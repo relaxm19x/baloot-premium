@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VIP Baloot - صكة الملوك Premium</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #060a13;
+            --royal-blue: #0f1626;
+            --luxury-gold: #cca43b;
+            --gold-gradient: linear-gradient(135deg, #ffe066 0%, #cca43b 50%, #96731c 100%);
+            --gold-glow: 0 0 15px rgba(204, 164, 59, 0.6);
+            --strong-glow: 0 0 25px #ffe066, inset 0 0 10px #cca43b;
+            --table-green: radial-gradient(circle, #11401d 30%, #0a2411 70%, #030d06 100%);
+        }
+
+        body {
+            margin: 0; padding: 10px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color); color: #ffffff;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            min-height: 100vh; overflow-x: hidden;
+            background-image: radial-gradient(circle at center, #111a2e 0%, #060a13 100%);
+            -webkit-user-select: none; user-select: none;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        .lobby-container {
+            background: var(--royal-blue); padding: 40px 30px; border-radius: 28px;
+            border: 2px solid var(--luxury-gold); text-align: center; margin-top: 40px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8); width: 85%; max-width: 390px;
+        }
+
+        .luxury-input {
+            width: 100%; padding: 14px; margin: 15px 0; border-radius: 14px;
+            border: 1px solid var(--luxury-gold); background: #060a13; color: white; text-align: center; font-size: 16px;
+        }
+
+        .luxury-button {
+            background: var(--gold-gradient); color: #060a13; border: none; padding: 15px 24px;
+            font-size: 18px; font-weight: bold; border-radius: 14px; cursor: pointer; width: 100%;
+            box-shadow: var(--gold-glow);
+        }
+
+        .game-layout { display: none; flex-direction: column; width: 100%; max-width: 480px; padding: 0 12px; gap: 8px; position: relative; }
+        .game-container { width: 100%; position: relative; }
+
+        .multiplayer-bar {
+            background: #0f172a; padding: 12px; border-radius: 18px;
+            border: 1px solid var(--luxury-gold); font-size: 13px; text-align: center;
+            display: flex; flex-direction: column; gap: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        .btn-link { background: var(--gold-gradient); color:#060a13; border:none; border-radius:8px; padding:6px 14px; font-weight:bold; cursor:pointer; font-size:12px; }
+
+        .btn-shop-toggle {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #ffe066; border: 1px solid var(--luxury-gold); padding: 8px 16px;
+            border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer;
+            box-shadow: var(--gold-glow); transition: all 0.2s;
+        }
+        .btn-shop-toggle:hover { transform: scale(1.05); }
+
+        .shop-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(6, 10, 19, 0.95); border: 2px solid var(--luxury-gold);
+            border-radius: 24px; z-index: 500; display: none; flex-direction: column;
+            padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+        }
+        .shop-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(204,164,59,0.3); padding-bottom: 10px; margin-bottom: 15px; }
+        .shop-item {
+            background: #0f1626; border: 1px solid rgba(204,164,59,0.2); border-radius: 14px;
+            padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .btn-buy-item { background: var(--gold-gradient); color: #060a13; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px; }
+
+        .score-board { 
+            font-size: 15px; color: #ffe066; display: flex; gap: 15px; 
+            justify-content: center; font-weight: bold; background: rgba(15, 22, 38, 0.9);
+            padding: 10px 18px; border-radius: 25px; border: 1px solid rgba(204,164,59,0.25);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.5); margin-bottom: 5px;
+        }
+
+        .baloot-table {
+            width: 100%; height: 390px; 
+            background: var(--table-green);
+            border: 14px solid #1a1107; border-radius: 45px; position: relative; margin: 10px auto;
+            box-shadow: inset 0 0 70px rgba(0,0,0,0.85), 0 20px 40px rgba(0,0,0,0.6), 0 0 0 2px var(--luxury-gold);
+            transition: background 0.5s ease;
+        }
+
+        .player-seat {
+            position: absolute; background: linear-gradient(180deg, #16223f 0%, #0f1626 100%);
+            border: 1.5px solid var(--luxury-gold); padding: 8px 14px; border-radius: 14px;
+            font-weight: bold; font-size: 13px; min-width: 95px; text-align: center; color: #ffe066;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.6); z-index: 20; transition: all 0.3s ease;
+        }
+        .seat-0 { bottom: -15px; left: calc(50% - 47px); border-color: #4caf50; color: white; } 
+        .seat-1 { left: -15px; top: calc(50% - 18px); } 
+        .seat-2 { top: -15px; left: calc(50% - 47px); }  
+        .seat-3 { right: -15px; top: calc(50% - 18px); } 
+
+        .active-turn-glow { box-shadow: var(--strong-glow); border-color: #ffe066; transform: scale(1.04); }
+
+        .player-seat.vip-active {
+            border: 2px solid #ffdf00 !important;
+            box-shadow: 0 0 20px #ffdf00, inset 0 0 8px #cca43b !important;
+            animation: vipPulse 1.5s infinite alternate;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+        }
+        @keyframes vipPulse { from { box-shadow: 0 0 10px #cca43b; } to { box-shadow: 0 0 25px #ffe066, inset 0 0 10px #cca43b; } }
+
+        .chat-bubble {
+            position: absolute; background: #ffffff; color: #0b0f19; padding: 7px 14px;
+            border-radius: 14px; font-size: 12px; font-weight: bold; min-width: 100px; max-width: 145px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.4); display: none; z-index: 100; text-align: center;
+            transition: all 0.2s ease;
+        }
+        .bubble-pos-0 { bottom: 35px; left: calc(50% - 50px); border-bottom: 4px solid #fff; }
+        .bubble-pos-1 { left: 95px; top: calc(50% - 15px); }
+        .bubble-pos-2 { top: 35px; left: calc(50% - 50px); }
+        .bubble-pos-3 { right: 95px; top: calc(50% - 15px); }
+
+        .chat-bubble.vip-bubble {
+            background: var(--gold-gradient) !important;
+            color: #060a13 !important;
+            box-shadow: 0 8px 25px rgba(255, 224, 102, 0.5) !important;
+            border: 1px solid #96731c !important;
+        }
+
+        .round-result-overlay {
+            position: absolute; top: 12%; left: 8%; width: 84%; height: 76%;
+            background: linear-gradient(135deg, #0f1626 0%, #060a13 100%);
+            border: 3px solid var(--luxury-gold); border-radius: 24px; z-index: 300; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9); padding: 15px; text-align: center;
+        }
+
+        .card {
+            width: 70px; height: 100px; background: #ffffff; color: #212121; border-radius: 12px; display: flex;
+            flex-direction: column; justify-content: space-between; padding: 7px; font-weight: 900; font-size: 18px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4); position: absolute; border: 1.5px solid #dcdde1;
+        }
+        .card-pos-0 { bottom: 85px; left: calc(50% - 35px); } 
+        .card-pos-1 { top: calc(50% - 50px); left: 75px; }    
+        .card-pos-2 { top: 85px; left: calc(50% - 35px); }     
+        .card-pos-3 { top: calc(50% - 50px); right: 75px; }  
+
+        .card.gold-glow {
+            border: 2px solid #cca43b !important;
+            box-shadow: 0 0 15px #ffe066, 0 8px 20px rgba(204,164,59,0.6) !important;
+        }
+
+        .card.premium-skin {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+            color: #ffe066 !important; border: 1.5px solid #cca43b !important;
+        }
+
+        .card.red { color: #d63031; background: linear-gradient(180deg, #fff 70%, #fff5f5 100%); }
+        .card.black { color: #2d3436; background: linear-gradient(180deg, #fff 70%, #f1f2f6 100%); }
+        .card-corner-top { display: flex; justify-content: flex-start; line-height: 0.9; }
+        .card-corner-bottom { display: flex; justify-content: flex-end; line-height: 0.9; transform: rotate(180deg); }
+        .card-center-icon { text-align: center; font-size: 22px; opacity: 0.9; margin-top: -2px; }
+
+        .player-hand { display: flex; justify-content: center; margin-top: 25px; padding-bottom: 25px; }
+        .player-hand .card { position: relative; bottom: 0; left: 0; margin-right: -28px; cursor: pointer; border: 1.5px solid var(--luxury-gold) !important; }
+        .player-hand .card:hover { transform: translateY(-25px) rotate(-1deg) scale(1.08); z-index: 100; box-shadow: 0 15px 30px rgba(0,0,0,0.6), var(--gold-glow); }
+
+        .projects-bar { width: 100%; display: flex; justify-content: center; margin-top: 5px; gap: 10px; }
+        .btn-projects-guide { background: rgba(15, 22, 38, 0.9); color: var(--luxury-gold); border: 1px solid var(--luxury-gold); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+        
+        .btn-declare-now {
+            background: var(--gold-gradient); color: #060a13; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; display: none; margin-top: 5px; width: 100%;
+        }
+
+        .action-panel {
+            background: linear-gradient(180deg, #16223f 0%, #060a13 100%); border: 1.5px solid var(--luxury-gold); padding: 12px; border-radius: 16px; display: none; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 10px auto; width: 100%;
+        }
+        .btn-action { padding: 10px 14px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; }
+        .btn-buy { background: var(--gold-gradient); color: #060a13; }
+        .btn-pass { background: #4a5568; color: white; }
+
+        .btn-suit-choice { padding: 8px 12px; font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold; border: 1px solid #cca43b; background: #060a13; color: #fff; }
+        .btn-suit-choice.red { color: #d63031; border-color: #d63031; }
+
+        .mobile-chat-bar {
+            width: 100%; display: flex; gap: 6px; background: rgba(15, 22, 38, 0.8); padding: 8px; border-radius: 12px; border: 1px solid rgba(204,164,59,0.2); margin-top: 10px;
+        }
+        .mobile-chat-input { flex: 1; background: #060a13; border: 1px solid var(--luxury-gold); border-radius: 8px; color: white; padding: 8px 12px; font-size: 14px; }
+        .mobile-chat-btn { background: var(--gold-gradient); border: none; border-radius: 8px; padding: 0 14px; font-weight: bold; cursor: pointer; color: #060a13; }
+
+        #game-status { font-size: 16px; color: #ffe066; margin: 8px 0; text-align: center; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="lobby-container" id="lobby-screen">
+        <h1 style="background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; font-size: 28px; font-weight: 900;">🃏 صكة الملوك Premium</h1>
+        <p style="font-size: 13px; color: #a0aec0; margin-bottom: 20px;" id="lobby-subtitle">نسخة النشرة الدولية + المتجر الملوكي</p>
+        <input type="text" id="usernameInput" class="luxury-input" placeholder="ادخل اسم اللاعب">
+        <button class="luxury-button" onclick="connectToTable()">دخول مجلس الصكة</button>
+    </div>
+
+    <div class="game-layout" id="game-layout">
+        <div class="game-container">
+            
+            <div class="multiplayer-bar">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>طاولة: <span id="room-id-span" style="color:#ffe066; font-weight:bold;">#0000</span></div>
+                    <button class="btn-shop-toggle" onclick="toggleShopOverlay()">🛒 المتجر الملوكي VIP</button>
+                </div>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button class="btn-link" onclick="copyWhatsAppLink()">🔗 نسخ رابط الواتساب للربع</button>
+                    <button class="btn-link" id="btn-fill-bots" style="background:#4caf50; color:#fff;" onclick="fillTableWithBots()">🤖 بدء الصكة فوراً</button>
+                </div>
+            </div>
+
+            <div class="shop-overlay" id="shop-panel">
+                <div class="shop-header">
+                    <h3 style="color:var(--luxury-gold); margin:0;">👑 متجر الديوانية الفخم</h3>
+                    <button style="background:#4a5568; color:#fff; border:none; padding:4px 10px; border-radius:6px; cursor:pointer; font-weight:bold;" onclick="toggleShopOverlay()">إغلاق ❌</button>
+                </div>
+                
+                <div class="shop-item">
+                    <div>
+                        <b style="color:#fff; display:block; font-size:14px;">اشتراك VIP الذهبي</b>
+                        <span style="color:#a0aec0; font-size:11px;">توهج اسمك بالذهب وإطار متفجر + فقاعة شات ملوكية</span>
+                    </div>
+                    <button class="btn-buy-item" onclick="buyFeature('vip')">شراء 60 KD</button>
+                </div>
+
+                <div class="shop-item">
+                    <div>
+                        <b style="color:#fff; display:block; font-size:14px;">سكن الكروت الأميري</b>
+                        <span style="color:#a0aec0; font-size:11px;">كروت بخلفية زرقاء داكنة وأطراف ذهبية</span>
+                    </div>
+                    <button class="btn-buy-item" onclick="buyFeature('skin')">تفعيل مجاني</button>
+                </div>
+
+                <div class="shop-item">
+                    <div>
+                        <b style="color:#fff; display:block; font-size:14px;">طاولة الخشب المخملي</b>
+                        <span style="color:#a0aec0; font-size:11px;">تغيير أرضية الطاولة إلى مظهر ملكي داكن</span>
+                    </div>
+                    <button class="btn-buy-item" onclick="buyFeature('table')">تغيير المظهر</button>
+                </div>
+                <p style="font-size:10px; color:#a0aec0; text-align:center; margin-top:auto;">جميع الأسعار قابلة للربط بقنوات الدفع المحلية عند الإطلاق الفعلي</p>
+            </div>
+
+            <div class="score-board">
+                <div>لنا: <span id="score-t1" style="color:#fff; font-size:16px;">0</span></div>
+                <div style="color: #cca43b;">┃</div>
+                <div>لهم: <span id="score-t2" style="color:#fff; font-size:16px;">0</span></div>
+            </div>
+
+            <div id="game-status">بانتظار اكتمال المجلس...</div>
+
+            <div class="projects-bar">
+                <div class="btn-projects-guide">🏆 مظهر الكروت الفخم VIP</div>
+            </div>
+
+            <div class="baloot-table" id="main-baloot-table">
+                <div class="round-result-overlay" id="round-result-panel">
+                    <h2 style="color: #ffe066; margin: 0 0 10px 0; font-size: 20px;">📊 نشرة الجولة الحالية</h2>
+                    <div style="font-size: 16px; color: #fff; margin: 5px 0;" id="round-points-text"></div>
+                    <div style="font-size: 14px; color: #cca43b; margin: 5px 0;" id="round-projects-text"></div>
+                    <hr style="width:80%; border: 0; border-top: 1px solid #cca43b; margin: 10px 0;">
+                    <div style="font-size: 18px; color: #ffe066; font-weight: bold;" id="total-scores-text"></div>
+                </div>
+
+                <div id="seat_2" class="player-seat seat-2">مقعد خالٍ</div>
+                <div id="bubble_2" class="chat-bubble bubble-pos-2"></div>
+
+                <div id="seat_1" class="player-seat seat-1">مقعد خالٍ</div>
+                <div id="bubble_1" class="chat-bubble bubble-pos-1"></div>
+
+                <div id="seat_3" class="player-seat seat-3">مقعد خالٍ</div>
+                <div id="bubble_3" class="chat-bubble bubble-pos-3"></div>
+
+                <div id="seat_0" class="player-seat seat-0">
+                    <span id="my-name-span" style="transition: color 0.3s;">أنت</span>
+                    <button id="btn-declare-project-now" class="btn-declare-now" onclick="declareMyProject()">📢 أعلن مشروعي!</button>
+                </div>
+                <div id="bubble_0" class="chat-bubble bubble-pos-0"></div>
+
+                <div class="center-area" id="center-table"></div>
+            </div>
+
+            <div class="action-panel" id="buying-panel"></div>
+            <div class="player-hand" id="my-hand"></div>
+
+            <div class="mobile-chat-bar">
+                <input type="text" id="chatInput" class="mobile-chat-input" placeholder="سولف وطقطق مع الربع لايف..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                <button class="mobile-chat-btn" onclick="sendChatMessage()">إرسال</button>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+    // 🎯 تحديث ديناميكي ملوكي: قراءة رابط السيرفر أوتوماتيكياً عند الرفع على الدومين
+    const socket = io(); 
+    let mySeatIndex = null;
+    let localCards = [];
+    let seatMapping = {}; 
+    let currentRoomId = null;
+    let currentGlobalGameType = 'صن';
+    let currentGlobalTrumpSuit = null;
+    
+    let hasPremiumSkin = false;
+    let isUserVIP = false;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomFromUrl = urlParams.get('room');
+    if (roomFromUrl) {
+        currentRoomId = roomFromUrl;
+        document.getElementById('lobby-subtitle').innerText = `طاولة رقم #${currentRoomId}`;
+    }
+
+    document.getElementById('usernameInput').value = "محمد";
+
+    function connectToTable() {
+        const username = document.getElementById('usernameInput').value;
+        if(!username) return alert("الرجاء كتابة الاسم!");
+        document.getElementById('lobby-screen').style.display = 'none';
+        document.getElementById('game-layout').style.display = 'flex';
+        socket.emit('join_matchmaking', { username: username, roomId: currentRoomId });
+    }
+
+    function toggleShopOverlay() {
+        const panel = document.getElementById('shop-panel');
+        panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function buyFeature(type) {
+        if(type === 'vip') {
+            isUserVIP = true;
+            const mySeat = document.getElementById('seat_0');
+            mySeat.classList.add('vip-active');
+            document.getElementById('my-name-span').style.color = '#ffdf00';
+            alert("👑 كفو بومحمد! تم تفعيل اشتراك VIP بنجاح. مقعدك وفقاعات الشات الخاصة بك الآن تشع بالذهب الملوكي!");
+        } else if(type === 'skin') {
+            hasPremiumSkin = true;
+            renderHand();
+            alert("🎨 تم تفعيل سكن الكروت الأميري الفاخر بنجاح!");
+        } else if(type === 'table') {
+            document.getElementById('main-baloot-table').style.background = 'radial-gradient(circle, #2d1f10 30%, #140d06 80%)';
+            document.getElementById('main-baloot-table').style.border = '14px solid #cca43b';
+            alert("🪵 تم تحويل مظهر الطاولة إلى الخشب الملكي المخملي!");
+        }
+        toggleShopOverlay();
+    }
+
+    function copyWhatsAppLink() {
+        const inviteUrl = `${window.location.origin}${window.location.pathname}?room=${currentRoomId}`;
+        navigator.clipboard.writeText(inviteUrl).then(() => {
+            alert(`🔗 تم نسخ الرابط الملوكي!\nارسله الحين للربع بالواتساب:\n${inviteUrl}`);
+        });
+    }
+
+    function fillTableWithBots() {
+        socket.emit('start_game_with_bots');
+    }
+
+    function declareMyProject() {
+        socket.emit('declare_my_project_manually');
+        document.getElementById('btn-declare-project-now').style.display = 'none';
+    }
+
+    socket.on('room_updated', (data) => {
+        currentRoomId = data.roomId;
+        document.getElementById('room-id-span').innerText = `#${currentRoomId}`;
+
+        for(let i=0; i<4; i++) {
+            if(data.seats[i] && data.seats[i].socketId === socket.id) { mySeatIndex = i; }
+        }
+        if(mySeatIndex === null) mySeatIndex = 0;
+
+        seatMapping = {};
+        for(let i=0; i<4; i++) {
+            let relativePos = (i - mySeatIndex + 4) % 4;
+            seatMapping[i] = relativePos;
+            const seatDiv = document.getElementById(`seat_${relativePos}`);
+            if (data.seats[i]) {
+                if (relativePos === 0) {
+                    document.getElementById('my-name-span').innerText = data.seats[i].username;
+                } else { seatDiv.innerText = data.seats[i].username; }
+            } else {
+                if (relativePos !== 0) seatDiv.innerText = "مقعد خالٍ";
+            }
+        }
+    });
+
+    socket.on('game_state_changed', (data) => {
+        document.getElementById('round-result-panel').style.display = 'none';
+        document.getElementById('btn-fill-bots').style.display = 'none';
+
+        if (data.scores) {
+            document.getElementById('score-t1').innerText = data.scores.team1;
+            document.getElementById('score-t2').innerText = data.scores.team2;
+        }
+
+        if(data.buyType) currentGlobalGameType = data.buyType;
+        if(data.trumpSuit) currentGlobalTrumpSuit = data.trumpSuit;
+
+        for(let i=0; i<4; i++) {
+            let relPos = seatMapping[i];
+            const seatDiv = document.getElementById(`seat_${relPos}`);
+            if(seatDiv) {
+                if(i === data.currentTurn) seatDiv.classList.add('active-turn-glow');
+                else seatDiv.classList.remove('active-turn-glow');
+            }
+        }
+
+        const centerTable = document.getElementById('center-table');
+        const buyingPanel = document.getElementById('buying-panel');
+
+        if(data.gameStage === 'buying') {
+            document.getElementById('game-status').innerText = `🚨 شراء الدورة ${data.buyRound} - عند مقعد ${data.currentTurn}`;
+            if(data.flipCard) {
+                centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 49px); left:calc(50% - 34px); border: 2px dashed #cca43b; border-radius:10px; padding:1px;">` + createCardMarkup(data.flipCard) + `</div>`;
+            }
+
+            if (data.currentTurn === mySeatIndex) {
+                buyingPanel.style.display = 'flex';
+                if (data.buyRound === 1) {
+                    buyingPanel.innerHTML = `
+                        <button class="btn-action btn-buy" onclick="makeDecision('buy', 'صن')">صن ☀️</button>
+                        <button class="btn-action btn-buy" onclick="makeDecision('buy', 'حكم')">حكم 👑</button>
+                        <button class="btn-action btn-pass" onclick="makeDecision('pass', null)">بس 🛡️</button>
+                    `;
+                } else {
+                    buyingPanel.innerHTML = `
+                        <button class="btn-action btn-buy" onclick="makeDecision('buy', 'صن')">صن ☀️</button>
+                        <button class="btn-action btn-buy" style="background:#0f1626; color:#ffe066; border:1px solid #cca43b;" onclick="showSuitSelectionOverlay()">حكم ثاني 🃏</button>
+                        <button class="btn-action btn-buy" onclick="makeDecision('buy', 'أشكل')">أشكل 👑</button>
+                        <button class="btn-action btn-pass" onclick="makeDecision('pass', null)">طوّف 🛡️</button>
+                    `;
+                }
+            } else { buyingPanel.style.display = 'none'; }
+
+        } else {
+            document.getElementById('game-status').innerText = `⚔️ الصكة جارية حالياً، الدور عند مقعد ${data.currentTurn}`;
+            buyingPanel.style.display = 'none';
+
+            centerTable.innerHTML = "";
+            if (data.tableCards && data.tableCards.length > 0) {
+                data.tableCards.forEach(item => {
+                    let cardRelPos = seatMapping[item.seatIndex];
+                    centerTable.innerHTML += createCardHTMLWithPosition(item.card, cardRelPos);
+                });
+            }
+        }
+
+        const projectBtn = document.getElementById('btn-declare-project-now');
+        if (data.gameStage === 'playing' && localCards.length === 8) {
+            projectBtn.style.display = 'block';
+        } else { projectBtn.style.display = 'none'; }
+
+        const myCards = data.playersCards[mySeatIndex] || [];
+        if(myCards.length > 0) {
+            localCards = myCards;
+            sortMyHand();
+            renderHand();
+        }
+    });
+
+    function showSuitSelectionOverlay() {
+        const buyingPanel = document.getElementById('buying-panel');
+        buyingPanel.innerHTML = `
+            <div style="width:100%; text-align:center; color:#ffe066; font-size:12px; margin-bottom:5px;">اختر زات الحكم الثاني:</div>
+            <button class="btn-suit-choice black" onclick="makeDecision('buy', 'حكم_ثاني_♠')">♠ سبيت</button>
+            <button class="btn-suit-choice red" onclick="makeDecision('buy', 'حكم_ثاني_♥')">♥ هاص</button>
+            <button class="btn-suit-choice red" onclick="makeDecision('buy', 'حكم_ثاني_♦')">♦ ديمَن</button>
+            <button class="btn-suit-choice black" onclick="makeDecision('buy', 'حكم_ثاني_♣')">♣ شريا</button>
+            <button class="btn-action btn-pass" style="width:100%; margin-top:5px;" onclick="socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: 'pass' })">الغاء ❌</button>
+        `;
+    }
+
+    socket.on('show_round_result_board', (data) => {
+        const resultPanel = document.getElementById('round-result-panel');
+        document.getElementById('round-points-text').innerHTML = `أبناط اللمّات الكسبانة:<br><b>لنا:</b> ${data.roundPoints.team1} بنط ┃ <b>لهم:</b> ${data.roundPoints.team2} بنط`;
+        document.getElementById('round-projects-text').innerHTML = `نقاط المشاريع المقيدة:<br><b>لنا:</b> ${data.projectPoints.team1} ┃ <b>لهم:</b> ${data.projectPoints.team2}`;
+        document.getElementById('total-scores-text').innerText = `🏆 المجموع التراكمي: لنا [ ${data.totalScores.team1} ] - لهم [ ${data.totalScores.team2} ]`;
+        resultPanel.style.display = 'flex';
+    });
+
+    socket.on('invalid_move_alert', (data) => { alert(data.message); });
+
+    socket.on('game_over_announcement', (data) => {
+        alert(`🏆 صكة الملوك الختامية 🏆\n\n${data.winnerText}\n\nالنتيجة النهائية:\nلنا: ${data.finalScores.team1} ┃ لهم: ${data.finalScores.team2}`);
+    });
+
+    socket.on('receive_chat_message', (data) => {
+        let senderRelPos = -1;
+        for(let i=0; i<4; i++) {
+            const seatDiv = document.getElementById(`seat_${seatMapping[i]}`);
+            let currentName = (seatMapping[i] === 0) ? document.getElementById('my-name-span').innerText : (seatDiv ? seatDiv.innerText : "");
+            if(currentName === data.username) { senderRelPos = seatMapping[i]; break; }
+        }
+        if(senderRelPos !== -1) {
+            const bubble = document.getElementById(`bubble_${senderRelPos}`);
+            if(bubble) {
+                bubble.innerText = data.text;
+                if (senderRelPos === 0 && isUserVIP) {
+                    bubble.classList.add('vip-bubble');
+                } else {
+                    bubble.classList.remove('vip-bubble');
+                }
+                bubble.style.display = 'block';
+                setTimeout(() => { bubble.style.display = 'none'; }, 4000);
+            }
+        }
+    });
+
+    const suitOrder = { '♠': 1, '♥': 2, '♦': 3, '♣': 4 };
+    const cardRankOrder = { 'A': 1, '10': 2, 'K': 3, 'Q': 4, 'J': 5, '9': 6, '8': 7, '7': 8 };
+    function sortMyHand() {
+        localCards.sort((a, b) => {
+            if (suitOrder[a.suit] !== suitOrder[b.suit]) { return suitOrder[a.suit] - suitOrder[b.suit]; }
+            return cardRankOrder[a.value] - cardRankOrder[b.value];
+        });
+    }
+
+    function isCardStrong(card) {
+        if (currentGlobalGameType === 'صن' && card.value === 'A') return true;
+        if (currentGlobalGameType === 'حكم' && card.suit === currentGlobalTrumpSuit && (card.value === 'J' || card.value === '9')) return true;
+        return false;
+    }
+
+    function createCardMarkup(card) {
+        const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
+        const glowClass = isCardStrong(card) ? 'gold-glow' : '';
+        const skinClass = hasPremiumSkin ? 'premium-skin' : '';
+        return `<div class="card ${colorClass} ${glowClass} ${skinClass}" data-suit="${card.suit}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
+    }
+
+    function createCardHTMLWithPosition(card, relPos) {
+        const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
+        const glowClass = isCardStrong(card) ? 'gold-glow' : '';
+        const skinClass = hasPremiumSkin ? 'premium-skin' : '';
+        return `<div class="card ${colorClass} ${glowClass} ${skinClass} card-pos-${relPos}" data-suit="${card.suit}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
+    }
+
+    function renderHand() {
+        const handDiv = document.getElementById('my-hand'); handDiv.innerHTML = "";
+        localCards.forEach((card, index) => {
+            const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
+            const glowClass = isCardStrong(card) ? 'gold-glow' : '';
+            const skinClass = hasPremiumSkin ? 'premium-skin' : '';
+            handDiv.innerHTML += `<div class="card ${colorClass} ${glowClass} ${skinClass}" data-suit="${card.suit}" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
+        });
+    }
+
+    function makeDecision(decision, buyType) { socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: decision, buyType: buyType }); }
+    function throwCardFromHand(cardIndex) { socket.emit('play_card', { seatIndex: mySeatIndex, card: localCards[cardIndex] }); }
+    function sendChatMessage() {
+        const input = document.getElementById('chatInput'); const text = input.value.trim(); if(!text) return;
+        socket.emit('send_chat_message', { text: text }); input.value = "";
+    }
+</script>
+</body>
+</html>
