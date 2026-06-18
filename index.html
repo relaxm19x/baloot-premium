@@ -46,7 +46,17 @@
         }
 
         .game-layout { display: none; flex-direction: column; width: 100%; max-width: 480px; padding: 0 12px; gap: 8px; position: relative; }
-        .game-container { width: 100%; position: relative; }
+        
+        /* 🚨 إشعار التنبيه الفخم بأعلى الشاشة (التزريق والكافتيريا) */
+        .royal-toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid var(--luxury-gold); padding: 14px 24px; border-radius: 16px;
+            color: #ffe066; font-weight: bold; text-align: center; z-index: 9999;
+            box-shadow: var(--strong-glow); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; font-size: 14px; min-width: 280px;
+        }
+        .royal-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
         .multiplayer-bar {
             background: #0f172a; padding: 12px; border-radius: 18px;
@@ -58,65 +68,68 @@
         .top-shop-bar { display: flex; gap: 6px; justify-content: space-between; width: 100%; align-items: center; }
         .btn-shop-toggle {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            color: #ffe066; border: 1px solid var(--luxury-gold); padding: 6px 12px;
-            border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer;
-            box-shadow: var(--gold-glow);
+            color: #ffe066; border: 1px solid var(--luxury-gold); padding: 8px 14px;
+            border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer;
+            box-shadow: var(--gold-glow); transition: all 0.2s;
         }
-        .wallet-display {
-            background: #060a13; border: 1px solid #4caf50; padding: 4px 10px;
-            border-radius: 15px; color: #4caf50; font-size: 12px; font-weight: bold;
+        .btn-shop-toggle:hover { transform: scale(1.05); border-color: #fff; }
+
+        /* ☕ لوحة منيو كافتيريا الديوانية الفاخرة */
+        .cafeteria-overlay {
+            position: absolute; top: 15%; left: 5%; width: 90%; background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+            border: 2px solid var(--luxury-gold); border-radius: 24px; z-index: 500; display: none;
+            flex-direction: column; padding: 20px; box-shadow: var(--strong-glow);
         }
+        .menu-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 12px;
+            margin-bottom: 8px; border: 1px solid rgba(204,164,59,0.1);
+        }
+
+        /* 👤 لوحة اختيار رفيق الديوانية لتقديم الشاي له */
+        .recipient-selector { display: none; flex-direction: column; gap: 6px; margin-top: 10px; background: #060a13; padding: 10px; border-radius: 12px; }
+        .btn-select-player { background: #1e293b; color: white; border: 1px solid rgba(255,255,255,0.1); padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .btn-select-player:hover { background: var(--luxury-gold); color: #060a13; }
 
         .score-board { 
             font-size: 15px; color: #ffe066; display: flex; gap: 15px; 
             justify-content: center; font-weight: bold; background: rgba(15, 22, 38, 0.9);
             padding: 10px 18px; border-radius: 25px; border: 1px solid rgba(204,164,59,0.25);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.5); margin-bottom: 5px;
+            margin-bottom: 5px;
         }
 
         .baloot-table {
-            width: 100%; height: 390px; 
-            background: var(--table-green);
+            width: 100%; height: 390px; background: var(--table-green);
             border: 14px solid #1a1107; border-radius: 45px; position: relative; margin: 10px auto;
-            box-shadow: inset 0 0 70px rgba(0,0,0,0.85), 0 20px 40px rgba(0,0,0,0.6), 0 0 0 2px var(--luxury-gold);
-            transition: background 0.5s ease;
+            box-shadow: inset 0 0 70px rgba(0,0,0,0.85), 0 20px 40px rgba(0,0,0,0.6);
         }
 
         .player-seat {
             position: absolute; background: linear-gradient(180deg, #16223f 0%, #0f1626 100%);
             border: 1.5px solid var(--luxury-gold); padding: 6px 10px; border-radius: 14px;
             font-weight: bold; font-size: 12px; min-width: 105px; text-align: center; color: #ffe066;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.6); z-index: 20; transition: all 0.3s ease;
+            z-index: 20; transition: all 0.3s ease;
         }
         .seat-0 { bottom: -15px; left: calc(50% - 52px); border-color: #4caf50; color: white; } 
         .seat-1 { left: -15px; top: calc(50% - 30px); } 
         .seat-2 { top: -15px; left: calc(50% - 52px); }  
         .seat-3 { right: -15px; top: calc(50% - 30px); } 
 
-        /* 📢 وشاح المشروع أعلى اسم اللاعب */
         .project-tag {
-            background: var(--gold-gradient); color: #060a13; font-size: 9px;
-            font-weight: 900; padding: 1px 6px; border-radius: 4px; display: none;
-            margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            background: var(--gold-gradient); color: #060a13; font-size: 10px;
+            font-weight: 900; padding: 2px 8px; border-radius: 5px; display: none;
+            margin-bottom: 3px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
+
+        /* ☕ وشاح الضيافة الحي فوق رأس اللاعب */
+        .hospitality-bubble {
+            background: #ff9800; color: white; font-size: 10px; padding: 2px 6px;
+            border-radius: 8px; display: none; margin-top: 3px; font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
 
         .active-turn-glow { box-shadow: var(--strong-glow); border-color: #ffe066; transform: scale(1.04); }
-
-        /* ✨ هوية بصرية فخمة جداً لنشرة القيد الملوكية وسط الطاولة */
-        .round-result-overlay {
-            position: absolute; top: 10%; left: 8%; width: 84%; height: 80%;
-            background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
-            border: 3px solid var(--luxury-gold); border-radius: 28px; z-index: 300; display: none;
-            flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.95), inset 0 0 20px rgba(204,164,59,0.2); 
-            padding: 20px; text-align: center; animation: overlayIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes overlayIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        .result-title { background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 24px; font-weight: 900; margin: 0 0 15px 0; }
-        .score-row { display: flex; width: 100%; justify-content: space-around; margin: 15px 0; }
-        .score-box { background: #0f1626; border: 1px solid rgba(204,164,59,0.3); border-radius: 14px; padding: 10px 20px; min-width: 90px; }
 
         .card {
             width: 70px; height: 100px; background: #ffffff; color: #212121; border-radius: 12px; display: flex;
@@ -128,26 +141,16 @@
         .card-pos-2 { top: 85px; left: calc(50% - 35px); }     
         .card-pos-3 { top: calc(50% - 50px); right: 75px; }  
 
-        /* 📢 مكان فرش واستعراض صور مشروع اللاعب الملعون في الأكلة الثانية */
-        .project-cards-showcase {
-            position: absolute; top: 32%; left: 15%; width: 70%; display: none;
-            justify-content: center; gap: 4px; z-index: 250; background: rgba(0,0,0,0.4);
-            padding: 6px; border-radius: 12px; border: 1px dashed var(--luxury-gold);
-        }
-        .project-cards-showcase .card { position: relative; bottom:0; left:0; width: 45px; height: 65px; font-size: 12px; padding: 3px; }
-        .project-cards-showcase .card .card-center-icon { font-size: 14px; }
-
         .card.red { color: #d63031; background: linear-gradient(180deg, #fff 70%, #fff5f5 100%); }
         .card.black { color: #2d3436; background: linear-gradient(180deg, #fff 70%, #f1f2f6 100%); }
         .card-corner-top { display: flex; justify-content: flex-start; line-height: 0.9; }
         .card-corner-bottom { display: flex; justify-content: flex-end; line-height: 0.9; transform: rotate(180deg); }
-        .card-center-icon { text-align: center; font-size: 22px; opacity: 0.9; margin-top: -2px; }
+        .card-center-icon { text-align: center; font-size: 22px; opacity: 0.9; }
 
         .player-hand { display: flex; justify-content: center; margin-top: 25px; padding-bottom: 25px; }
-        .player-hand .card { position: relative; bottom: 0; left: 0; margin-right: -28px; cursor: pointer; border: 1.5px solid var(--luxury-gold) !important; }
-        .player-hand .card:hover { transform: translateY(-25px) rotate(-1deg) scale(1.08); z-index: 100; box-shadow: 0 15px 30px rgba(0,0,0,0.6), var(--gold-glow); }
+        .player-hand .card { position: relative; bottom: 0; left: 0; margin-right: -28px; cursor: pointer; border: 1.5px solid var(--luxury-gold) !important; transition: transform 0.2s; }
+        .player-hand .card:hover { transform: translateY(-20px) scale(1.05); z-index: 100; }
         
-        /* 📢 لوحة المشاريع المتجاورة الفخمة (سرا خمسين 100 400) */
         .project-panel-layout {
             background: linear-gradient(180deg, #0f172a 0%, #020617 100%); border: 2px solid var(--luxury-gold);
             padding: 14px; border-radius: 20px; display: none; justify-content: center; gap: 8px;
@@ -155,33 +158,31 @@
         }
         .btn-project {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffe066;
-            border: 1px solid var(--luxury-gold); padding: 12px 10px; font-size: 13px; font-weight: bold;
-            border-radius: 10px; cursor: pointer; flex: 1; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            transition: all 0.2s;
+            border: 1px solid var(--luxury-gold); padding: 12px 6px; font-size: 12px; font-weight: bold;
+            border-radius: 10px; cursor: pointer; flex: 1; text-align: center;
         }
-        .btn-project:hover { background: var(--gold-gradient); color: #060a13; transform: translateY(-2px); }
+        .btn-project:hover { background: var(--gold-gradient); color: #060a13; }
 
         .action-panel {
-            background: linear-gradient(180deg, #16223f 0%, #060a13 100%); border: 1.5px solid var(--luxury-gold); padding: 12px; border-radius: 16px; display: none; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 10px auto; width: 100%;
+            background: linear-gradient(180deg, #16223f 0%, #060a13 100%); border: 1.5px solid var(--luxury-gold); padding: 12px; border-radius: 16px; display: none; justify-content: center; gap: 8px; margin: 10px auto; width: 100%;
         }
         .btn-action { padding: 10px 14px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; }
         .btn-buy { background: var(--gold-gradient); color: #060a13; }
         .btn-pass { background: #4a5568; color: white; }
 
         .mobile-chat-bar {
-            width: 100%; display: flex; gap: 6px; background: rgba(15, 22, 38, 0.8); padding: 8px; border-radius: 12px; border: 1px solid rgba(204,164,59,0.2); margin-top: 10px;
+            width: 100%; display: flex; gap: 6px; background: rgba(15, 22, 38, 0.8); padding: 8px; border-radius: 12px; margin-top: 10px;
         }
-        .mobile-chat-input { flex: 1; background: #060a13; border: 1px solid var(--luxury-gold); border-radius: 8px; color: white; padding: 8px 12px; font-size: 14px; }
-        .mobile-chat-btn { background: var(--gold-gradient); border: none; border-radius: 8px; padding: 0 14px; font-weight: bold; cursor: pointer; color: #060a13; }
-
-        #game-status { font-size: 16px; color: #ffe066; margin: 8px 0; text-align: center; font-weight: bold; }
+        .mobile-chat-input { flex: 1; background: #060a13; border: 1px solid var(--luxury-gold); border-radius: 8px; color: white; padding: 8px 12px; }
+        .mobile-chat-btn { background: var(--gold-gradient); border: none; border-radius: 8px; padding: 0 14px; font-weight: bold; color: #060a13; }
     </style>
 </head>
 <body>
 
+    <div class="royal-toast" id="global-toast">🚨 تنبيه ديوانية الملوك</div>
+
     <div class="lobby-container" id="lobby-screen">
-        <h1 style="background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; font-size: 28px; font-weight: 900;">🃏 صكة الملوك Premium</h1>
-        <p style="font-size: 13px; color: #a0aec0; margin-bottom: 20px;">نظام الكافتيريا الفورية والمحفظة الرقمية د.ك</p>
+        <h1 style="background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 28px; font-weight: 900;">🃏 صكة الملوك Premium</h1>
         <input type="text" id="usernameInput" class="luxury-input" placeholder="ادخل اسم اللاعب">
         <button class="luxury-button" onclick="connectToTable()">دخول مجلس الصكة</button>
     </div>
@@ -191,105 +192,86 @@
             
             <div class="multiplayer-bar">
                 <div class="top-shop-bar">
-                    <button class="btn-shop-toggle" onclick="toggleOverlay('shop-panel')">🛒 متجر VIP</button>
-                    <button class="btn-shop-toggle" style="border-color:#4caf50; color:#4caf50;" onclick="toggleOverlay('cafeteria-panel')">☕ كافتيريا الديوانية</button>
+                    <button class="btn-shop-toggle" style="background:#1e3a8a;" onclick="openCafeteriaMenu()">☕ كافتيريا الديوانية</button>
                     <div class="wallet-display" id="wallet-balance-text">محفظتك: 5.000 د.ك</div>
                 </div>
                 <div style="display:flex; gap:10px; justify-content:center; margin-top:4px;">
-                    <button class="btn-link" onclick="copyWhatsAppLink()">🔗 رابط الواتساب للربع</button>
-                    <button class="btn-link" id="btn-fill-bots" style="background:#4caf50; color:#fff;" onclick="fillTableWithBots()">🤖 بدء الصكة</button>
+                    <button class="btn-link" id="btn-fill-bots" style="background:#4caf50; color:#fff;" onclick="fillTableWithBots()">🤖 بدء الصكة وتوزيع الورق</button>
                 </div>
             </div>
 
-            <!-- متجر الـ VIP -->
-            <div class="shop-overlay" id="shop-panel">
-                <div class="shop-header">
-                    <h3 style="color:var(--luxury-gold); margin:0;">👑 متجر VIP</h3>
-                    <button style="background:#4a5568; color:#fff; border:none; padding:4px 10px; border-radius:6px; cursor:pointer;" onclick="toggleOverlay('shop-panel')">إغلاق ❌</button>
+            <div class="cafeteria-overlay" id="cafeteria-panel">
+                <h3 style="color:var(--luxury-gold); margin:0 0 15px 0; text-align:center;">☕ منيو ضيافة الملوك</h3>
+                
+                <div class="menu-item">
+                    <div><b>☕ استكانة شاي مخدر</b> (0.250 د.ك)</div>
+                    <button class="btn-link" onclick="selectHospitalityTarget('شاي مخدر')">تقديم ضيافة</button>
                 </div>
-                <div class="shop-item">
-                    <div><b>اشتراك VIP الذهبي</b></div>
-                    <button class="btn-buy-item" onclick="buyFeature('vip', 3.000)">3.000 د.ك</button>
+                <div class="menu-item">
+                    <div><b>☕ فنجان قهوة عربية شقراء</b> (0.300 د.ك)</div>
+                    <button class="btn-link" onclick="selectHospitalityTarget('قهوة عربية')">تقديم ضيافة</button>
                 </div>
-                <button class="luxury-button" style="margin-top:20px; font-size:14px; padding:10px;" onclick="rechargeWallet()">➕ شحن رصيد (K-Net)</button>
+
+                <div class="recipient-selector" id="recipient-area">
+                    <div style="font-size:11px; color:#cca43b; margin-bottom:4px;">اختر من تريد إكرامه بالضيافة:</div>
+                    <button class="btn-select-player" onclick="confirmHospitalityDelivery(1)">👤 الرفيق على اليسار (لاعب 2)</button>
+                    <button class="btn-select-player" onclick="confirmHospitalityDelivery(2)">👤 الرفيق المقابل (لاعب 3)</button>
+                    <button class="btn-select-player" onclick="confirmHospitalityDelivery(3)">👤 الرفيق على اليمين (لاعب 4)</button>
+                </div>
+
+                <button class="luxury-button" style="margin-top:15px; font-size:13px; padding:8px;" onclick="closeCafeteriaMenu()">إغلاق المنيو ❌</button>
             </div>
 
             <div class="score-board">
-                <div>لنا: <span id="score-t1" style="color:#fff; font-size:16px;">0</span></div>
+                <div>لنا: <span id="score-t1" style="color:#fff;">0</span></div>
                 <div style="color: #cca43b;">┃</div>
-                <div>لهم: <span id="score-t2" style="color:#fff; font-size:16px;">0</span></div>
+                <div>لهم: <span id="score-t2" style="color:#fff;">0</span></div>
             </div>
 
             <div id="game-status">بانتظار اكتمال المجلس...</div>
 
             <div class="baloot-table" id="main-baloot-table">
                 
-                <!-- 📊 الهوية البصرية العميقة والفاخرة لنشرة نتائج الجولة وقيد البلوت -->
-                <div class="round-result-overlay" id="round-result-panel">
-                    <div class="result-title">📊 قـيـد مـلـوكـي رسـمـي</div>
-                    <div style="font-size: 14px; color: #a0aec0;">تم احتساب النقاط والـ 10 حق الأرض للأكلة الأخيرة بنجاح</div>
-                    
-                    <div class="score-row">
-                        <div class="score-box">
-                            <span style="color:#a0aec0; font-size:12px; display:block;">لَنَا (فريق 1)</span>
-                            <b style="color:#4caf50; font-size:24px;" id="panel-score-t1">0</b>
-                        </div>
-                        <div class="score-box">
-                            <span style="color:#a0aec0; font-size:12px; display:block;">لَهُمْ (فريق 2)</span>
-                            <b style="color:#e53e3e; font-size:24px;" id="panel-score-t2">0</b>
-                        </div>
-                    </div>
-                    <button class="luxury-button" style="padding:10px 20px; font-size:14px; margin-top:10px;" onclick="closeResultOverlayAndNext()">توزيع قيد جديد 🃏</button>
-                </div>
-
-                <!-- 📢 ساحة استعراض صور كروت المشروع الفعلي بالأكلة الثانية -->
-                <div class="project-cards-showcase" id="project-cards-area"></div>
-
-                <!-- مقعد لاعب 2 (أعلى) -->
                 <div id="seat_2" class="player-seat seat-2">
                     <div class="project-tag" id="tag_2">سرا</div>
+                    <div class="hospitality-bubble" id="drink_2">☕ يشرب شاي</div>
                     <span class="seat-name">مقعد خالٍ</span>
                 </div>
-                <div id="bubble_2" class="chat-bubble bubble-pos-2"></div>
 
-                <!-- مقعد لاعب 1 (يسار) -->
                 <div id="seat_1" class="player-seat seat-1">
                     <div class="project-tag" id="tag_1">خمسين</div>
+                    <div class="hospitality-bubble" id="drink_1">☕ يشرب شاي</div>
                     <span class="seat-name">مقعد خالٍ</span>
                 </div>
-                <div id="bubble_1" class="chat-bubble bubble-pos-1"></div>
 
-                <!-- مقعد لاعب 3 (يمين) -->
                 <div id="seat_3" class="player-seat seat-3">
                     <div class="project-tag" id="tag_3">مية</div>
+                    <div class="hospitality-bubble" id="drink_3">☕ يشرب شاي</div>
                     <span class="seat-name">مقعد خالٍ</span>
                 </div>
-                <div id="bubble_3" class="chat-bubble bubble-pos-3"></div>
 
-                <!-- أنت (لاعب 0 أسفل) -->
                 <div id="seat_0" class="player-seat seat-0">
                     <div class="project-tag" id="tag_0">400</div>
+                    <div class="hospitality-bubble" id="drink_0">☕ يصب القهوة</div>
                     <span id="my-name-span">أنت</span>
                 </div>
-                <div id="bubble_0" class="chat-bubble bubble-pos-0"></div>
 
                 <div class="center-area" id="center-table"></div>
             </div>
 
-            <!-- 📢 لوحة المشاريع المتجاورة الفخمة (سرا خمسين 100 400) بعد الطلب مباشرة -->
             <div class="project-panel-layout" id="projects-panel">
-                <button class="btn-project" onclick="declareProject('سرا')">📢 سِرا (4+ ن)</button>
-                <button class="btn-project" onclick="declareProject('خمسين')">📢 خمسين (10+ ن)</button>
-                <button class="btn-project" onclick="declareProject('مية')">📢 مِية (20+ ن)</button>
-                <button class="btn-project" onclick="declareProject('400')">📢 400 (صن فقط)</button>
-                <button class="btn-project" style="background:#4a5568; color:#fff;" onclick="hideProjectPanel()">ما عندي مشروع 🛡️</button>
+                <button class="btn-project" onclick="declareProject('سرا')">📢 سِرا</button>
+                <button class="btn-project" onclick="declareProject('خمسين')">📢 خمسين</button>
+                <button class="btn-project" onclick="declareProject('مية')">📢 مِية</button>
+                <button class="btn-project" onclick="declareProject('400')">📢 400</button>
+                <button class="btn-project" style="background:#4a5568; color:#fff;" onclick="hideProjectPanel()">ما عندي شيء 🛡️</button>
             </div>
 
             <div class="action-panel" id="buying-panel"></div>
             <div class="player-hand" id="my-hand"></div>
 
             <div class="mobile-chat-bar">
-                <input type="text" id="chatInput" class="mobile-chat-input" placeholder="سولف وطقطق مع الربع لايف...">
+                <input type="text" id="chatInput" class="mobile-chat-input" placeholder="سولف مع الربع لايف...">
                 <button class="mobile-chat-btn" onclick="sendChatMessage()">إرسال</button>
             </div>
 
@@ -301,8 +283,15 @@
     let mySeatIndex = null;
     let localCards = [];
     let seatMapping = {}; 
-    let currentRoomId = null;
-    let playerWalletBalance = 5.000;
+    let currentLeadSuit = null; // النقش الملعوب أولاً على الأرض لمنع التزريق
+    let selectedDrinkType = "";
+
+    function showToast(message) {
+        const toast = document.getElementById('global-toast');
+        toast.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => { toast.classList.remove('show'); }, 3500);
+    }
 
     function connectToTable() {
         const username = document.getElementById('usernameInput').value.trim();
@@ -314,20 +303,54 @@
 
     function fillTableWithBots() { socket.emit('start_game_with_bots'); }
 
-    // 📢 إرسال المشروع المختار للسيرفر ليتحقق منه
+    /* ☕ وظائف الكافتيريا الفاخرة والمستهدفة */
+    function openCafeteriaMenu() { document.getElementById('cafeteria-panel').style.display = 'flex'; }
+    function closeCafeteriaMenu() { 
+        document.getElementById('cafeteria-panel').style.display = 'none'; 
+        document.getElementById('recipient-area').style.display = 'none';
+    }
+    function selectHospitalityTarget(drinkName) {
+        selectedDrinkType = drinkName;
+        document.getElementById('recipient-area').style.display = 'flex';
+    }
+    function confirmHospitalityDelivery(targetRelSeat) {
+        // العثور على المقعد الفعلي في السيرفر بناءً على الموضع النسبي
+        let actualTargetSeat = 0;
+        for(let i=0; i<4; i++) {
+            if(seatMapping[i] === targetRelSeat) { actualTargetSeat = i; break; }
+        }
+        socket.emit('deliver_hospitality', { fromSeat: mySeatIndex, toSeat: actualTargetSeat, item: selectedDrinkType });
+        closeCafeteriaMenu();
+    }
+
+    /* 📢 المشاريع والتحقق منها */
     function declareProject(type) {
         socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type });
         hideProjectPanel();
     }
     function hideProjectPanel() { document.getElementById('projects-panel').style.display = 'none'; }
 
-    function closeResultOverlayAndNext() {
-        document.getElementById('round-result-panel').style.display = 'none';
-        fillTableWithBots(); // بدء قيد جديد تلقائياً
-    }
+    socket.on('hospitality_broadcast', (data) => {
+        showToast(`☕ ${data.senderName} قدّم ${data.item} فخم إلى ${data.receiverName}!`);
+        
+        let relReceiver = seatMapping[data.receiverSeat];
+        const bubble = document.getElementById(`drink_${relReceiver}`);
+        if(bubble) {
+            bubble.innerText = `☕ تناول ${data.item}`;
+            bubble.style.display = 'block';
+            setTimeout(() => { bubble.style.display = 'none'; }, 6000);
+        }
+    });
+
+    socket.on('project_validation_result', (data) => {
+        if(!data.success) {
+            showToast(`❌ خطأ: مشروعك الـ (${data.type}) ناقص أو غير صحيح وفق ورق يدك!`);
+        } else {
+            showToast(`✅ تم التحقق! مشروعك الـ (${data.type}) كامل وسليم 100%.`);
+        }
+    });
 
     socket.on('room_updated', (data) => {
-        currentRoomId = data.roomId;
         for(let i=0; i<4; i++) {
             if(data.seats[i] && data.seats[i].socketId === socket.id) { mySeatIndex = i; }
         }
@@ -349,22 +372,20 @@
     });
 
     socket.on('game_state_changed', (data) => {
-        // ✨ تفعيل الهوية البصرية العميقة لنشرة القيد عند انتهاء الـ 8 جولات
-        if(data.gameStage === 'lobby' && data.trickCount === 8) {
-            document.getElementById('panel-score-t1').innerText = data.scores.team1;
-            document.getElementById('panel-score-t2').innerText = data.scores.team2;
-            document.getElementById('round-result-panel').style.display = 'flex';
-        }
-
         document.getElementById('score-t1').innerText = data.scores.team1;
         document.getElementById('score-t2').innerText = data.scores.team2;
 
-        // 📢 إظهار لوحة المشاريع الجانبية المتجاورة (سرا خمسين 100 400) فوراً بعد انتهاء مرحلة الشراء والتوزيع الثاني
-        if (data.gameStage === 'playing' && data.trickCount === 0 && localCards.length === 8 && mySeatIndex === 0) {
+        // 🎯 تحديث النقش القائم الحالي على الأرض لمنع التزريق
+        currentLeadSuit = data.leadSuit || null;
+
+        // 📢 الميزة الكبرى: إظهار لوحة المشاريع فوراً في أول أكلة (Trick 0) بعد التوزيع مباشرة وليس في الأكلة الثانية!
+        if (data.gameStage === 'playing' && data.trickCount === 0 && data.tableCards.length === 0 && mySeatIndex === data.currentTurn) {
             document.getElementById('projects-panel').style.display = 'flex';
+        } else {
+            hideProjectPanel();
         }
 
-        // 📢 إدارة وشاح المشروع فوق اسم اللاعب إذا تم إعلانه والتحقق منه
+        // تحديث أوشحة المشاريع المحققة فوق الأسماء
         for(let i=0; i<4; i++) {
             let relPos = seatMapping[i];
             const tagDiv = document.getElementById(`tag_${relPos}`);
@@ -376,21 +397,7 @@
             }
         }
 
-        // 📢 إدارة عرض صور كروت المشروع المذكور على الطاولة (الأكلة الثانية والثالثة)
-        const projectShowcaseArea = document.getElementById('project-cards-area');
-        if (data.gameStage === 'playing' && data.trickCount === 1 && data.projectShowcaseCards) {
-            // 🔹 الأكلة الثانية: انزل صور ورق المشروع وسط الطاولة
-            projectShowcaseArea.innerHTML = "<div style='color:#ffe066; font-size:10px; width:100%; text-align:center; margin-bottom:2px;'>🔍 كروت المشروع المعلن:</div>";
-            data.projectShowcaseCards.forEach(c => {
-                projectShowcaseArea.innerHTML += createCardMarkupSmall(c);
-            });
-            projectShowcaseArea.style.display = 'flex';
-        } else if (data.gameStage === 'playing' && data.trickCount === 2) {
-            // 🔹 الأكلة الثالثة: ارفع صور ورق المشروع واختفائه تماماً
-            projectShowcaseArea.style.display = 'none';
-        }
-
-        // تحريك الأدوار والوهج
+        // توهج الدور النشط
         for(let i=0; i<4; i++) {
             let relPos = seatMapping[i];
             const seatDiv = document.getElementById(`seat_${relPos}`);
@@ -404,28 +411,20 @@
         const buyingPanel = document.getElementById('buying-panel');
 
         if(data.gameStage === 'buying') {
-            document.getElementById('game-status').innerText = `🚨 دورة الشراء ${data.buyRound} - عند مقعد ${data.currentTurn}`;
+            document.getElementById('game-status').innerText = `🚨 شراء الـقـيـد - دور مقعد ${data.currentTurn}`;
             if(data.flipCard) {
                 centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 49px); left:calc(50% - 34px); border: 2px dashed #cca43b; border-radius:10px; padding:1px;">` + createCardMarkup(data.flipCard) + `</div>`;
             }
-
             if (data.currentTurn === mySeatIndex) {
                 buyingPanel.style.display = 'flex';
-                if (data.buyRound === 1) {
-                    buyingPanel.innerHTML = `
-                        <button class="btn-action btn-buy" onclick="makeDecision('buy', 'صن')">صن ☀️</button>
-                        <button class="btn-action btn-buy" onclick="makeDecision('buy', 'حكم')">حكم 👑</button>
-                        <button class="btn-action btn-pass" onclick="makeDecision('pass', null)">بس 🛡️</button>
-                    `;
-                } else {
-                    buyingPanel.innerHTML = `
-                        <button class="btn-action btn-buy" onclick="makeDecision('buy', 'صن')">صن ☀️</button>
-                        <button class="btn-action btn-pass" onclick="makeDecision('pass', null)">طوّف 🛡️</button>
-                    `;
-                }
+                buyingPanel.innerHTML = `
+                    <button class="btn-action btn-buy" onclick="makeDecision('buy', 'صن')">صن ☀️</button>
+                    <button class="btn-action btn-buy" onclick="makeDecision('buy', 'حكم')">حكم 👑</button>
+                    <button class="btn-action btn-pass" onclick="makeDecision('pass', null)">بس 🛡️</button>
+                `;
             } else { buyingPanel.style.display = 'none'; }
         } else {
-            document.getElementById('game-status').innerText = `⚔️ الصكة جارية - الأكلة [${data.trickCount + 1}/8]`;
+            document.getElementById('game-status').innerText = `⚔️ صكة جارية - الأكلة [${data.trickCount + 1}/8]`;
             buyingPanel.style.display = 'none';
 
             centerTable.innerHTML = "";
@@ -444,26 +443,38 @@
         }
     });
 
-    function createCardMarkup(card) {
-        const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
-        return `<div class="card ${colorClass}" data-suit="${card.suit}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
+    /* 🛡️ محرك فحص ومنع التزريق الصارم بالفرونت إند */
+    function throwCardFromHand(cardIndex) {
+        const selectedCard = localCards[cardIndex];
+        
+        if (currentLeadSuit && selectedCard.suit !== currentLeadSuit) {
+            // اللاعب يحاول التزريق (يلعب نقش مختلف)، دعنا نفحص هل يمتلك في يده نقش الأرض فعلياً؟
+            const hasLeadSuitInHand = localCards.some(c => c.suit === currentLeadSuit);
+            if (hasLeadSuitInHand) {
+                // عنده نفس النقش! إذن التزريق ممنوع كلياً بقوة القانون!
+                showToast(`🚨 ممنوع التزريق! الأرض ملعوب فيها [${currentLeadSuit}] وأنت عندك منها باليد، اقطها إجباري!`);
+                return; // إيقاف الرمية تماماً وحجز الكرت باليد
+            }
+        }
+        
+        socket.emit('play_card', { seatIndex: mySeatIndex, card: selectedCard });
     }
 
-    function createCardMarkupSmall(card) {
+    function createCardMarkup(card) {
         const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
-        return `<div class="card ${colorClass}"><div class="card-corner-top"><span>${card.value}${card.suit}</span></div></div>`;
+        return `<div class="card ${colorClass}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
     }
 
     function createCardHTMLWithPosition(card, relPos) {
         const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
-        return `<div class="card ${colorClass} card-pos-${relPos}" data-suit="${card.suit}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
+        return `<div class="card ${colorClass} card-pos-${relPos}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
     }
 
     function renderHand() {
         const handDiv = document.getElementById('my-hand'); handDiv.innerHTML = "";
         localCards.forEach((card, index) => {
             const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
-            handDiv.innerHTML += `<div class="card ${colorClass}" data-suit="${card.suit}" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
+            handDiv.innerHTML += `<div class="card ${colorClass}" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
         });
     }
 
@@ -477,7 +488,6 @@
     }
 
     function makeDecision(decision, buyType) { socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: decision, buyType: buyType }); }
-    function throwCardFromHand(cardIndex) { socket.emit('play_card', { seatIndex: mySeatIndex, card: localCards[cardIndex] }); }
 </script>
 </body>
 </html>
