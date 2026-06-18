@@ -85,13 +85,7 @@
         .seat-2 { top: -15px; left: calc(50% - 54px); }  
         .seat-3 { right: -15px; top: calc(50% - 30px); } 
 
-        /* 📢 وشاح المشتري ونوع الطلب الفخم الجديد */
-        .buy-tag {
-            background: #d32f2f; color: white; font-size: 9px; font-weight: 900;
-            padding: 2px 6px; border-radius: 4px; display: none; margin-bottom: 3px;
-            box-shadow: 0 0 10px rgba(211,47,47,0.6); text-transform: uppercase;
-        }
-
+        .buy-tag { background: #d32f2f; color: white; font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 4px; display: none; margin-bottom: 3px; }
         .project-tag { background: var(--gold-gradient); color: #060a13; font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 5px; display: none; margin-bottom: 3px; }
         .revealed-project-cards-box { display: flex; gap: 2px; justify-content: center; margin-top: 4px; }
         .mini-card-reveal { background: white; color: black; font-size: 8px; padding: 1px 3px; border-radius: 3px; font-weight: 900; }
@@ -112,10 +106,7 @@
 
         .card.red { color: #d63031; background: linear-gradient(180deg, #fff 70%, #fff5f5 100%); }
         .card.black { color: #2d3436; background: linear-gradient(180deg, #fff 70%, #f1f2f6 100%); }
-        .card-corner-top { display: flex; justify-content: flex-start; line-height: 0.9; }
-        .card-corner-bottom { display: flex; justify-content: flex-end; line-height: 0.9; transform: rotate(180deg); }
-        .card-center-icon { text-align: center; font-size: 22px; opacity: 0.9; }
-
+        
         .player-hand { display: flex; justify-content: center; margin-top: 25px; padding-bottom: 25px; width: 100%; max-width: 420px; }
         .player-hand .card { position: relative; bottom: 0; left: 0; margin-right: -28px; cursor: pointer; border: 1.5px solid var(--luxury-gold) !important; }
         
@@ -126,6 +117,10 @@
         .btn-action { padding: 10px 14px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; }
         .btn-buy { background: var(--gold-gradient); color: #060a13; }
         .btn-pass { background: #4a5568; color: white; }
+
+        /* 👑 لوحة اختيار الزات للحكم الثاني الفخمة */
+        .suit-selector-panel { display: none; gap: 6px; justify-content: center; width: 95%; max-width: 420px; margin: 10px auto; background: #0f1626; padding: 10px; border-radius: 14px; border: 1px solid var(--luxury-gold); }
+        .btn-suit-choice { padding: 8px 12px; font-size: 16px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; }
 
         .cafeteria-overlay { position: absolute; top: 12%; left: 5%; width: 90%; background: linear-gradient(135deg, #0f172a 0%, #020617 100%); border: 2px solid var(--luxury-gold); border-radius: 24px; z-index: 500; display: none; flex-direction: column; padding: 20px; box-shadow: var(--strong-glow); }
         .menu-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 12px; margin-bottom: 6px; border: 1px solid rgba(204,164,59,0.1); font-size: 13px; }
@@ -164,13 +159,11 @@
 
         <div id="game-status" style="font-size:13px; color:#ffe066; margin:4px 0;">بانتظار اكتمال المجلس...</div>
 
-        <!-- كافتيريا الديوانية المشهورة -->
         <div class="cafeteria-overlay" id="cafeteria-panel">
             <h3 style="color:var(--luxury-gold); margin:0 0 15px 0; text-align:center;">☕ منيو ضيافة الديوانية</h3>
             <div class="menu-item"><div><b>☕ استكانة شاي مخدر</b></div><button class="btn-link" onclick="selectHospitalityTarget('شاي مخدر')">0.100 فلس</button></div>
-            <div class="menu-item"><div><b>☕ فنجان قهوة عربية بالهيل</b></div><button class="btn-link" onclick="selectHospitalityTarget('قهوة عربية')">0.150 فلس</button></div>
+            <div class="menu-item"><div><b>☕ فنجان قهوة بالهيل</b></div><button class="btn-link" onclick="selectHospitalityTarget('قهوة عربية')">0.150 فلس</button></div>
             <div class="menu-item"><div><b>🌴 حبة تمر إخلاص فاخرة</b></div><button class="btn-link" onclick="selectHospitalityTarget('تمر إخلاص')">0.050 فلس</button></div>
-            <div class="menu-item"><div><b>🥜 طاسة مكسرات مشكلة</b></div><button class="btn-link" onclick="selectHospitalityTarget('مكسرات مشكلة')">0.200 فلس</button></div>
             <div class="recipient-selector" id="recipient-area">
                 <button class="btn-select-player" onclick="confirmHospitalityDelivery(1)">👤 الرفيق على اليسار</button>
                 <button class="btn-select-player" onclick="confirmHospitalityDelivery(2)">👤 الرفيق المقابل</button>
@@ -180,43 +173,19 @@
         </div>
 
         <div class="baloot-table" id="main-baloot-table">
-            <!-- مقعد لاعب 2 (أعلى) -->
-            <div id="seat_2" class="player-seat seat-2">
-                <div class="buy-tag" id="buy_tag_2"></div>
-                <div class="project-tag" id="tag_2"></div>
-                <div class="revealed-project-cards-box" id="reveal_box_2"></div>
-                <div class="hospitality-bubble" id="drink_2">☕</div>
-                <span class="seat-name">مقعد خالٍ</span>
-            </div>
-
-            <!-- مقعد لاعب 1 (يسار) -->
-            <div id="seat_1" class="player-seat seat-1">
-                <div class="buy-tag" id="buy_tag_1"></div>
-                <div class="project-tag" id="tag_1"></div>
-                <div class="revealed-project-cards-box" id="reveal_box_1"></div>
-                <div class="hospitality-bubble" id="drink_1">☕</div>
-                <span class="seat-name">مقعد خالٍ</span>
-            </div>
-
-            <!-- مقعد لاعب 3 (يمين) -->
-            <div id="seat_3" class="player-seat seat-3">
-                <div class="buy-tag" id="buy_tag_3"></div>
-                <div class="project-tag" id="tag_3"></div>
-                <div class="revealed-project-cards-box" id="reveal_box_3"></div>
-                <div class="hospitality-bubble" id="drink_3">☕</div>
-                <span class="seat-name">مقعد خالٍ</span>
-            </div>
-
-            <!-- أنت (لاعب 0 أسفل) -->
-            <div id="seat_0" class="player-seat seat-0">
-                <div class="buy-tag" id="buy_tag_0"></div>
-                <div class="project-tag" id="tag_0"></div>
-                <div class="revealed-project-cards-box" id="reveal_box_0"></div>
-                <div class="hospitality-bubble" id="drink_0">☕</div>
-                <span id="my-name-span">أنت</span>
-            </div>
-
+            <div id="seat_2" class="player-seat seat-2"><div class="buy-tag" id="buy_tag_2"></div><div class="project-tag" id="tag_2"></div><div class="revealed-project-cards-box" id="reveal_box_2"></div><div class="hospitality-bubble" id="drink_2">☕</div><span class="seat-name">مقعد خالٍ</span></div>
+            <div id="seat_1" class="player-seat seat-1"><div class="buy-tag" id="buy_tag_1"></div><div class="project-tag" id="tag_1"></div><div class="revealed-project-cards-box" id="reveal_box_1"></div><div class="hospitality-bubble" id="drink_1">☕</div><span class="seat-name">مقعد خالٍ</span></div>
+            <div id="seat_3" class="player-seat seat-3"><div class="buy-tag" id="buy_tag_3"></div><div class="project-tag" id="tag_3"></div><div class="revealed-project-cards-box" id="reveal_box_3"></div><div class="hospitality-bubble" id="drink_3">☕</div><span class="seat-name">مقعد خالٍ</span></div>
+            <div id="seat_0" class="player-seat seat-0"><div class="buy-tag" id="buy_tag_0"></div><div class="project-tag" id="tag_0"></div><div class="revealed-project-cards-box" id="reveal_box_0"></div><div class="hospitality-bubble" id="drink_0">☕</div><span id="my-name-span">أنت</span></div>
             <div class="center-area" id="center-table"></div>
+        </div>
+
+        <div class="suit-selector-panel" id="suit-selector-area">
+            <div style="color:#ffe066; font-size:12px; width:100%; text-align:center; margin-bottom:5px; font-weight:bold;">اختر نقش زات الحكم الثاني:</div>
+            <button class="btn-suit-choice" style="background:white; color:black;" onclick="confirmTrumpSecondSuit('♠')">♠ سبيد</button>
+            <button class="btn-suit-choice" style="background:white; color:red;" onclick="confirmTrumpSecondSuit('♥')">♥ هاص</button>
+            <button class="btn-suit-choice" style="background:white; color:red;" onclick="confirmTrumpSecondSuit('♦')">♦ ديمن</button>
+            <button class="btn-suit-choice" style="background:white; color:black;" onclick="confirmTrumpSecondSuit('♣')">♣ شيريا</button>
         </div>
 
         <div class="project-panel-layout" id="projects-panel">
@@ -237,49 +206,23 @@
     let seatMapping = {}; 
     let currentLeadSuit = null;
     let selectedDrinkType = "";
+    let isSecondRoundBuying = false; // لمراقبة الدورة الثانية
 
-    // 🔊 محرك توليد الأصوات الاصطناعية الاحترافية (Synth) للبلوت دون ملفات خارجية
     function playRoyalSound(type) {
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            
-            if (type === 'صن') {
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(587.33, ctx.currentTime); // نغمة حماسية مرتفعة
-                gain.gain.setValueAtTime(0.2, ctx.currentTime); osc.start(); osc.stop(ctx.currentTime + 0.3);
-            } else if (type === 'حكم') {
-                osc.type = 'sine'; osc.frequency.setValueAtTime(440, ctx.currentTime); // نغمة رصينة ملحة
-                gain.gain.setValueAtTime(0.2, ctx.currentTime); osc.start(); osc.stop(ctx.currentTime + 0.4);
-            } else if (type === 'بس') {
-                osc.type = 'sine'; osc.frequency.setValueAtTime(293.66, ctx.currentTime); // نغمة هادئة للتمرير
-                gain.gain.setValueAtTime(0.1, ctx.currentTime); osc.start(); osc.stop(ctx.currentTime + 0.15);
-            }
-        } catch(e) { console.log(e); }
+            const osc = ctx.createOscillator(); const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            if (type === 'صن') { osc.type = 'triangle'; osc.frequency.setValueAtTime(587.33, ctx.currentTime); gain.gain.setValueAtTime(0.2, ctx.currentTime); osc.start(); osc.stop(ctx.currentTime + 0.3); }
+            else if (type === 'حكم') { osc.type = 'sine'; osc.frequency.setValueAtTime(440, ctx.currentTime); gain.gain.setValueAtTime(0.2, ctx.currentTime); osc.start(); osc.stop(ctx.currentTime + 0.4); }
+            else if (type === 'بس') { osc.type = 'sine'; osc.frequency.setValueAtTime(293.66, ctx.currentTime); gain.gain.setValueAtTime(0.1, ctx.currentTime); osc.start(); osc.stop(ctx.currentTime + 0.15); }
+        } catch(e){}
     }
 
-    function showToast(message) {
-        const toast = document.getElementById('global-toast');
-        toast.innerText = message; toast.classList.add('show');
-        setTimeout(() => { toast.classList.remove('show'); }, 3500);
-    }
-
-    function connectToTable() {
-        const username = document.getElementById('usernameInput').value.trim();
-        if(!username) return alert("الرجاء إدخال اسم اللاعب!");
-        document.getElementById('lobby-screen').style.display = 'none';
-        document.getElementById('game-layout').style.display = 'flex';
-        socket.emit('join_matchmaking', { username: username });
-    }
-
+    function showToast(message) { const toast = document.getElementById('global-toast'); toast.innerText = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3500); }
+    function connectToTable() { const username = document.getElementById('usernameInput').value.trim(); if(!username) return alert("الرجاء إدخال اسم اللاعب!"); document.getElementById('lobby-screen').style.display = 'none'; document.getElementById('game-layout').style.display = 'flex'; socket.emit('join_matchmaking', { username: username }); }
     function fillTableWithBots() { socket.emit('start_game_with_bots'); }
-    function activateVipSubscription() {
-        document.getElementById('seat_0').classList.add('vip-activated');
-        showToast("👑 تفعيل VIP ممتاز بـ 5 د.ك!");
-    }
-
+    function activateVipSubscription() { document.getElementById('seat_0').classList.add('vip-activated'); showToast("👑 تفعيل VIP ممتاز بـ 5 د.ك!"); }
     function openCafeteriaMenu() { document.getElementById('cafeteria-panel').style.display = 'flex'; }
     function closeCafeteriaMenu() { document.getElementById('cafeteria-panel').style.display = 'none'; }
     function selectHospitalityTarget(drinkName) { selectedDrinkType = drinkName; document.getElementById('recipient-area').style.display = 'flex'; }
@@ -294,10 +237,7 @@
     function declareProject(type) { socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type }); hideProjectPanel(); }
     function hideProjectPanel() { document.getElementById('projects-panel').style.display = 'none'; }
 
-    socket.on('hospitality_broadcast', (data) => {
-        showToast(`☕ ${data.senderName} قدّم [${data.item}] إلى ${data.receiverName}!`);
-    });
-
+    socket.on('hospitality_broadcast', (data) => { showToast(`☕ ${data.senderName} قدّم [${data.item}] إلى ${data.receiverName}!`); });
     socket.on('round_ended_announcement', (data) => { showToast(data.summary); });
 
     socket.on('room_updated', (data) => {
@@ -319,21 +259,17 @@
         document.getElementById('score-t1').innerText = data.scores.team1;
         document.getElementById('score-t2').innerText = data.scores.team2;
         currentLeadSuit = data.leadSuit || null;
+        isSecondRoundBuying = (data.buyRound === 2);
 
         if (data.gameStage === 'playing' && data.trickCount === 0 && data.tableCards.length === 0 && mySeatIndex === data.currentTurn) {
             document.getElementById('projects-panel').style.display = 'flex';
         } else { hideProjectPanel(); }
 
-        // 🎯 تفعيل وشاح من طلب الصن أو الحكم فوق اسم اللاعب مباشرة
         for(let i=0; i<4; i++) {
             let relPos = seatMapping[i];
             const buyTag = document.getElementById(`buy_tag_${relPos}`);
-            if(data.buyerSeat === i && data.buyType) {
-                buyTag.innerText = `طلب: ${data.buyType}`;
-                buyTag.style.display = 'inline-block';
-            } else {
-                buyTag.style.display = 'none';
-            }
+            if(data.buyerSeat === i && data.buyType) { buyTag.innerText = `طلب: ${data.buyType}`; buyTag.style.display = 'inline-block'; }
+            else { buyTag.style.display = 'none'; }
         }
 
         for(let i=0; i<4; i++) {
@@ -347,23 +283,36 @@
 
         const centerTable = document.getElementById('center-table');
         const buyingPanel = document.getElementById('buying-panel');
+        const suitSelectorArea = document.getElementById('suit-selector-area');
 
         if(data.gameStage === 'buying') {
-            document.getElementById('game-status').innerText = `🚨 دورة الشراء - دور مقعد ${data.currentTurn}`;
+            document.getElementById('game-status').innerText = `🚨 دورة الشراء [الدورة ${data.buyRound}] - دور مقعد ${data.currentTurn}`;
             if(data.flipCard) {
                 centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 49px); left:calc(50% - 34px); border: 2px dashed #cca43b; border-radius:10px; padding:1px;">` + createCardMarkup(data.flipCard) + `</div>`;
             }
             if (data.currentTurn === mySeatIndex) {
                 buyingPanel.style.display = 'flex';
-                buyingPanel.innerHTML = `
-                    <button class="btn-action btn-buy" onclick="makeDecision('buy', 'صن')">صن ☀️</button>
-                    <button class="btn-action btn-buy" onclick="makeDecision('buy', 'حكم')">حكم 👑</button>
-                    <button class="btn-action btn-pass" onclick="makeDecision('pass', null)">بس 🛡️</button>
-                `;
-            } else { buyingPanel.style.display = 'none'; }
+                if(data.buyRound === 1) {
+                    buyingPanel.innerHTML = `
+                        <button class="btn-action btn-buy" onclick="makeDecision('buy', 'صن')">صن ☀️</button>
+                        <button class="btn-action btn-buy" onclick="makeDecision('buy', 'حكم')">حكم 👑</button>
+                        <button class="btn-action btn-buy" style="background:#e67e22; color:#fff;" onclick="makeDecision('buy', 'أشكل')">أشكل 🃏</button>
+                        <button class="btn-action btn-pass" onclick="makeDecision('pass', null)">بس 🛡️</button>
+                    `;
+                    suitSelectorArea.style.display = 'none';
+                } else {
+                    // الدورة الثانية: يظهر خيار صن أو حكم ثاني فقط
+                    buyingPanel.innerHTML = `
+                        <button class="btn-action btn-buy" onclick="makeDecision('buy', 'صن')">صن ثاني ☀️</button>
+                        <button class="btn-action btn-buy" style="background:#9b59b6; color:#fff;" onclick="openSuitSelectorForTrumpSecond()">حكم ثاني 👑</button>
+                        <button class="btn-action btn-pass" onclick="makeDecision('pass', null)">بس 🛡️</button>
+                    `;
+                }
+            } else { buyingPanel.style.display = 'none'; suitSelectorArea.style.display = 'none'; }
         } else {
             document.getElementById('game-status').innerText = `⚔️ صكة جارية - الأكلة [${data.trickCount + 1}/8]`;
             buyingPanel.style.display = 'none';
+            suitSelectorArea.style.display = 'none';
             centerTable.innerHTML = "";
             if (data.tableCards && data.tableCards.length > 0) {
                 data.tableCards.forEach(item => {
@@ -377,11 +326,22 @@
     });
 
     function makeDecision(decision, buyType) { 
-        // تشغيل النغمة الصوتية المناسبة للطلب فوراً
-        if(decision === 'buy') playRoyalSound(buyType);
-        else playRoyalSound('بس');
-        
+        if(decision === 'buy') playRoyalSound(buyType); else playRoyalSound('بس');
+        // إذا كان حكم ثاني لا يرسل الشراء مباشرة بل ينتظر اختيار الزات
+        if(buyType === 'حكم' && isSecondRoundBuying) return;
         socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: decision, buyType: buyType }); 
+    }
+
+    // 👑 فتح لوحة شعارات الزات للحكم الثاني بالملي
+    function openSuitSelectorForTrumpSecond() {
+        playRoyalSound('حكم');
+        document.getElementById('suit-selector-area').style.display = 'flex';
+    }
+
+    // تأكيد زات الحكم الثاني وإرساله للسيرفر
+    function confirmTrumpSecondSuit(suit) {
+        socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: 'buy', buyType: 'حكم', selectedSuit: suit });
+        document.getElementById('suit-selector-area').style.display = 'none';
     }
 
     function throwCardFromHand(cardIndex) {
@@ -396,32 +356,11 @@
         socket.emit('play_card', { seatIndex: mySeatIndex, card: selectedCard });
     }
 
-    function createCardMarkup(card) {
-        const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
-        return `<div class="card ${colorClass}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
-    }
-
-    function createCardHTMLWithPosition(card, relPos) {
-        const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
-        return `<div class="card ${colorClass} card-pos-${relPos}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
-    }
-
-    function renderHand() {
-        const handDiv = document.getElementById('my-hand'); handDiv.innerHTML = "";
-        localCards.forEach((card, index) => {
-            const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
-            handDiv.innerHTML += `<div class="card ${colorClass}" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
-        });
-    }
-
-    const suitOrder = { '♠': 1, '♥': 2, '♦': 3, '♣': 4 };
-    const cardRankOrder = { 'A': 1, '10': 2, 'K': 3, 'Q': 4, 'J': 5, '9': 6, '8': 7, '7': 8 };
-    function sortMyHand() {
-        localCards.sort((a, b) => {
-            if (suitOrder[a.suit] !== suitOrder[b.suit]) return suitOrder[a.suit] - suitOrder[b.suit];
-            return cardRankOrder[a.value] - cardRankOrder[b.value];
-        });
-    }
+    function createCardMarkup(card) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
+    function createCardHTMLWithPosition(card, relPos) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass} card-pos-${relPos}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
+    function renderHand() { const handDiv = document.getElementById('my-hand'); handDiv.innerHTML = ""; localCards.forEach((card, index) => { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; handDiv.innerHTML += `<div class="card ${colorClass}" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }); }
+    const suitOrder = { '♠': 1, '♥': 2, '♦': 3, '♣': 4 }; const cardRankOrder = { 'A': 1, '10': 2, 'K': 3, 'Q': 4, 'J': 5, '9': 6, '8': 7, '7': 8 };
+    function sortMyHand() { localCards.sort((a, b) => { if (suitOrder[a.suit] !== suitOrder[b.suit]) return suitOrder[a.suit] - suitOrder[b.suit]; return cardRankOrder[a.value] - cardRankOrder[b.value]; }); }
 </script>
 </body>
 </html>
