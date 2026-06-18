@@ -17,7 +17,7 @@ module.exports = function(io) {
                     buyType: null,
                     tableCards: [],
                     playersCards: [[], [], [], []],
-                    deck: [] // لحفظ الكروت الباقية للتوزيع الثاني
+                    deck: []
                 };
             }
             
@@ -53,22 +53,19 @@ module.exports = function(io) {
             room.currentTurn = 0; 
             room.tableCards = [];
             
-            // توليد وخلط الكروت كاملة
             let suits = ['♠', '♥', '♦', '♣'];
             let values = ['A', 'K', 'Q', 'J', '10', '9', '8', '7'];
             let fullDeck = [];
             suits.forEach(s => values.forEach(v => fullDeck.push({ suit: s, value: v })));
             fullDeck.sort(() => Math.random() - 0.5);
             
-            // الكرت المكشوف
             room.flipCard = fullDeck.pop();
             
-            // التوزيع الأول (5 كروت لكل لاعب)
             for (let i = 0; i < 4; i++) {
                 room.playersCards[i] = [fullDeck.pop(), fullDeck.pop(), fullDeck.pop(), fullDeck.pop(), fullDeck.pop()];
             }
             
-            room.deck = fullDeck; // حفظ باقي الكروت في الغرفة للتوزيع الثاني
+            room.deck = fullDeck;
             
             io.to(roomId).emit('room_updated', room);
             io.to(roomId).emit('game_state_changed', room);
@@ -82,33 +79,32 @@ module.exports = function(io) {
             if (room.currentTurn !== data.seatIndex) return;
 
             if (data.decision === 'buy') {
-                // 👑 تم الشراء! الحين ننتقل لمرحلة اللعب الفعلي
                 room.gameStage = 'playing';
                 room.buyType = data.buyType;
                 
-                // 🎯 نظام التوزيع الثاني الذكي (تكملة الـ 8 أوراق):
                 let buyerIndex = data.seatIndex;
-                
                 for (let i = 0; i < 4; i++) {
                     if (i === buyerIndex) {
-                        // المشتري يأخذ الكرت المكشوف + كرتين إضافيين من الـ Deck
                         room.playersCards[i].push(room.flipCard);
                         room.playersCards[i].push(room.deck.pop());
                         room.playersCards[i].push(room.deck.pop());
                     } else {
-                        // باقي اللاعبين يأخذون 3 كروت كاملة من الـ Deck
                         room.playersCards[i].push(room.deck.pop());
                         room.playersCards[i].push(room.deck.pop());
                         room.playersCards[i].push(room.deck.pop());
                     }
                 }
                 
-                room.flipCard = null; // إخفاء الكرت المكشوف من وسط الطاولة لأنه تم أخذه
-                room.currentTurn = 0; // يبدأ اللعب من أول لاعب على الطاولة
-                console.log(`✅ اكتمل توزيع الـ 8 كروت لجميع اللاعبين بنجاح! نوع اللعب: ${data.buyType}`);
+                room.flipCard = null;
+                room.currentTurn = 0; // يبدأ اللعب من لاعب 0
+                
+                // 🤖 فحص فوري: إذا كان لاعب 0 بوت خليه يلعب، وإذا كان أنت بيفك القفل الحين لتلعب!
+                let activePlayer = room.seats[room.currentTurn];
+                if (activePlayer && activePlayer.socketId.startsWith('bot_')) {
+                    makeBotPlayCard(room, roomId);
+                }
                 
             } else {
-                // إذا قال "بس"، يمر الدور للي بعده
                 room.currentTurn = (room.currentTurn + 1) % 4;
                 if (room.currentTurn === 0 && room.buyRound === 1) {
                     room.buyRound = 2;
@@ -118,6 +114,62 @@ module.exports = function(io) {
             
             io.to(roomId).emit('game_state_changed', room);
         });
+
+        // 🎯 استقبال كرت اللعب المقذوف من يدك وتمرير الدور فوراً للبوتات
+        socket.on('play_card', (data) => {
+            let roomId = socket.roomId || "1000";
+            if (!rooms[roomId]) return;
+            let room = rooms[roomId];
+
+            // التأكد أن الدور على اللاعب فعلياً
+            if (room.currentTurn !== data.seatIndex) return;
+
+            // إنزال الكرت على الطاولة
+            room.tableCards.push({ seatIndex: data.seatIndex, card: data.card });
+
+            // إزالة الكرت من يد اللاعب
+            room.playersCards[data.seatIndex] = room.playersCards[data.seatIndex].filter(
+                c => !(c.suit === data.card.suit && c.value === data.card.value)
+            );
+
+            // لمة الأوراق إذا اكتملت الأكلة (4 كروت على الأرض)
+            if (room.tableCards.length === 4) {
+                setTimeout(() => {
+                    room.tableCards = []; // تصفير الأرضية للأكلة الجديدة
+                    room.currentTurn = (room.currentTurn + 1) % 4; // من يأكل يبدأ، نفترض التالي مؤقتاً للتسيير
+                    io.to(roomId).emit('game_state_changed', room);
+                }, 1500);
+            } else {
+                // نقل الدور للاعب التالي
+                room.currentTurn = (room.currentTurn + 1) % 4;
+                
+                // إذا كان اللاعب التالي بوووت، خليه يرمي كرت فوراً أوتوماتيكياً!
+                let nextPlayer = room.seats[room.currentTurn];
+                if (nextPlayer && nextPlayer.socketId.startsWith('bot_')) {
+                    makeBotPlayCard(room, roomId);
+                }
+            }
+
+            io.to(roomId).emit('game_state_changed', room);
+        });
+
+        // دالة جعل البوت يرمي كرت من يده أوتوماتيكياً
+        function makeBotPlayCard(room, roomId) {
+            let botHand = room.playersCards[room.currentTurn];
+            if (botHand && botHand.length > 0) {
+                let thrownCard = botHand.pop(); // رمي آخر كرت بيده
+                room.tableCards.push({ seatIndex: room.currentTurn, card: thrownCard });
+                
+                // الانتقال للاعب التالي
+                room.currentTurn = (room.currentTurn + 1) % 4;
+                
+                // إذا كان التالي أيضاً بوت.. خليه يلعب بتكرار ذكي
+                let nextPlayer = room.seats[room.currentTurn];
+                if (nextPlayer && nextPlayer.socketId.startsWith('bot_') && room.tableCards.length < 4) {
+                    makeBotPlayCard(room, roomId);
+                }
+            }
+        }
 
         function checkAndRunBotTurns(room, roomId) {
             let attempts = 0;
