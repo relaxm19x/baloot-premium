@@ -29,8 +29,8 @@ module.exports = function(io) {
                     roundPoints: { team1: 0, team2: 0 },
                     trickCount: 0,
                     activeProjects: ["", "", "", ""],
-                    revealedProjectCards: [[], [], [], []],
-                    passCount: 0 // لحساب عدد مرات التمرير (بس)
+                    playerActionsText: ["", "", "", ""], // لتسجيل كلمة "بس" أو "طلب" فوق الاسم لايف
+                    passCount: 0
                 };
             }
             let room = rooms[roomId];
@@ -73,7 +73,7 @@ module.exports = function(io) {
             room.passCount = 0;
             room.roundPoints = { team1: 0, team2: 0 };
             room.activeProjects = ["", "", "", ""];
-            room.revealedProjectCards = [[], [], [], []];
+            room.playerActionsText = ["", "", "", ""]; 
 
             let suits = ['♠', '♥', '♦', '♣'];
             let values = ['A', 'K', 'Q', 'J', '10', '9', '8', '7'];
@@ -92,7 +92,6 @@ module.exports = function(io) {
             io.to(roomId).emit('game_state_changed', room);
         }
 
-        // معالجة قرارات الشراء والدورتين بالملي وقانون أشكل وإعادة التوزيع
         socket.on('player_buy_decision', (data) => {
             let roomId = socket.roomId || "1000";
             if (!rooms[roomId]) return;
@@ -102,36 +101,23 @@ module.exports = function(io) {
 
             if (data.decision === 'buy') {
                 room.buyerSeat = data.seatIndex;
-                let roundText = room.buyRound === 1 ? "أول" : "ثاني";
-                room.buyType = `${data.buyType} ${roundText}`;
-                
-                // إذا كان حكم ثاني، نثبت الزات المختار
-                if (data.buyType === 'حكم' && room.buyRound === 2) {
-                    room.trumpSuit = data.selectedSuit || room.flipCard.suit;
-                    room.buyType = `حكم ثاني (${room.trumpSuit})`;
-                } else {
-                    room.trumpSuit = (data.buyType === 'حكم' || data.buyType === 'أشكل') ? room.flipCard.suit : null;
-                }
-
+                room.buyType = data.buyType;
+                room.trumpSuit = (data.buyType === 'حكم' || data.buyType === 'أشكل') ? room.flipCard.suit : null;
+                room.playerActionsText[data.seatIndex] = `طلب: ${data.buyType}`;
                 executeBuy(room, roomId, data.buyType, data.seatIndex);
             } else {
-                // اللاعب قال "بس"
+                // اللاعب ضغط بس -> يظهر فوق اسمه فوراً
+                room.playerActionsText[room.currentTurn] = "بس 🛡️";
                 room.passCount++;
                 
-                // قانون البلوت: إذا الكل طوّف الدورتين (4 لاعبين × دورتين = 8 بس)، يعيد التوزيع فوراً!
                 if (room.passCount >= 8) {
-                    io.to(roomId).emit('round_ended_announcement', {
-                        summary: "🔄 تم تمرير الدورتين بالكامل (الكل بس)! جاري لم الورق وإعادة التوزيع تلقائياً...",
-                        scores: room.scores
-                    });
-                    setTimeout(() => { setupNewRound(roomId); }, 3000);
+                    io.to(roomId).emit('round_ended_announcement', { summary: "🔄 الكل بس! جاري إعادة التوزيع...", scores: room.scores });
+                    setTimeout(() => { setupNewRound(roomId); }, 2500);
                     return;
                 }
 
                 room.currentTurn = (room.currentTurn + 1) % 4;
-                if (room.passCount === 4) {
-                    room.buyRound = 2; // دخول الدورة الثانية رسمياً بعد 4 "بس"
-                }
+                if (room.passCount === 4) room.buyRound = 2;
 
                 io.to(roomId).emit('game_state_changed', room);
                 checkAndRunBotBuying(room, roomId);
@@ -143,28 +129,37 @@ module.exports = function(io) {
             let activePlayer = room.seats[room.currentTurn];
             if (activePlayer && activePlayer.socketId.startsWith('bot_')) {
                 setTimeout(() => {
-                    room.passCount++;
-                    if (room.passCount >= 8) {
-                        io.to(roomId).emit('round_ended_announcement', { summary: "🔄 الكل قال بس! جاري إعادة التوزيع...", scores: room.scores });
-                        setTimeout(() => { setupNewRound(roomId); }, 3000);
-                        return;
+                    if (room.flipCard && (room.flipCard.value === 'A' || room.flipCard.value === 'J')) {
+                        room.buyerSeat = room.currentTurn;
+                        room.buyType = (room.flipCard.value === 'J') ? 'حكم' : 'صن';
+                        room.trumpSuit = (room.buyType === 'حكم') ? room.flipCard.suit : null;
+                        room.playerActionsText[room.currentTurn] = `طلب: ${room.buyType}`;
+                        executeBuy(room, roomId, room.buyType, room.currentTurn);
+                    } else {
+                        room.playerActionsText[room.currentTurn] = "بس 🛡️";
+                        room.passCount++;
+                        if (room.passCount >= 8) {
+                            io.to(roomId).emit('round_ended_announcement', { summary: "🔄 الكل بس! جاري إعادة التوزيع...", scores: room.scores });
+                            setTimeout(() => { setupNewRound(roomId); }, 2500);
+                            return;
+                        }
+                        room.currentTurn = (room.currentTurn + 1) % 4;
+                        if (room.passCount === 4) room.buyRound = 2;
+                        io.to(roomId).emit('game_state_changed', room);
+                        checkAndRunBotBuying(room, roomId);
                     }
-                    
-                    room.currentTurn = (room.currentTurn + 1) % 4;
-                    if (room.passCount === 4) room.buyRound = 2;
-                    
-                    io.to(roomId).emit('game_state_changed', room);
-                    checkAndRunBotBuying(room, roomId);
                 }, 700);
             }
         }
 
         function executeBuy(room, roomId, buyType, buyerIndex) {
             room.gameStage = 'playing';
-            
+            // عند انتهاء الشراء وبدء اللعب، نمسح كلمات "بس" لتهيئتها للمشاريع
+            for(let i=0; i<4; i++) { if(room.playerActionsText[i] === "بس 🛡️") room.playerActionsText[i] = ""; }
+
             for (let i = 0; i < 4; i++) {
                 if (i === buyerIndex) {
-                    room.playersCards[i].push(room.flipCard);
+                    room.playersCards[i].push(room.deck.pop());
                     room.playersCards[i].push(room.deck.pop());
                     room.playersCards[i].push(room.deck.pop());
                 } else {
@@ -182,12 +177,76 @@ module.exports = function(io) {
             }
         }
 
+        // 📊 محرك تدقيق وتطبيق قوانين المشاريع الرسمية (الأكبر يلغي الأصغر + استثناء البلوت)
+        socket.on('declare_project_attempt', (data) => {
+            let roomId = socket.roomId || "1000";
+            if (!rooms[roomId]) return;
+            let room = rooms[roomId];
+
+            let seatIndex = data.seatIndex;
+            let projectType = data.projectType;
+
+            if (projectType !== 'لا شيء') {
+                room.activeProjects[seatIndex] = projectType;
+                room.playerActionsText[seatIndex] = `مشروع: ${projectType}`; // يظهر فوق الاسم دغري
+            }
+
+            // خوارزمية تصفية وتطبيق القوانين الرسمية للمشاريع
+            let maxProjectWeight = 0;
+            let winningTeam = 0; // 1 = فريقنا (0 و 2)، 2 = فريقهم (1 و 3)
+
+            const weights = { 'لا شيء': 0, 'بلوت': 1, 'سرا': 2, 'خمسين': 3, '100': 4, '400': 5 };
+
+            for (let i = 0; i < 4; i++) {
+                let p = room.activeProjects[i];
+                if (p && p !== 'لا شيء' && p !== 'بلوت') {
+                    if (weights[p] > maxProjectWeight) {
+                        maxProjectWeight = weights[p];
+                        winningTeam = (i === 0 || i === 2) ? 1 : 2;
+                    }
+                }
+            }
+
+            // احتساب النقاط بناءً على فوز المشروع الأكبر وإلغاء مشروع الخصم تماماً
+            let p1Points = 0;
+            let p2Points = 0;
+
+            for (let i = 0; i < 4; i++) {
+                let p = room.activeProjects[i];
+                if (!p || p === 'لا شيء') continue;
+
+                let currentTeam = (i === 0 || i === 2) ? 1 : 2;
+                let pts = (p === 'سرا') ? 4 : (p === 'خمسين') ? 10 : (p === '100') ? 20 : (p === 'بلوت') ? 4 : 40;
+
+                // مشروع البلوت استثناء لا يُلغى أبداً ويُحسب تلقائياً
+                if (p === 'بلوت') {
+                    if (currentTeam === 1) p1Points += pts;
+                    else p2Points += pts;
+                } else {
+                    // المشاريع العادية تُحسب فقط للفريق صاحب المشروع الأكبر
+                    if (currentTeam === winningTeam) {
+                        if (currentTeam === 1) p1Points += pts;
+                        else p2Points += pts;
+                    }
+                }
+            }
+
+            room.roundPoints.team1 += p1Points;
+            room.roundPoints.team2 += p2Points;
+
+            io.to(roomId).emit('game_state_changed', room);
+        });
+
         socket.on('play_card', (data) => {
             let roomId = socket.roomId || "1000";
             if (!rooms[roomId]) return;
             let room = rooms[roomId];
             if (room.currentTurn !== data.seatIndex) return;
-            if (room.tableCards.length >= 4) return; 
+
+            // 🔄 قانون التصفية الذاتية: بمجرد رمي أول كرت في اللعبة، تختفي الكلمات والمشاريع من فوق الرؤوس لتبقى الشاشة نظيفة!
+            if (room.tableCards.length === 0) {
+                for(let i=0; i<4; i++) { room.playerActionsText[i] = ""; }
+            }
 
             if (room.tableCards.length === 0) room.leadSuit = data.card.suit;
             room.tableCards.push({ seatIndex: data.seatIndex, card: data.card });
@@ -223,7 +282,7 @@ module.exports = function(io) {
                     room.scores.team1 += t1Gain;
                     room.scores.team2 += t2Gain;
                     io.to(roomId).emit('round_ended_announcement', { summary: `🏁 انتهى القيد! لنا +${t1Gain} | لهم +${t2Gain}.`, scores: room.scores });
-                    setTimeout(() => { setupNewRound(roomId); }, 4000);
+                    setTimeout(() => { setupNewRound(roomId); }, 3500);
                 } else {
                     io.to(roomId).emit('game_state_changed', room);
                     if (room.gameStage === 'playing') checkAndRunBotGameplay(roomId);
@@ -292,14 +351,5 @@ module.exports = function(io) {
             });
             return total;
         }
-
-        socket.on('deliver_hospitality', (data) => {
-            let roomId = socket.roomId || "1000";
-            if (rooms[roomId]) {
-                let s = rooms[roomId].seats[data.fromSeat];
-                let r = rooms[roomId].seats[data.toSeat];
-                if (s && r) io.to(roomId).emit('hospitality_broadcast', { senderName: s.username, receiverName: r.username, senderSeat: data.fromSeat, receiverSeat: data.toSeat, item: data.item });
-            }
-        });
     });
 };
