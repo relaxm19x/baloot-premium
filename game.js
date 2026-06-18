@@ -10,33 +10,14 @@ module.exports = function(io) {
     const projectSequence = ['7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 
     io.on('connection', (socket) => {
-        console.log(`📡 متصل جديد: ${socket.id}`);
-
+        
         socket.on('join_matchmaking', (data) => {
             let roomId = "1000"; 
             if (!rooms[roomId]) {
-                rooms[roomId] = {
-                    roomId: roomId,
-                    seats: [null, null, null, null],
-                    gameStage: 'lobby',
-                    scores: { team1: 0, team2: 0 },
-                    currentTurn: 0,
-                    buyRound: 1,
-                    buyType: null,
-                    trumpSuit: null,
-                    tableCards: [],
-                    playersCards: [[], [], [], []],
-                    deck: [],
-                    leadSuit: null,
-                    roundPoints: { team1: 0, team2: 0 },
-                    trickCount: 0,
-                    activeProjects: ["", "", "", ""] // تهيئة ثابتة لمنع أي تعليق بالواجهة
-                };
+                initRoom(roomId);
             }
-            
             let room = rooms[roomId];
             let existingSeat = room.seats.findIndex(s => s && s.socketId === socket.id);
-            
             if (existingSeat === -1) {
                 let freeSeat = room.seats.findIndex(s => s === null);
                 if (freeSeat !== -1) {
@@ -49,51 +30,75 @@ module.exports = function(io) {
             io.to(roomId).emit('game_state_changed', room);
         });
 
+        function initRoom(roomId) {
+            rooms[roomId] = {
+                roomId: roomId,
+                seats: [null, null, null, null],
+                gameStage: 'lobby',
+                scores: { team1: 0, team2: 0 },
+                currentTurn: 0,
+                buyRound: 1,
+                buyType: null,
+                trumpSuit: null,
+                tableCards: [],
+                playersCards: [[], [], [], []],
+                deck: [],
+                leadSuit: null,
+                roundPoints: { team1: 0, team2: 0 },
+                trickCount: 0,
+                activeProjects: ["", "", "", ""],
+                revealedProjectCards: [[], [], [], []] // مصفوفة لكشف كروت المشاريع علناً للطاولة
+            };
+        }
+
         socket.on('start_game_with_bots', () => {
             let roomId = socket.roomId || "1000";
+            setupNewRound(roomId);
+        });
+
+        function setupNewRound(roomId) {
             if (!rooms[roomId]) return;
             let room = rooms[roomId];
-            
+
             for (let i = 0; i < 4; i++) {
                 if (!room.seats[i]) {
                     room.seats[i] = { socketId: 'bot_' + i, username: "🤖 بوت محترف " + (i+1) };
                 }
             }
-            
+
             room.gameStage = 'buying';
             room.buyRound = 1;
-            room.currentTurn = 0; 
+            room.currentTurn = 0;
             room.tableCards = [];
             room.trickCount = 0;
             room.roundPoints = { team1: 0, team2: 0 };
             room.activeProjects = ["", "", "", ""];
-            
+            room.revealedProjectCards = [[], [], [], []];
+
             let suits = ['♠', '♥', '♦', '♣'];
             let values = ['A', 'K', 'Q', 'J', '10', '9', '8', '7'];
             let fullDeck = [];
             suits.forEach(s => values.forEach(v => fullDeck.push({ suit: s, value: v })));
             fullDeck.sort(() => Math.random() - 0.5);
-            
+
             room.flipCard = fullDeck.pop();
-            
+
             for (let i = 0; i < 4; i++) {
                 room.playersCards[i] = [fullDeck.pop(), fullDeck.pop(), fullDeck.pop(), fullDeck.pop(), fullDeck.pop()];
             }
             room.deck = fullDeck;
-            
+
             io.to(roomId).emit('room_updated', room);
             io.to(roomId).emit('game_state_changed', room);
-        });
+        }
 
-        // ☕ إرسال وتثبيت إشعار الكافتيريا الفوري للجميع وتوصيل الطلب لايف
+        // ☕ استقبال وتوصيل طلبات الكافتيريا
         socket.on('deliver_hospitality', (data) => {
             let roomId = socket.roomId || "1000";
             if (!rooms[roomId]) return;
             let room = rooms[roomId];
-
             let sender = room.seats[data.fromSeat];
             let receiver = room.seats[data.toSeat];
-
             if (sender && receiver) {
                 io.to(roomId).emit('hospitality_broadcast', {
                     senderName: sender.username,
@@ -105,7 +110,7 @@ module.exports = function(io) {
             }
         });
 
-        // 📢 التدقيق الصارم والمثبت للمشاريع
+        // 📢 محرك تدقيق السرا الشرعي وكشف كروت المشروع علناً لبقية اللاعبين على الطاولة
         socket.on('declare_project_attempt', (data) => {
             let roomId = socket.roomId || "1000";
             if (!rooms[roomId]) return;
@@ -115,6 +120,7 @@ module.exports = function(io) {
             let projectType = data.projectType;
             let hand = room.playersCards[seatIndex] || [];
             let isVerified = false;
+            let verifiedCards = []; // الكروت التي تشكل السرا لكشفها
 
             if (projectType === 'سرا') {
                 let suitsGroup = { '♠': [], '♥': [], '♦': [], '♣': [] };
@@ -122,7 +128,15 @@ module.exports = function(io) {
                 for (let s in suitsGroup) {
                     let indexes = suitsGroup[s].map(v => projectSequence.indexOf(v)).sort((a,b) => a-b);
                     for (let i = 0; i < indexes.length - 2; i++) {
-                        if (indexes[i+1] === indexes[i] + 1 && indexes[i+2] === indexes[i] + 2) { isVerified = true; break; }
+                        if (indexes[i+1] === indexes[i] + 1 && indexes[i+2] === indexes[i] + 2) {
+                            isVerified = true;
+                            verifiedCards = [
+                                { suit: s, value: projectSequence[indexes[i]] },
+                                { suit: s, value: projectSequence[indexes[i+1]] },
+                                { suit: s, value: projectSequence[indexes[i+2]] }
+                            ];
+                            break;
+                        }
                     }
                 }
             } else if (projectType === 'خمسين') {
@@ -131,19 +145,31 @@ module.exports = function(io) {
                 for (let s in suitsGroup) {
                     let indexes = suitsGroup[s].map(v => projectSequence.indexOf(v)).sort((a,b) => a-b);
                     for (let i = 0; i < indexes.length - 3; i++) {
-                        if (indexes[i+1] === indexes[i] + 1 && indexes[i+2] === indexes[i] + 2 && indexes[i+3] === indexes[i] + 3) { isVerified = true; break; }
+                        if (indexes[i+1] === indexes[i] + 1 && indexes[i+2] === indexes[i] + 2 && indexes[i+3] === indexes[i] + 3) {
+                            isVerified = true;
+                            verifiedCards = [
+                                { suit: s, value: projectSequence[indexes[i]] },
+                                { suit: s, value: projectSequence[indexes[i+1]] },
+                                { suit: s, value: projectSequence[indexes[i+2]] },
+                                { suit: s, value: projectSequence[indexes[i+3]] }
+                            ];
+                            break;
+                        }
                     }
                 }
-            } else if (projectType === '100' || projectType === 'مية' || projectType === '400') {
+            } else {
                 isVerified = true; 
             }
 
             if (isVerified) {
                 room.activeProjects[seatIndex] = projectType;
+                room.revealedProjectCards[seatIndex] = verifiedCards; // كشف الكروت للعامة
+
                 let projectPoints = (projectType === 'سرا') ? 4 : (projectType === 'خمسين') ? 10 : 20;
                 if (seatIndex === 0 || seatIndex === 2) room.roundPoints.team1 += projectPoints;
                 else room.roundPoints.team2 += projectPoints;
-                socket.emit('project_validation_result', { success: true, type: projectType });
+
+                socket.emit('project_validation_result', { success: true, type: projectType, cards: verifiedCards });
             } else {
                 socket.emit('project_validation_result', { success: false, type: projectType });
             }
@@ -244,19 +270,32 @@ module.exports = function(io) {
                 room.leadSuit = null;
                 room.currentTurn = winnerSeat;
 
+                // 🔄 الجولة الثامنة انتهت: احسب وسجل قيد الجولة ثم اخلط ووزع الجولة التالية فوراً!
                 if (room.trickCount === 8) {
-                    room.scores.team1 += Math.round(room.roundPoints.team1 / 10);
-                    room.scores.team2 += Math.round(room.roundPoints.team2 / 10);
-                    room.gameStage = 'lobby'; 
-                }
+                    let t1Gain = Math.round(room.roundPoints.team1 / 10);
+                    let t2Gain = Math.round(room.roundPoints.team2 / 10);
+                    room.scores.team1 += t1Gain;
+                    room.scores.team2 += t2Gain;
 
-                io.to(roomId).emit('game_state_changed', room);
-                if (room.gameStage === 'playing') checkAndRunBotGameplay(room, roomId);
+                    io.to(roomId).emit('round_ended_announcement', {
+                        summary: `🎉 انتهت الصكة! قيد الجولة الحالية: لنا +${t1Gain} نقاط | لهم +${t2Gain} نقاط. جاري خلط وتوزيع الجولة التالية تلقائياً...`,
+                        scores: room.scores
+                    });
+
+                    // تدوير تلقائي لبدء جولة جديدة دون تعليق السيرفر
+                    setTimeout(() => {
+                        setupNewRound(roomId);
+                    }, 4000);
+                } else {
+                    io.to(roomId).emit('game_state_changed', room);
+                    if (room.gameStage === 'playing') checkAndRunBotGameplay(roomId);
+                }
             }, 1800);
         }
 
-        function checkAndRunBotGameplay(room, roomId) {
-            if (room.gameStage !== 'playing' || room.tableCards.length >= 4) return;
+        function checkAndRunBotGameplay(roomId) {
+            let room = rooms[roomId];
+            if (!room || room.gameStage !== 'playing' || room.tableCards.length >= 4) return;
             let activePlayer = room.seats[room.currentTurn];
             if (activePlayer && activePlayer.socketId.startsWith('bot_')) {
                 setTimeout(() => { makeAdvancedBotPlay(room, roomId); }, 600);
@@ -292,7 +331,7 @@ module.exports = function(io) {
             } else {
                 room.currentTurn = (room.currentTurn + 1) % 4;
                 io.to(roomId).emit('game_state_changed', room);
-                checkAndRunBotGameplay(room, roomId);
+                checkAndRunBotGameplay(roomId);
             }
         }
 
