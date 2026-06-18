@@ -44,9 +44,6 @@
             font-weight: bold; font-size: 16px; border-radius: 14px; cursor: pointer; width: 100%;
             box-shadow: var(--gold-glow); transition: all 0.3s ease;
         }
-        .luxury-button:hover { transform: translateY(-2px); box-shadow: var(--strong-glow); }
-
-        .btn-link { background: #1e293b; color: #ffe066; border: 1px solid var(--luxury-gold); padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 11px; }
 
         .royal-toast {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
@@ -64,73 +61,42 @@
             display: flex; flex-direction: column; gap: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); margin: 0 auto;
         }
         .top-shop-bar { display: flex; gap: 6px; justify-content: space-between; width: 100%; align-items: center; }
-        
-        .btn-vip-premium {
-            background: var(--gold-gradient); color: #060a13; border: none; padding: 8px 16px;
-            border-radius: 20px; font-size: 12px; font-weight: 900; cursor: pointer;
-            box-shadow: var(--gold-glow); transition: all 0.2s;
-        }
-        .btn-vip-premium:hover { transform: scale(1.05); box-shadow: var(--strong-glow); }
-
-        .btn-shop-toggle {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            color: #4caf50; border: 1px solid #4caf50; padding: 8px 14px;
-            border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer;
-        }
-
-        .cafeteria-overlay {
-            position: absolute; top: 12%; left: 5%; width: 90%; background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
-            border: 2px solid var(--luxury-gold); border-radius: 24px; z-index: 500; display: none;
-            flex-direction: column; padding: 20px; box-shadow: var(--strong-glow);
-        }
-        .menu-item {
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 12px;
-            margin-bottom: 6px; border: 1px solid rgba(204,164,59,0.1); font-size: 13px;
-        }
-
-        .recipient-selector { display: none; flex-direction: column; gap: 6px; margin-top: 10px; background: #060a13; padding: 10px; border-radius: 12px; }
-        .btn-select-player { background: #1e293b; color: white; border: 1px solid rgba(255,255,255,0.1); padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .btn-link { background: #1e293b; color: #ffe066; border: 1px solid var(--luxury-gold); padding: 5px 10px; border-radius: 8px; cursor: pointer; }
 
         .score-board {
             display: flex; justify-content: center; gap: 20px; background: rgba(15, 23, 42, 0.9);
             padding: 8px 24px; border-radius: 30px; border: 1px solid var(--luxury-gold);
-            font-weight: 900; font-size: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); margin: 8px auto;
+            font-weight: 900; font-size: 16px; margin: 8px auto;
         }
 
         .baloot-table {
             width: 100%; height: 390px; background: var(--table-green); max-width: 420px;
             border: 14px solid #1a1107; border-radius: 45px; position: relative; margin: 10px auto;
-            box-shadow: inset 0 0 70px rgba(0,0,0,0.85), 0 20px 40px rgba(0,0,0,0.6);
         }
 
         .player-seat {
             position: absolute; background: linear-gradient(180deg, #16223f 0%, #0f1626 100%);
             border: 1.5px solid var(--luxury-gold); padding: 6px 10px; border-radius: 14px;
-            font-weight: bold; font-size: 12px; min-width: 105px; text-align: center; color: #ffe066;
+            font-weight: bold; font-size: 12px; min-width: 108px; text-align: center; color: #ffe066;
             z-index: 20; transition: all 0.3s ease;
         }
-        .seat-0 { bottom: -15px; left: calc(50% - 52px); border-color: #4caf50; color: white; } 
+        .seat-0 { bottom: -15px; left: calc(50% - 54px); border-color: #4caf50; color: white; } 
         .seat-1 { left: -15px; top: calc(50% - 30px); } 
-        .seat-2 { top: -15px; left: calc(50% - 52px); }  
+        .seat-2 { top: -15px; left: calc(50% - 54px); }  
         .seat-3 { right: -15px; top: calc(50% - 30px); } 
 
-        .player-seat.vip-activated {
-            border: 2px solid #ffdf00 !important;
-            box-shadow: 0 0 20px #ffdf00, inset 0 0 8px #cca43b !important;
-            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+        /* 📢 وشاح المشتري ونوع الطلب الفخم الجديد */
+        .buy-tag {
+            background: #d32f2f; color: white; font-size: 9px; font-weight: 900;
+            padding: 2px 6px; border-radius: 4px; display: none; margin-bottom: 3px;
+            box-shadow: 0 0 10px rgba(211,47,47,0.6); text-transform: uppercase;
         }
-        .vip-crown-badge { display: none; background: var(--gold-gradient); color: #060a13; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; margin-bottom: 2px; }
 
-        .project-tag {
-            background: var(--gold-gradient); color: #060a13; font-size: 10px;
-            font-weight: 900; padding: 2px 8px; border-radius: 5px; display: none; margin-bottom: 3px;
-        }
+        .project-tag { background: var(--gold-gradient); color: #060a13; font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 5px; display: none; margin-bottom: 3px; }
         .revealed-project-cards-box { display: flex; gap: 2px; justify-content: center; margin-top: 4px; }
-        .mini-card-reveal { background: white; color: black; font-size: 8px; padding: 1px 3px; border-radius: 3px; font-weight: 900; border: 0.5px solid #000; }
+        .mini-card-reveal { background: white; color: black; font-size: 8px; padding: 1px 3px; border-radius: 3px; font-weight: 900; }
         .mini-card-reveal.red { color: red; }
-
-        .hospitality-bubble { background: #ff9800; color: white; font-size: 10px; padding: 2px 6px; border-radius: 8px; display: none; margin-top: 3px; font-weight: bold; }
+        .hospitality-bubble { background: #ff9800; color: white; font-size: 10px; padding: 2px 6px; border-radius: 8px; display: none; margin-top: 3px; }
 
         .active-turn-glow { box-shadow: var(--strong-glow); border-color: #ffe066; transform: scale(1.04); }
 
@@ -153,16 +119,18 @@
         .player-hand { display: flex; justify-content: center; margin-top: 25px; padding-bottom: 25px; width: 100%; max-width: 420px; }
         .player-hand .card { position: relative; bottom: 0; left: 0; margin-right: -28px; cursor: pointer; border: 1.5px solid var(--luxury-gold) !important; }
         
-        .project-panel-layout {
-            background: linear-gradient(180deg, #0f172a 0%, #020617 100%); border: 2px solid var(--luxury-gold);
-            padding: 14px; border-radius: 20px; display: none; justify-content: center; gap: 8px; margin: 10px auto; width: 95%; max-width: 420px;
-        }
+        .project-panel-layout { background: linear-gradient(180deg, #0f172a 0%, #020617 100%); border: 2px solid var(--luxury-gold); padding: 14px; border-radius: 20px; display: none; justify-content: center; gap: 8px; margin: 10px auto; width: 95%; max-width: 420px; }
         .btn-project { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffe066; border: 1px solid var(--luxury-gold); padding: 12px 6px; font-size: 12px; font-weight: bold; border-radius: 10px; cursor: pointer; flex: 1; text-align: center; }
 
         .action-panel { background: linear-gradient(180deg, #16223f 0%, #060a13 100%); border: 1.5px solid var(--luxury-gold); padding: 12px; border-radius: 16px; display: none; justify-content: center; gap: 8px; margin: 10px auto; width: 95%; max-width: 420px; }
         .btn-action { padding: 10px 14px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; }
         .btn-buy { background: var(--gold-gradient); color: #060a13; }
         .btn-pass { background: #4a5568; color: white; }
+
+        .cafeteria-overlay { position: absolute; top: 12%; left: 5%; width: 90%; background: linear-gradient(135deg, #0f172a 0%, #020617 100%); border: 2px solid var(--luxury-gold); border-radius: 24px; z-index: 500; display: none; flex-direction: column; padding: 20px; box-shadow: var(--strong-glow); }
+        .menu-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 12px; margin-bottom: 6px; border: 1px solid rgba(204,164,59,0.1); font-size: 13px; }
+        .recipient-selector { display: none; flex-direction: column; gap: 6px; margin-top: 10px; background: #060a13; padding: 10px; border-radius: 12px; }
+        .btn-select-player { background: #1e293b; color: white; border: 1px solid rgba(255,255,255,0.1); padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -179,8 +147,8 @@
         
         <div class="multiplayer-bar">
             <div class="top-shop-bar">
-                <button class="btn-vip-premium" onclick="activateVipSubscription()">👑 تفعيل VIP بـ 5 د.ك</button>
-                <button class="btn-shop-toggle" onclick="openCafeteriaMenu()">☕ كافتيريا الديوانية</button>
+                <button class="btn-link" style="background:var(--gold-gradient); color:#060a13; font-weight:900;" onclick="activateVipSubscription()">👑 VIP ملوكي</button>
+                <button class="btn-link" onclick="openCafeteriaMenu()">☕ كافتيريا الديوانية</button>
                 <div class="wallet-display" id="wallet-balance-text">محفظتك: 5.000 د.ك</div>
             </div>
             <div style="display:flex; gap:10px; justify-content:center; margin-top:4px;">
@@ -196,69 +164,52 @@
 
         <div id="game-status" style="font-size:13px; color:#ffe066; margin:4px 0;">بانتظار اكتمال المجلس...</div>
 
+        <!-- كافتيريا الديوانية المشهورة -->
         <div class="cafeteria-overlay" id="cafeteria-panel">
-            <h3 style="color:var(--luxury-gold); margin:0 0 15px 0; text-align:center;">☕ منيو ضيافة الديوانية الفاخر</h3>
-            <div class="menu-item">
-                <div><b>☕ استكانة شاي مخدر</b></div>
-                <button class="btn-link" onclick="selectHospitalityTarget('شاي مخدر')">0.100 فلس</button>
-            </div>
-            <div class="menu-item">
-                <div><b>☕ فنجان قهوة عربية بالهيل</b></div>
-                <button class="btn-link" onclick="selectHospitalityTarget('قهوة عربية')">0.150 فلس</button>
-            </div>
-            <div class="menu-item">
-                <div><b>🌴 حبة تمر إخلاص فاخرة</b></div>
-                <button class="btn-link" onclick="selectHospitalityTarget('تمر إخلاص')">0.050 فلس</button>
-            </div>
-            <div class="menu-item">
-                <div><b>🥜 طاسة مكسرات ديوانية مشكلة</b></div>
-                <button class="btn-link" onclick="selectHospitalityTarget('مكسرات مشكلة')">0.200 فلس</button>
-            </div>
-            <div class="menu-item">
-                <div><b>🥣 بيالة لوز كويتي محمص</b></div>
-                <button class="btn-link" onclick="selectHospitalityTarget('لوز محمص')">0.250 فلس</button>
-            </div>
-            <div class="menu-item">
-                <div><b>💧 بطلي ماء بارد منعش</b></div>
-                <button class="btn-link" onclick="selectHospitalityTarget('ماء بارد')">0.050 فلس</button>
-            </div>
-
+            <h3 style="color:var(--luxury-gold); margin:0 0 15px 0; text-align:center;">☕ منيو ضيافة الديوانية</h3>
+            <div class="menu-item"><div><b>☕ استكانة شاي مخدر</b></div><button class="btn-link" onclick="selectHospitalityTarget('شاي مخدر')">0.100 فلس</button></div>
+            <div class="menu-item"><div><b>☕ فنجان قهوة عربية بالهيل</b></div><button class="btn-link" onclick="selectHospitalityTarget('قهوة عربية')">0.150 فلس</button></div>
+            <div class="menu-item"><div><b>🌴 حبة تمر إخلاص فاخرة</b></div><button class="btn-link" onclick="selectHospitalityTarget('تمر إخلاص')">0.050 فلس</button></div>
+            <div class="menu-item"><div><b>🥜 طاسة مكسرات مشكلة</b></div><button class="btn-link" onclick="selectHospitalityTarget('مكسرات مشكلة')">0.200 فلس</button></div>
             <div class="recipient-selector" id="recipient-area">
-                <div style="font-size:11px; color:#cca43b; margin-bottom:4px;">اختر من تريد إكرامه بالضيافة:</div>
                 <button class="btn-select-player" onclick="confirmHospitalityDelivery(1)">👤 الرفيق على اليسار</button>
                 <button class="btn-select-player" onclick="confirmHospitalityDelivery(2)">👤 الرفيق المقابل</button>
                 <button class="btn-select-player" onclick="confirmHospitalityDelivery(3)">👤 الرفيق على اليمين</button>
             </div>
-            <button class="luxury-button" style="margin-top:15px; font-size:13px; padding:8px;" onclick="closeCafeteriaMenu()">إغلاق المنيو ❌</button>
+            <button class="luxury-button" style="margin-top:15px; font-size:13px; padding:8px;" onclick="closeCafeteriaMenu()">إغلاق ❌</button>
         </div>
 
         <div class="baloot-table" id="main-baloot-table">
+            <!-- مقعد لاعب 2 (أعلى) -->
             <div id="seat_2" class="player-seat seat-2">
-                <div class="vip-crown-badge" id="crown_2">👑 VIP MEMBER</div>
+                <div class="buy-tag" id="buy_tag_2"></div>
                 <div class="project-tag" id="tag_2"></div>
                 <div class="revealed-project-cards-box" id="reveal_box_2"></div>
                 <div class="hospitality-bubble" id="drink_2">☕</div>
                 <span class="seat-name">مقعد خالٍ</span>
             </div>
 
+            <!-- مقعد لاعب 1 (يسار) -->
             <div id="seat_1" class="player-seat seat-1">
-                <div class="vip-crown-badge" id="crown_1">👑 VIP MEMBER</div>
+                <div class="buy-tag" id="buy_tag_1"></div>
                 <div class="project-tag" id="tag_1"></div>
                 <div class="revealed-project-cards-box" id="reveal_box_1"></div>
                 <div class="hospitality-bubble" id="drink_1">☕</div>
                 <span class="seat-name">مقعد خالٍ</span>
             </div>
 
+            <!-- مقعد لاعب 3 (يمين) -->
             <div id="seat_3" class="player-seat seat-3">
-                <div class="vip-crown-badge" id="crown_3">👑 VIP MEMBER</div>
+                <div class="buy-tag" id="buy_tag_3"></div>
                 <div class="project-tag" id="tag_3"></div>
                 <div class="revealed-project-cards-box" id="reveal_box_3"></div>
                 <div class="hospitality-bubble" id="drink_3">☕</div>
                 <span class="seat-name">مقعد خالٍ</span>
             </div>
 
+            <!-- أنت (لاعب 0 أسفل) -->
             <div id="seat_0" class="player-seat seat-0">
-                <div class="vip-crown-badge" id="crown_0">👑 VIP MEMBER</div>
+                <div class="buy-tag" id="buy_tag_0"></div>
                 <div class="project-tag" id="tag_0"></div>
                 <div class="revealed-project-cards-box" id="reveal_box_0"></div>
                 <div class="hospitality-bubble" id="drink_0">☕</div>
@@ -268,12 +219,10 @@
             <div class="center-area" id="center-table"></div>
         </div>
 
-        <!-- 📢 تم إصلاح المسميات لتطابق السيرفر وإضافة خيار الـ 100 والـ 400 وتخطي اللعب -->
         <div class="project-panel-layout" id="projects-panel">
-            <button class="btn-project" onclick="declareProject('سرا')">📢 إعلان سِرا</button>
-            <button class="btn-project" onclick="declareProject('خمسين')">📢 إعلان خمسين</button>
-            <button class="btn-project" onclick="declareProject('100')">📢 إعلان 100</button>
-            <button class="btn-project" onclick="declareProject('400')">📢 إعلان 400</button>
+            <button class="btn-project" onclick="declareProject('سرا')">📢 سِرا</button>
+            <button class="btn-project" onclick="declareProject('خمسين')">📢 خمسين</button>
+            <button class="btn-project" onclick="declareProject('100')">📢 100</button>
             <button class="btn-project" style="background:#4a5568; color:#fff;" onclick="declareProject('لا شيء')">ما عندي شيء 🛡️</button>
         </div>
 
@@ -289,11 +238,32 @@
     let currentLeadSuit = null;
     let selectedDrinkType = "";
 
+    // 🔊 محرك توليد الأصوات الاصطناعية الاحترافية (Synth) للبلوت دون ملفات خارجية
+    function playRoyalSound(type) {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            if (type === 'صن') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(587.33, ctx.currentTime); // نغمة حماسية مرتفعة
+                gain.gain.setValueAtTime(0.2, ctx.currentTime); osc.start(); osc.stop(ctx.currentTime + 0.3);
+            } else if (type === 'حكم') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(440, ctx.currentTime); // نغمة رصينة ملحة
+                gain.gain.setValueAtTime(0.2, ctx.currentTime); osc.start(); osc.stop(ctx.currentTime + 0.4);
+            } else if (type === 'بس') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(293.66, ctx.currentTime); // نغمة هادئة للتمرير
+                gain.gain.setValueAtTime(0.1, ctx.currentTime); osc.start(); osc.stop(ctx.currentTime + 0.15);
+            }
+        } catch(e) { console.log(e); }
+    }
+
     function showToast(message) {
         const toast = document.getElementById('global-toast');
-        toast.innerText = message;
-        toast.classList.add('show');
-        setTimeout(() => { toast.classList.remove('show'); }, 3800);
+        toast.innerText = message; toast.classList.add('show');
+        setTimeout(() => { toast.classList.remove('show'); }, 3500);
     }
 
     function connectToTable() {
@@ -305,23 +275,15 @@
     }
 
     function fillTableWithBots() { socket.emit('start_game_with_bots'); }
-
     function activateVipSubscription() {
         document.getElementById('seat_0').classList.add('vip-activated');
-        document.getElementById('crown_0').style.display = 'block';
-        document.getElementById('my-name-span').style.color = '#ffdf00';
-        showToast("👑 مبروك! تم تفعيل اشتراك الـ VIP الفخم والمميزات الذهبية بـ 5 د.ك!");
+        showToast("👑 تفعيل VIP ممتاز بـ 5 د.ك!");
     }
 
     function openCafeteriaMenu() { document.getElementById('cafeteria-panel').style.display = 'flex'; }
-    function closeCafeteriaMenu() { 
-        document.getElementById('cafeteria-panel').style.display = 'none'; 
-        document.getElementById('recipient-area').style.display = 'none';
-    }
-    function selectHospitalityTarget(drinkName) {
-        selectedDrinkType = drinkName;
-        document.getElementById('recipient-area').style.display = 'flex';
-    }
+    function closeCafeteriaMenu() { document.getElementById('cafeteria-panel').style.display = 'none'; }
+    function selectHospitalityTarget(drinkName) { selectedDrinkType = drinkName; document.getElementById('recipient-area').style.display = 'flex'; }
+    
     function confirmHospitalityDelivery(targetRelSeat) {
         let actualTargetSeat = 0;
         for(let i=0; i<4; i++) { if(seatMapping[i] === targetRelSeat) { actualTargetSeat = i; break; } }
@@ -329,33 +291,14 @@
         closeCafeteriaMenu();
     }
 
-    function declareProject(type) {
-        socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type });
-        hideProjectPanel();
-    }
+    function declareProject(type) { socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type }); hideProjectPanel(); }
     function hideProjectPanel() { document.getElementById('projects-panel').style.display = 'none'; }
 
     socket.on('hospitality_broadcast', (data) => {
-        showToast(`☕ ${data.senderName} قدّم [${data.item}] فخم إلى ${data.receiverName}!`);
-        let relReceiver = seatMapping[data.receiverSeat];
-        const bubble = document.getElementById(`drink_${relReceiver}`);
-        if(bubble) {
-            bubble.innerText = `😋 تناول ${data.item}`;
-            bubble.style.display = 'block';
-            setTimeout(() => { bubble.style.display = 'none'; }, 4000);
-        }
+        showToast(`☕ ${data.senderName} قدّم [${data.item}] إلى ${data.receiverName}!`);
     });
 
-    socket.on('project_validation_result', (data) => {
-        if(!data.success) { showToast(`❌ مشروعك الـ (${data.type}) ناقص أو غير صحيح وفق ورق يدك!`); }
-        else { showToast(`✅ مشروعك الـ (${data.type}) سليم وتم كشف أوراقه علناً للمجلس وقيدها بالسكور!`); }
-    });
-
-    socket.on('round_ended_announcement', (data) => {
-        showToast(data.summary);
-        document.getElementById('score-t1').innerText = data.scores.team1;
-        document.getElementById('score-t2').innerText = data.scores.team2;
-    });
+    socket.on('round_ended_announcement', (data) => { showToast(data.summary); });
 
     socket.on('room_updated', (data) => {
         for(let i=0; i<4; i++) { if(data.seats[i] && data.seats[i].socketId === socket.id) { mySeatIndex = i; } }
@@ -381,25 +324,15 @@
             document.getElementById('projects-panel').style.display = 'flex';
         } else { hideProjectPanel(); }
 
+        // 🎯 تفعيل وشاح من طلب الصن أو الحكم فوق اسم اللاعب مباشرة
         for(let i=0; i<4; i++) {
             let relPos = seatMapping[i];
-            const tagDiv = document.getElementById(`tag_${relPos}`);
-            const boxDiv = document.getElementById(`reveal_box_${relPos}`);
-            
-            if(data.activeProjects && data.activeProjects[i] && data.activeProjects[i] !== "") {
-                tagDiv.innerText = data.activeProjects[i];
-                tagDiv.style.display = 'inline-block';
-                
-                boxDiv.innerHTML = "";
-                if(data.revealedProjectCards && data.revealedProjectCards[i] && data.revealedProjectCards[i].length > 0) {
-                    data.revealedProjectCards[i].forEach(card => {
-                        let isRed = (card.suit === '♥' || card.suit === '♦') ? 'red' : '';
-                        boxDiv.innerHTML += `<div class="mini-card-reveal ${isRed}">${card.value}${card.suit}</div>`;
-                    });
-                }
-            } else { 
-                tagDiv.style.display = 'none'; 
-                boxDiv.innerHTML = "";
+            const buyTag = document.getElementById(`buy_tag_${relPos}`);
+            if(data.buyerSeat === i && data.buyType) {
+                buyTag.innerText = `طلب: ${data.buyType}`;
+                buyTag.style.display = 'inline-block';
+            } else {
+                buyTag.style.display = 'none';
             }
         }
 
@@ -443,6 +376,14 @@
         if(myCards.length > 0) { localCards = myCards; sortMyHand(); renderHand(); }
     });
 
+    function makeDecision(decision, buyType) { 
+        // تشغيل النغمة الصوتية المناسبة للطلب فوراً
+        if(decision === 'buy') playRoyalSound(buyType);
+        else playRoyalSound('بس');
+        
+        socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: decision, buyType: buyType }); 
+    }
+
     function throwCardFromHand(cardIndex) {
         const selectedCard = localCards[cardIndex];
         if (currentLeadSuit && selectedCard.suit !== currentLeadSuit) {
@@ -481,8 +422,6 @@
             return cardRankOrder[a.value] - cardRankOrder[b.value];
         });
     }
-
-    function makeDecision(decision, buyType) { socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: decision, buyType: buyType }); }
 </script>
 </body>
 </html>
