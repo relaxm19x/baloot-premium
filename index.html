@@ -55,7 +55,6 @@
         }
         .btn-link { background: var(--gold-gradient); color:#060a13; border:none; border-radius:8px; padding:6px 14px; font-weight:bold; cursor:pointer; font-size:12px; }
 
-        /* تصفيف أزرار المتجر والكافتيريا والمحفظة */
         .top-shop-bar { display: flex; gap: 6px; justify-content: space-between; width: 100%; align-items: center; }
         .btn-shop-toggle {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -107,10 +106,8 @@
         .seat-2 { top: -15px; left: calc(50% - 52px); }  
         .seat-3 { right: -15px; top: calc(50% - 30px); } 
 
-        /* أزرار الدعم السريع والضيافة الميكروية بجانب المقاعد */
         .gift-buttons-container { display: flex; gap: 3px; justify-content: center; margin-top: 4px; }
         .btn-gift-micro { background: #060a13; border: 0.5px solid var(--luxury-gold); border-radius: 4px; font-size: 10px; cursor: pointer; padding: 2px 4px; color: #fff; }
-        .btn-gift-micro:hover { background: var(--luxury-gold); color: #060a13; }
 
         .active-turn-glow { box-shadow: var(--strong-glow); border-color: #ffe066; transform: scale(1.04); }
 
@@ -157,15 +154,8 @@
         .card-pos-2 { top: 85px; left: calc(50% - 35px); }     
         .card-pos-3 { top: calc(50% - 50px); right: 75px; }  
 
-        .card.gold-glow {
-            border: 2px solid #cca43b !important;
-            box-shadow: 0 0 15px #ffe066, 0 8px 20px rgba(204,164,59,0.6) !important;
-        }
-
-        .card.premium-skin {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
-            color: #ffe066 !important; border: 1.5px solid #cca43b !important;
-        }
+        .card.gold-glow { border: 2px solid #cca43b !important; box-shadow: 0 0 15px #ffe066, 0 8px 20px rgba(204,164,59,0.6) !important; }
+        .card.premium-skin { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important; color: #ffe066 !important; border: 1.5px solid #cca43b !important; }
 
         .card.red { color: #d63031; background: linear-gradient(180deg, #fff 70%, #fff5f5 100%); }
         .card.black { color: #2d3436; background: linear-gradient(180deg, #fff 70%, #f1f2f6 100%); }
@@ -221,7 +211,7 @@
                 </div>
             </div>
 
-            <!-- 👑 1. لوحة المتجر الملوكي المعدلة بأسعار بومحمد الجديدة -->
+            <!-- متجر الـ VIP بأسعار بومحمد الجديدة -->
             <div class="shop-overlay" id="shop-panel">
                 <div class="shop-header">
                     <h3 style="color:var(--luxury-gold); margin:0;">👑 متجر التميز VIP</h3>
@@ -251,7 +241,7 @@
                 <button class="luxury-button" style="margin-top:20px; font-size:14px; padding:10px;" onclick="rechargeWallet()">➕ شحن رصيد المحفظة (K-Net)</button>
             </div>
 
-            <!-- ☕ 2. لوحة كافتيريا الديوانية الجديدة كلياً لطقطقة وضيافة الربع -->
+            <!-- كافتيريا الديوانية بأسعار ميكروية -->
             <div class="shop-overlay" id="cafeteria-panel">
                 <div class="shop-header">
                     <h3 style="color:#4caf50; margin:0;">☕ كافتيريا صكة الملوك</h3>
@@ -302,19 +292,19 @@
                     <div style="font-size: 18px; color: #ffe066; font-weight: bold;" id="total-scores-text"></div>
                 </div>
 
-                <!-- مقعد لاعب 2 (أعلى) مع ميزة الطقطقة السريعة -->
+                <!-- مقعد لاعب 2 (أعلى) -->
                 <div id="seat_2" class="player-seat seat-2">مقعد خالٍ
                     <div class="gift-buttons-container"><button class="btn-gift-micro" onclick="sendQuickGift(2, 'شاي')">☕</button><button class="btn-gift-micro" onclick="sendQuickGift(2, 'تمرة')">🌴</button></div>
                 </div>
                 <div id="bubble_2" class="chat-bubble bubble-pos-2"></div>
 
-                <!-- مقعد لاعب 1 (يسار) مع ميزة الطقطقة السريعة -->
+                <!-- مقعد لاعب 1 (يسار) -->
                 <div id="seat_1" class="player-seat seat-1">مقعد خالٍ
                     <div class="gift-buttons-container"><button class="btn-gift-micro" onclick="sendQuickGift(1, 'شاي')">☕</button><button class="btn-gift-micro" onclick="sendQuickGift(1, 'غازي')">🥤</button></div>
                 </div>
                 <div id="bubble_1" class="chat-bubble bubble-pos-1"></div>
 
-                <!-- مقعد لاعب 3 (يمين) مع ميزة الطقطقة السريعة -->
+                <!-- مقعد لاعب 3 (يمين) -->
                 <div id="seat_3" class="player-seat seat-3">مقعد خالٍ
                     <div class="gift-buttons-container"><button class="btn-gift-micro" onclick="sendQuickGift(3, 'شاي')">☕</button><button class="btn-gift-micro" onclick="sendQuickGift(3, 'تمرة')">🌴</button></div>
                 </div>
@@ -342,7 +332,9 @@
     </div>
 
 <script>
+    // 🎯 تم إرجاع الاتصال التلقائي بدون روابط ثابتة ليعمل أونلاين ومحلياً بسلاسة
     const socket = io(); 
+    
     let mySeatIndex = null;
     let localCards = [];
     let seatMapping = {}; 
@@ -350,10 +342,22 @@
     let currentGlobalGameType = 'صن';
     let currentGlobalTrumpSuit = null;
     
-    // متغيرات المحفظة والمنتجات الجديدة الفاخرة لبومحمد
-    let playerWalletBalance = 5.000; // رصيد افتراضي 5 دنانير
+    let playerWalletBalance = 5.000; 
     let hasPremiumSkin = false;
     let isUserVIP = false;
+
+    // 🎯 الدالة المسؤولة عن نقل اللاعب الفعلي من اللوبي لداخل الطاولة
+    function connectToTable() {
+        const username = document.getElementById('usernameInput').value.trim();
+        if(!username) return alert("الرجاء إدخال اسم اللاعب أولاً لمجلس الصكة!");
+        
+        // إخفاء شاشة اللوبي وإظهار شاشة اللعب والملعب الأخضر
+        document.getElementById('lobby-screen').style.display = 'none';
+        document.getElementById('game-layout').style.display = 'flex';
+        
+        // إرسال الاسم للسيرفر لحجز المقعد تلقائياً
+        socket.emit('join_matchmaking', { username: username });
+    }
 
     function updateWalletUI() {
         document.getElementById('wallet-balance-text').innerText = `محفظتك: ${playerWalletBalance.toFixed(3)} د.ك`;
@@ -364,7 +368,6 @@
         panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
     }
 
-    // شراء المنتجات الكبرى من المتجر
     function buyFeature(type, cost) {
         if (playerWalletBalance < cost) return alert("❌ رصيدك غير كافٍ! اشحن محفظتك عبر كي نت.");
         playerWalletBalance -= cost;
@@ -374,7 +377,7 @@
             isUserVIP = true;
             document.getElementById('seat_0').classList.add('vip-active');
             document.getElementById('my-name-span').style.color = '#ffdf00';
-            alert("👑 كفو بومحمد! تم تفعيل اشتراك VIP بنجاح بـ 3 دنانير فقط!");
+            alert("👑 تم تفعيل اشتراك VIP بنجاح بـ 3 دنانير فقط!");
         } else if(type === 'skin') {
             hasPremiumSkin = true;
             renderHand();
@@ -387,7 +390,6 @@
         toggleOverlay('shop-panel');
     }
 
-    // شراء من كافتيريا الصفحة الرئيسية
     function buyCafeteriaItem(name, cost) {
         if (playerWalletBalance < cost) return alert("❌ الرصيد غير كافٍ لشراء الضيافة!");
         playerWalletBalance -= cost;
@@ -396,7 +398,6 @@
         toggleOverlay('cafeteria-panel');
     }
 
-    // ميزة الضيافة والدعم الفوري على الطاولة بـ 100 فلس
     function sendQuickGift(targetRelativePos, giftType) {
         const cost = (giftType === 'تمرة') ? 0.050 : 0.100;
         if (playerWalletBalance < cost) return alert("❌ رصيد محفظتك لا يكفي لصب الضيافة!");
@@ -404,7 +405,6 @@
         playerWalletBalance -= cost;
         updateWalletUI();
 
-        // محاكاة إرسال حركة الضيافة لايف على الطاولة عبر نظام الدردشة والفقاعات
         let giftText = "";
         if (giftType === 'شاي') giftText = "☕ صب لك استكانة شاي مخدر!";
         if (giftType === 'تمرة') giftText = "🌴 قند راسك بتمرة إخلاص فاخرة!";
@@ -423,7 +423,7 @@
     function rechargeWallet() {
         playerWalletBalance += 5.000;
         updateWalletUI();
-        alert("💳 محاكاة نجاح الدفع عبر K-Net: تم شحن محفظتك بـ 5.000 د.ك إضافية!");
+        alert("💳 نجاح الدفع عبر K-Net: تم شحن محفظتك بـ 5.000 د.ك إضافية!");
     }
 
     function copyWhatsAppLink() {
@@ -438,8 +438,6 @@
 
     socket.on('room_updated', (data) => {
         currentRoomId = data.roomId;
-        document.getElementById('room-id-span').innerText = `#${currentRoomId}`;
-
         for(let i=0; i<4; i++) {
             if(data.seats[i] && data.seats[i].socketId === socket.id) { mySeatIndex = i; }
         }
@@ -454,7 +452,6 @@
                 if (relativePos === 0) {
                     document.getElementById('my-name-span').innerText = data.seats[i].username;
                 } else { 
-                    // الحفاظ على أزرار الهدايا عند تحديث الاسم
                     let giftHTML = (relativePos === 2) ? `<div class="gift-buttons-container"><button class="btn-gift-micro" onclick="sendQuickGift(2, 'شاي')">☕</button><button class="btn-gift-micro" onclick="sendQuickGift(2, 'تمرة')">🌴</button></div>` :
                                    (relativePos === 1) ? `<div class="gift-buttons-container"><button class="btn-gift-micro" onclick="sendQuickGift(1, 'شاي')">☕</button><button class="btn-gift-micro" onclick="sendQuickGift(1, 'غازي')">🥤</button></div>` :
                                    `<div class="gift-buttons-container"><button class="btn-gift-micro" onclick="sendQuickGift(3, 'شاي')">☕</button><button class="btn-gift-micro" onclick="sendQuickGift(3, 'تمرة')">🌴</button></div>`;
