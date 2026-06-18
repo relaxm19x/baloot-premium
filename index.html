@@ -126,7 +126,6 @@
             background: var(--gold-gradient); color: #060a13; font-size: 10px;
             font-weight: 900; padding: 2px 8px; border-radius: 5px; display: none; margin-bottom: 3px;
         }
-        /* لوحة كشف كروت السرا علناً فوق المقعد */
         .revealed-project-cards-box { display: flex; gap: 2px; justify-content: center; margin-top: 4px; }
         .mini-card-reveal { background: white; color: black; font-size: 8px; padding: 1px 3px; border-radius: 3px; font-weight: 900; border: 0.5px solid #000; }
         .mini-card-reveal.red { color: red; }
@@ -269,10 +268,13 @@
             <div class="center-area" id="center-table"></div>
         </div>
 
+        <!-- 📢 تم إصلاح المسميات لتطابق السيرفر وإضافة خيار الـ 100 والـ 400 وتخطي اللعب -->
         <div class="project-panel-layout" id="projects-panel">
             <button class="btn-project" onclick="declareProject('سرا')">📢 إعلان سِرا</button>
             <button class="btn-project" onclick="declareProject('خمسين')">📢 إعلان خمسين</button>
-            <button class="btn-project" style="background:#4a5568; color:#fff;" onclick="hideProjectPanel()">ما عندي شيء 🛡️</button>
+            <button class="btn-project" onclick="declareProject('100')">📢 إعلان 100</button>
+            <button class="btn-project" onclick="declareProject('400')">📢 إعلان 400</button>
+            <button class="btn-project" style="background:#4a5568; color:#fff;" onclick="declareProject('لا شيء')">ما عندي شيء 🛡️</button>
         </div>
 
         <div class="action-panel" id="buying-panel"></div>
@@ -379,17 +381,15 @@
             document.getElementById('projects-panel').style.display = 'flex';
         } else { hideProjectPanel(); }
 
-        // معالجة عرض وشاح المشاريع + كشف الكروت علناً على الطاولة للاعبين
         for(let i=0; i<4; i++) {
             let relPos = seatMapping[i];
             const tagDiv = document.getElementById(`tag_${relPos}`);
             const boxDiv = document.getElementById(`reveal_box_${relPos}`);
             
-            if(data.activeProjects && data.activeProjects[i]) {
+            if(data.activeProjects && data.activeProjects[i] && data.activeProjects[i] !== "") {
                 tagDiv.innerText = data.activeProjects[i];
                 tagDiv.style.display = 'inline-block';
                 
-                // كشف الكروت
                 boxDiv.innerHTML = "";
                 if(data.revealedProjectCards && data.revealedProjectCards[i] && data.revealedProjectCards[i].length > 0) {
                     data.revealedProjectCards[i].forEach(card => {
