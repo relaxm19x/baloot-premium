@@ -207,11 +207,12 @@
                 </div>
                 <div style="display:flex; gap:10px; justify-content:center; margin-top:4px;">
                     <button class="btn-link" onclick="copyWhatsAppLink()">🔗 رابط الواتساب للربع</button>
+                    <!-- 🎯 تم تثبيت الزر هنا ليبقى ظاهراً بشكل دائم للتحكم والتوزيع في أي وقت -->
                     <button class="btn-link" id="btn-fill-bots" style="background:#4caf50; color:#fff;" onclick="fillTableWithBots()">🤖 بدء الصكة</button>
                 </div>
             </div>
 
-            <!-- متجر الـ VIP بأسعار بومحمد الجديدة -->
+            <!-- متجر الـ VIP -->
             <div class="shop-overlay" id="shop-panel">
                 <div class="shop-header">
                     <h3 style="color:var(--luxury-gold); margin:0;">👑 متجر التميز VIP</h3>
@@ -241,7 +242,7 @@
                 <button class="luxury-button" style="margin-top:20px; font-size:14px; padding:10px;" onclick="rechargeWallet()">➕ شحن رصيد المحفظة (K-Net)</button>
             </div>
 
-            <!-- كافتيريا الديوانية بأسعار ميكروية -->
+            <!-- كافتيريا الديوانية -->
             <div class="shop-overlay" id="cafeteria-panel">
                 <div class="shop-header">
                     <h3 style="color:#4caf50; margin:0;">☕ كافتيريا صكة الملوك</h3>
@@ -332,7 +333,6 @@
     </div>
 
 <script>
-    // 🎯 تم إرجاع الاتصال التلقائي بدون روابط ثابتة ليعمل أونلاين ومحلياً بسلاسة
     const socket = io(); 
     
     let mySeatIndex = null;
@@ -346,16 +346,11 @@
     let hasPremiumSkin = false;
     let isUserVIP = false;
 
-    // 🎯 الدالة المسؤولة عن نقل اللاعب الفعلي من اللوبي لداخل الطاولة
     function connectToTable() {
         const username = document.getElementById('usernameInput').value.trim();
         if(!username) return alert("الرجاء إدخال اسم اللاعب أولاً لمجلس الصكة!");
-        
-        // إخفاء شاشة اللوبي وإظهار شاشة اللعب والملعب الأخضر
         document.getElementById('lobby-screen').style.display = 'none';
         document.getElementById('game-layout').style.display = 'flex';
-        
-        // إرسال الاسم للسيرفر لحجز المقعد تلقائياً
         socket.emit('join_matchmaking', { username: username });
     }
 
@@ -465,7 +460,8 @@
 
     socket.on('game_state_changed', (data) => {
         document.getElementById('round-result-panel').style.display = 'none';
-        document.getElementById('btn-fill-bots').style.display = 'none';
+        
+        // 🎯 تم إلغاء سطر إخفاء زر البوتات لكي يظل ثابتاً ومتاحاً لبدء التوزيع في أي وقت!
 
         if (data.scores) {
             document.getElementById('score-t1').innerText = data.scores.team1;
