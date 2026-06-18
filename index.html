@@ -26,7 +26,6 @@
 
         *, *::before, *::after { box-sizing: border-box; }
 
-        /* 👑 البار العلوي لجلسات كملنا المطور */
         .top-score-bar {
             width: 100%; max-width: 420px; background: linear-gradient(180deg, #44464a 0%, #1e1f22 100%);
             padding: 8px 14px; border-bottom-left-radius: 18px; border-bottom-right-radius: 18px;
@@ -37,22 +36,7 @@
             display: flex; background: #000000; border-radius: 12px; border: 1.5px solid #555;
             padding: 3px 16px; gap: 16px; font-weight: 900; font-size: 16px; color: #ffffff;
         }
-        .top-action-btn {
-            background: none; border: none; color: #ffe066; font-size: 12px; font-weight: bold; cursor: pointer;
-        }
 
-        .lobby-container {
-            background: #181b22; padding: 35px 25px; border-radius: 24px;
-            border: 2px solid var(--luxury-gold); text-align: center; margin-top: 70px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8); width: 88%; max-width: 370px;
-        }
-
-        .luxury-input {
-            width: 100%; padding: 12px; margin: 12px 0; border-radius: 12px;
-            border: 1px solid var(--luxury-gold); background: #0c0f16; color: white; text-align: center; font-size: 15px;
-        }
-
-        /* 📱 الطاولة الاحترافية */
         .baloot-table {
             width: 94%; max-width: 410px; height: 350px; background: var(--table-green);
             border: 14px solid #33200f; border-radius: 45px; position: relative; margin: 8px auto;
@@ -60,7 +44,6 @@
             z-index: 10;
         }
 
-        /* 👤 المقاعد */
         .player-seat-avatar {
             position: absolute; display: flex; flex-direction: column; align-items: center;
             width: 85px; z-index: 20; text-align: center;
@@ -84,17 +67,16 @@
             box-shadow: 0 3px 6px rgba(0,0,0,0.3); overflow: hidden; white-space: nowrap;
         }
 
-        .buy-badge-status {
-            background: #ffffff; color: #111; font-size: 9px; font-weight: 900;
-            padding: 2px 6px; border-radius: 5px; border: 1px solid #777; display: none; margin-top: 3px;
-        }
-        
-        .project-show-card-box {
-            background: #ffffff; color: #d32f2f; font-size: 9px; font-weight: 900;
-            padding: 1px 6px; border-radius: 4px; border: 1px solid #d32f2f; display: none; margin-top: 2px;
+        /* 👑 الوشاح الذهبي الفخم لعرض كلمة "بس" أو "المشروع" فوق الرأس لايف */
+        .live-action-bubble {
+            background: linear-gradient(180deg, #444 0%, #222 100%); color: #ffe066;
+            font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 6px;
+            border: 1px solid var(--luxury-gold); margin-top: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: none; animation: popIn 0.2s ease-out;
         }
 
-        /* ♣️ الكروت */
+        @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
         .card {
             width: 64px; height: 92px; background: #ffffff; color: #212121; border-radius: 8px; display: flex;
             flex-direction: column; justify-content: space-between; padding: 5px; font-weight: 900; font-size: 16px;
@@ -106,12 +88,11 @@
         .card-corner-bottom { display: flex; justify-content: flex-end; line-height: 0.8; transform: rotate(180deg); }
         .card-center-icon { text-align: center; font-size: 20px; }
 
-        .card-pos-0 { bottom: 80px; left: calc(50% - 32px); transform: rotate(-2deg); }
-        .card-pos-1 { top: calc(50% - 46px); left: 65px; transform: rotate(8deg); }
-        .card-pos-2 { top: 80px; left: calc(50% - 32px); transform: rotate(4deg); }
-        .card-pos-3 { top: calc(50% - 46px); right: 65px; transform: rotate(-6deg); }
+        .card-pos-0 { bottom: 80px; left: calc(50% - 32px); }
+        .card-pos-1 { top: calc(50% - 46px); left: 65px; }
+        .card-pos-2 { top: 80px; left: calc(50% - 32px); }
+        .card-pos-3 { top: calc(50% - 46px); right: 65px; }
 
-        /* 🎛 لوحة أزرار الشراء الفخمة (الرمادية الكبسولية لـ كملنا) */
         .action-panel-bar {
             display: none; justify-content: center; gap: 6px;
             margin: 10px auto 4px auto; width: 96%; max-width: 410px; z-index: 100;
@@ -119,13 +100,11 @@
         .btn-action-kamalna {
             flex: 1; background: var(--panel-gray); border: var(--btn-border);
             color: #111111; font-weight: 900; font-size: 14px; padding: 12px 10px;
-            border-radius: 12px; cursor: pointer; text-shadow: 0 1px 0 rgba(255,255,255,0.4);
-            box-shadow: inset 0 1px 3px rgba(255,255,255,0.5), 0 5px 10px rgba(0,0,0,0.3);
+            border-radius: 12px; cursor: pointer;
         }
 
-        /* 📊 لوحة عدادات المشاريع (تم إخفاءها افتراضياً بالكامل لمنع خطأ صورة 9) */
         .project-counters-row {
-            display: none; gap: 6px; justify-content: center; width: 96%; max-width: 410px; margin-top: 6px; z-index: 90;
+            display: none; gap: 6px; justify-content: center; width: 96%; max-width: 410px; margin-top: 6px;
         }
         .counter-badge-item {
             flex: 1; background: linear-gradient(180deg, #ededed 0%, #bfbfbf 100%); border: var(--btn-border);
@@ -137,7 +116,6 @@
             display: flex; align-items: center; justify-content: center; font-size: 10px; border: 1px solid #555;
         }
 
-        /* 📊 مروحة اليد الحرة والمضمونة والمؤمنة من التعليق */
         .player-hand-container {
             display: flex; justify-content: center; width: 100%; max-width: 410px;
             position: relative; height: 110px; margin-top: 10px; margin-bottom: 25px; z-index: 200;
@@ -148,19 +126,7 @@
         }
         .player-hand-container .card:hover {
             bottom: 30px; z-index: 999 !important; transform: scale(1.15) !important;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.6);
         }
-
-        /* ☕ منيو الكافتيريا والتعابير الانزلاقي */
-        .cafeteria-tray-slide {
-            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
-            width: 100%; max-width: 410px; background: #22252a; border-top-left-radius: 20px;
-            border-top-right-radius: 20px; border-top: 3px solid var(--luxury-gold); z-index: 999;
-            padding: 14px; transition: transform 0.25s ease-out; box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
-        }
-        .cafeteria-tray-slide.open { transform: translateX(-50%) translateY(0); }
-        .grid-gift-items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
-        .gift-card-btn { background: #1a1c20; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; font-size: 12px; color: #fff; }
 
         .royal-toast {
             position: fixed; top: 15px; left: 50%; transform: translateX(-50%) translateY(-100px);
@@ -172,78 +138,62 @@
 </head>
 <body>
 
-    <div class="royal-toast" id="global-toast">🚨 تنبيه ديوانية كملنا</div>
+    <div class="royal-toast" id="global-toast">🚨 ديوانية كملنا الاحترافية</div>
 
-    <!-- البار العلوي كملنا -->
     <div class="top-score-bar" id="top-nav-bar" style="display:none;">
-        <div class="top-action-btn" onclick="openTray('تعابير')">💬 تعابير</div>
+        <div style="font-size:12px; font-weight:bold; color:#a0aec0;">💬 تعابير</div>
         <div class="score-display-box">
             <div>لنا: <span id="score-t1">0</span></div>
             <div style="color:#444;">┃</div>
             <div>لهم: <span id="score-t2">0</span></div>
         </div>
-        <div class="top-action-btn" style="color:#4caf50;" onclick="openTray('ضيافة')">☕ ضيافة وقهوة</div>
+        <div style="font-size:11px; font-weight:bold; color:#a0aec0;" id="session-lbl">جلسة 1253</div>
     </div>
 
     <div class="lobby-container" id="lobby-screen">
         <h1 style="background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 24px; font-weight: 900; margin:0 0 15px 0;">🃏 صكة الملوك الاحترافية</h1>
-        <input type="text" id="usernameInput" class="luxury-input" placeholder="ادخل اسم اللاعب الفخم">
+        <input type="text" id="usernameInput" class="luxury-input" placeholder="ادخل اسم اللاعب">
         <button class="btn-action-kamalna" style="width:100%; padding:12px;" onclick="connectToTable()">دخول مجلس الصكة</button>
     </div>
 
     <div class="game-layout" id="game-layout" style="display:none; flex-direction:column; align-items:center; width:100%;">
-        <div id="game-status" style="font-size:11px; color:#111; font-weight:bold; margin-top:2px;">بانتظار بدء اللعب...</div>
+        <div id="game-status" style="font-size:11px; color:#111; font-weight:bold; margin-top:2px;">جاري التوزيع...</div>
 
         <div class="baloot-table" id="main-baloot-table">
             <div id="seat_2" class="player-seat-avatar seat-2">
                 <div class="avatar-circle"><img src="https://cdn-icons-png.flaticon.com/512/219/219983.png"></div>
                 <div class="name-plate seat-name">Thamer</div>
-                <div class="buy-badge-status" id="buy_tag_2"></div>
-                <div class="project-show-card-box" id="reveal_box_2"></div>
+                <div class="live-action-bubble" id="action_tag_2"></div>
             </div>
             <div id="seat_1" class="player-seat-avatar seat-1">
                 <div class="avatar-circle"><img src="https://cdn-icons-png.flaticon.com/512/219/219964.png"></div>
                 <div class="name-plate seat-name">Abomidal</div>
-                <div class="buy-badge-status" id="buy_tag_1"></div>
-                <div class="project-show-card-box" id="reveal_box_1"></div>
+                <div class="live-action-bubble" id="action_tag_1"></div>
             </div>
             <div id="seat_3" class="player-seat-avatar seat-3">
                 <div class="avatar-circle"><img src="https://cdn-icons-png.flaticon.com/512/219/219968.png"></div>
                 <div class="name-plate seat-name">Seemo</div>
-                <div class="buy-badge-status" id="buy_tag_3"></div>
-                <div class="project-show-card-box" id="reveal_box_3"></div>
+                <div class="live-action-bubble" id="action_tag_3"></div>
             </div>
             <div id="seat_0" class="player-seat-avatar seat-0">
                 <div class="avatar-circle" style="border-color:#4caf50;"><img src="https://cdn-icons-png.flaticon.com/512/219/219970.png"></div>
                 <div class="name-plate" id="my-name-span" style="background:linear-gradient(180deg, #fff 0%, #b39659 100%); color:#000;">Mohammad RTL</div>
-                <div class="buy-badge-status" id="buy_tag_0"></div>
-                <div class="project-show-card-box" id="reveal_box_0"></div>
+                <div class="live-action-bubble" id="action_tag_0"></div>
             </div>
             <div class="center-area" id="center-table"></div>
         </div>
 
-        <!-- 🎛 لوحة خيارات الشراء الكبسولية الفخمة الرمادية (كملنا بالملي) -->
         <div class="action-panel-bar" id="buying-panel"></div>
 
-        <!-- 📊 لوحة العدادات التلقائية للمشاريع (تفتح فقط في مرحلة اللعب الفعلي) -->
+        <!-- 📊 لوحة العدادات التلقائية للمشاريع أسفل الطاولة -->
         <div class="project-counters-row" id="counters-row-area">
             <div class="counter-badge-item" onclick="declareProject('سرا')"><span>سرا</span><div class="counter-number-circle">١</div></div>
             <div class="counter-badge-item" onclick="declareProject('خمسين')"><span>٥٠</span><div class="counter-number-circle">٠</div></div>
             <div class="counter-badge-item" onclick="declareProject('100')"><span>١٠٠</span><div class="counter-number-circle">٠</div></div>
-            <div class="counter-badge-item" onclick="declareProject('400')"><span>٤٠٠</span><div class="counter-number-circle">٠</div></div>
+            <div class="counter-badge-item" onclick="declareProject('بلوت')"><span>بلوت</span><div class="counter-number-circle">٠</div></div>
         </div>
         
-        <!-- 📊 مروحة اليد الحرة والمحميّة من الاختفاء أو قفل التاتش -->
         <div class="player-hand-container" id="my-hand"></div>
-    </div>
-
-    <!-- ☕ لوحة الضيافة والتعابير الانزلاقية التفاعلية -->
-    <div class="cafeteria-tray-slide" id="tray-overlay">
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:6px;">
-            <b id="tray-title" style="color:var(--luxury-gold); font-size:14px;">منيو الديوانية</b>
-            <button style="background:none; border:none; color:#ff4d4d; font-weight:bold; cursor:pointer;" onclick="closeTray()">❌</button>
-        </div>
-        <div class="grid-gift-items" id="tray-grid-content"></div>
     </div>
 
 <script>
@@ -252,38 +202,6 @@
     let localCards = [];
     let seatMapping = {}; 
     let currentLeadSuit = null;
-
-    function openTray(mode) {
-        const tray = document.getElementById('tray-overlay');
-        const title = document.getElementById('tray-title');
-        const grid = document.getElementById('tray-grid-content');
-        grid.innerHTML = "";
-        
-        if(mode === 'تعابير') {
-            title.innerText = "💬 إرسال تعبيرات وتصاريح الديوانية";
-            const phrases = ["كفوك الطيب", "العب عجل!", "صن يا ولد", "الحظر يا رفيقي", "اشرب جاي"];
-            phrases.forEach(p => {
-                grid.innerHTML += `<div class="gift-card-btn" onclick="sendEmojiText('${p}')">${p}</div>`;
-            });
-        } else {
-            title.innerText = "☕ منيو ضيافة وإكرام رفقاء المجلس";
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(1)">☕ استكانة شاي لـ (الادهم)</div>`;
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(2)">☕ فنجان قهوة لـ (Thamer)</div>`;
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(3)">🥜 طاسة مكسرات لـ (Seemo)</div>`;
-        }
-        tray.classList.add('open');
-    }
-
-    function closeTray() { document.getElementById('tray-overlay').classList.remove('open'); }
-    
-    function sendEmojiText(msg) { socket.emit('deliver_hospitality', { fromSeat: mySeatIndex, toSeat: mySeatIndex, item: msg }); closeTray(); }
-    
-    function sendHospitalityDirect(relSeat) {
-        let actualTarget = 0;
-        for(let i=0; i<4; i++) { if(seatMapping[i] === relSeat) { actualTarget = i; break; } }
-        socket.emit('deliver_hospitality', { fromSeat: mySeatIndex, toSeat: actualTarget, item: "فنجان قهوة ملوكي" });
-        closeTray();
-    }
 
     function showToast(message) { const toast = document.getElementById('global-toast'); toast.innerText = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3000); }
     
@@ -299,7 +217,6 @@
 
     function declareProject(type) { socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type }); }
 
-    socket.on('hospitality_broadcast', (data) => { showToast(`💬 ${data.senderName}: [ ${data.item} ]`); });
     socket.on('round_ended_announcement', (data) => { showToast(data.summary); });
 
     socket.on('room_updated', (data) => {
@@ -322,33 +239,23 @@
         document.getElementById('score-t2').innerText = data.scores.team2;
         currentLeadSuit = data.leadSuit || null;
 
-        // التدقيق الصارم لمنع ظهور مشاريع وقت الشراء (حل خطأ الصورة 9)
+        // إخفاء ذكي للمشاريع وقت الشراء وعرضها فقط وقت اللعب الفعلي
         const countersRow = document.getElementById('counters-row-area');
         if(data.gameStage === 'playing') {
-            countersRow.style.display = 'flex'; // تظهر فقط وقت اللعب والفرش الفعلي
+            countersRow.style.display = 'flex';
         } else {
-            countersRow.style.display = 'none';  // تختفي تماماً وقت الشراء أول وثاني
+            countersRow.style.display = 'none';
         }
 
+        // تحديث وعرض أوشحة "بس" أو "المشروع" لايف فوق رأس كل لاعب
         for(let i=0; i<4; i++) {
             let relPos = seatMapping[i];
-            const buyTag = document.getElementById(`buy_tag_${relPos}`);
-            const boxDiv = document.getElementById(`reveal_box_${relPos}`);
-            
-            if(data.buyerSeat === i && data.buyType) { buyTag.innerText = `${data.buyType}`; buyTag.style.display = 'inline-block'; }
-            else { buyTag.style.display = 'none'; }
-
-            if(data.activeProjects && data.activeProjects[i] && data.activeProjects[i] !== "") {
-                boxDiv.innerText = `${data.activeProjects[i]}`; boxDiv.style.display = 'block';
-            } else { boxDiv.style.display = 'none'; }
-        }
-
-        for(let i=0; i<4; i++) {
-            let relPos = seatMapping[i];
-            const seatDiv = document.getElementById(`seat_${relPos}`);
-            if(seatDiv) {
-                if(i === data.currentTurn) seatDiv.classList.add('active-turn-glow');
-                else seatDiv.classList.remove('active-turn-glow');
+            const actionTag = document.getElementById(`action_tag_${relPos}`);
+            if(data.playerActionsText && data.playerActionsText[i] && data.playerActionsText[i] !== "") {
+                actionTag.innerText = data.playerActionsText[i];
+                actionTag.style.display = 'inline-block';
+            } else {
+                actionTag.style.display = 'none';
             }
         }
 
@@ -356,7 +263,7 @@
         const buyingPanel = document.getElementById('buying-panel');
 
         if(data.gameStage === 'buying') {
-            document.getElementById('game-status').innerText = `دور الشراء - مقعد ${data.currentTurn}`;
+            document.getElementById('game-status').innerText = `دور شراء القيد - مقعد ${data.currentTurn}`;
             if(data.flipCard) { centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 46px); left:calc(50% - 32px); border: 1.5px dashed #cca43b; border-radius:8px;">` + createCardMarkup(data.flipCard) + `</div>`; }
             
             if (data.currentTurn === mySeatIndex) {
@@ -365,7 +272,7 @@
                     <button class="btn-action-kamalna" onclick="makeDecision('buy', 'صن')">صن</button>
                     <button class="btn-action-kamalna" onclick="makeDecision('buy', 'حكم')">حكم</button>
                     <button class="btn-action-kamalna" onclick="makeDecision('buy', 'أشكل')">أشكل</button>
-                    <button class="btn-action-kamalna" onclick="makeDecision('pass', null)">بس</button>
+                    <button class="btn-action-kamalna" style="background:#5a5a5a; color:#fff;" onclick="makeDecision('pass', null)">بس</button>
                 `;
             } else { buyingPanel.style.display = 'none'; }
         } else {
