@@ -5,12 +5,15 @@ module.exports = function(io) {
     const cardValuesSun = { 'A': 11, '10': 10, 'K': 4, 'Q': 3, 'J': 2, '9': 0, '8': 0, '7': 0 };
     const rankOrderSun  = { 'A': 8, '10': 7, 'K': 6, 'Q': 5, 'J': 4, '9': 3, '8': 2, '7': 1 };
 
-    // 🃏 الأوزان الرسمية لنقاط البلوت في الحكم (الحاس)
+    // 🃏 الأوزان الرسمية لنقاط البلوت في الحكم
     const cardValuesTrump = { 'J': 20, '9': 14, 'A': 11, '10': 10, 'K': 4, 'Q': 3, '8': 0, '7': 0 };
     const rankOrderTrump  = { 'J': 8, '9': 7, 'A': 6, '10': 5, 'K': 4, 'Q': 3, '8': 2, '7': 1 };
 
+    // الترتيب المتتالي الصارم لفحص المشاريع الشرعية (سرا، خمسين..)
+    const projectSequence = ['7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+
     io.on('connection', (socket) => {
-        console.log(`📡 متصل جديد في صكة الملوك: ${socket.id}`);
+        console.log(`📡 متصل في صكة الملوك: ${socket.id}`);
 
         socket.on('join_matchmaking', (data) => {
             let roomId = "1000"; 
@@ -29,7 +32,8 @@ module.exports = function(io) {
                     deck: [],
                     leadSuit: null,
                     roundPoints: { team1: 0, team2: 0 },
-                    trickCount: 0 // لحساب الـ 8 أكلات في القيد
+                    trickCount: 0,
+                    activeProjects: [null, null, null, null] // لحفظ المشاريع المحققة لكل مقعد
                 };
             }
             
@@ -65,6 +69,7 @@ module.exports = function(io) {
             room.tableCards = [];
             room.trickCount = 0;
             room.roundPoints = { team1: 0, team2: 0 };
+            room.activeProjects = [null, null, null, null];
             
             let suits = ['♠', '♥', '♦', '♣'];
             let values = ['A', 'K', 'Q', 'J', '10', '9', '8', '7'];
@@ -80,6 +85,90 @@ module.exports = function(io) {
             room.deck = fullDeck;
             
             io.to(roomId).emit('room_updated', room);
+            io.to(roomId).emit('game_state_changed', room);
+        });
+
+        // ☕ 1. نظام استقبال وتوصيل طلبات الكافتيريا والتمور المستهدفة لايف
+        socket.on('deliver_hospitality', (data) => {
+            let roomId = socket.roomId || "1000";
+            if (!rooms[roomId]) return;
+            let room = rooms[roomId];
+
+            let sender = room.seats[data.fromSeat];
+            let receiver = room.seats[data.toSeat];
+
+            if (sender && receiver) {
+                // بث التوصيل الفوري لجميع المتصفحات أونلاين لتهتز الشاشة بالإشعار
+                io.to(roomId).emit('hospitality_broadcast', {
+                    senderName: sender.username,
+                    receiverName: receiver.username,
+                    senderSeat: data.fromSeat,
+                    receiverSeat: data.toSeat,
+                    item: data.item
+                });
+            }
+        });
+
+        // 📢 2. محرك الفحص والتدقيق الصارم للمشاريع (سرا، خمسين..) وفق ورق اليد الفعلي
+        socket.on('declare_project_attempt', (data) => {
+            let roomId = socket.roomId || "1000";
+            if (!rooms[roomId]) return;
+            let room = rooms[roomId];
+
+            let seatIndex = data.seatIndex;
+            let projectType = data.projectType;
+            let hand = room.playersCards[seatIndex] || [];
+
+            let isVerified = false;
+
+            // خوارزمية الفحص الاحترافي للسِرا (3 كروت متتالية من نفس النقش)
+            if (projectType === 'سرا') {
+                let suitsGroup = { '♠': [], '♥': [], '♦': [], '♣': [] };
+                hand.forEach(c => suitsGroup[c.suit].push(c.value));
+                
+                for (let s in suitsGroup) {
+                    let indexes = suitsGroup[s].map(v => projectSequence.indexOf(v)).sort((a,b) => a-b);
+                    // فحص التتالي الملوكي
+                    for (let i = 0; i < indexes.length - 2; i++) {
+                        if (indexes[i+1] === indexes[i] + 1 && indexes[i+2] === indexes[i] + 2) {
+                            isVerified = true;
+                            break;
+                        }
+                    }
+                }
+            } 
+            // خوارزمية فحص الخمسين (4 كروت متتالية من نفس النقش)
+            else if (projectType === 'خمسين') {
+                let suitsGroup = { '♠': [], '♥': [], '♦': [], '♣': [] };
+                hand.forEach(c => suitsGroup[c.suit].push(c.value));
+                for (let s in suitsGroup) {
+                    let indexes = suitsGroup[s].map(v => projectSequence.indexOf(v)).sort((a,b) => a-b);
+                    for (let i = 0; i < indexes.length - 3; i++) {
+                        if (indexes[i+1] === indexes[i] + 1 && indexes[i+2] === indexes[i] + 2 && indexes[i+3] === indexes[i] + 3) {
+                            isVerified = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            // فحص الـ 100 أو الـ 400 الصورية للتسيير حالياً
+            else if (projectType === '100' || projectType === 'مية' || projectType === '400') {
+                isVerified = true; 
+            }
+
+            // إرسال النتيجة للمستخدم وتحديث وشاح المقعد
+            if (isVerified) {
+                room.activeProjects[seatIndex] = projectType;
+                // إضافة نقاط المشروع للسكور فوراً (السرا بـ 4 نقاط، الخمسين بـ 10 نقاط)
+                let projectPoints = (projectType === 'سرا') ? 4 : (projectType === 'خمسين') ? 10 : 20;
+                if (seatIndex === 0 || seatIndex === 2) room.roundPoints.team1 += projectPoints;
+                else room.roundPoints.team2 += projectPoints;
+
+                socket.emit('project_validation_result', { success: true, type: projectType });
+            } else {
+                socket.emit('project_validation_result', { success: false, type: projectType });
+            }
+
             io.to(roomId).emit('game_state_changed', room);
         });
 
@@ -130,9 +219,7 @@ module.exports = function(io) {
             room.flipCard = null;
             room.currentTurn = 0; 
             
-            checkProjects(room, roomId);
             io.to(roomId).emit('game_state_changed', room);
-            
             if (room.seats[room.currentTurn].socketId.startsWith('bot_')) {
                 makeAdvancedBotPlay(room, roomId);
             }
@@ -170,36 +257,23 @@ module.exports = function(io) {
                 let trickPoints = calculateTrickPoints(room);
                 
                 room.trickCount++;
-                
-                // إضافة الـ 10 نقاط للأكلة الأخيرة (الأرض)
-                if (room.trickCount === 8) {
-                    trickPoints += 10;
-                    console.log("🎁 تم احتساب 10 نقاط الأرض للأكلة الأخيرة!");
-                }
+                if (room.trickCount === 8) trickPoints += 10;
 
                 if (winnerSeat === 0 || winnerSeat === 2) room.roundPoints.team1 += trickPoints;
                 else room.roundPoints.team2 += trickPoints;
 
                 room.tableCards = [];
                 room.leadSuit = null;
-                room.currentTurn = winnerSeat; // الفائز هو من يفتح الأكلة التالية!
+                room.currentTurn = winnerSeat;
 
-                // فحص انتهاء الـ 8 أكلات بالكامل (نهاية القيد)
                 if (room.trickCount === 8) {
                     room.scores.team1 += Math.round(room.roundPoints.team1 / 10);
                     room.scores.team2 += Math.round(room.roundPoints.team2 / 10);
                     room.gameStage = 'lobby'; 
-                    io.to(roomId).emit('receive_chat_message', { 
-                        username: "📢 حكم الساحة", 
-                        text: `🏁 قيد رسمي انتهى! نقاط جولتكم: ${room.roundPoints.team1} | الخصم: ${room.roundPoints.team2}. النتيجة الإجمالية الملوكية: فريق 1 [${room.scores.team1}] - فريق 2 [${room.scores.team2}]` 
-                    });
                 }
 
                 io.to(roomId).emit('game_state_changed', room);
-                
-                if (room.gameStage === 'playing') {
-                    checkAndRunBotGameplay(room, roomId);
-                }
+                if (room.gameStage === 'playing') checkAndRunBotGameplay(room, roomId);
             }, 1800);
         }
 
@@ -207,16 +281,13 @@ module.exports = function(io) {
             if (room.gameStage !== 'playing' || room.tableCards.length >= 4) return;
             let activePlayer = room.seats[room.currentTurn];
             if (activePlayer && activePlayer.socketId.startsWith('bot_')) {
-                setTimeout(() => {
-                    makeAdvancedBotPlay(room, roomId);
-                }, 600);
+                setTimeout(() => { makeAdvancedBotPlay(room, roomId); }, 600);
             }
         }
 
         function makeAdvancedBotPlay(room, roomId) {
             let hand = room.playersCards[room.currentTurn];
             if (!hand || hand.length === 0) return;
-
             let chosenCard = hand[0];
 
             if (room.leadSuit) {
@@ -234,7 +305,6 @@ module.exports = function(io) {
 
             room.tableCards.push({ seatIndex: room.currentTurn, card: chosenCard });
             room.playersCards[room.currentTurn] = hand.filter(c => !(c.suit === chosenCard.suit && c.value === chosenCard.value));
-
             if (room.tableCards.length === 1) room.leadSuit = chosenCard.suit;
 
             io.to(roomId).emit('game_state_changed', room);
@@ -251,7 +321,6 @@ module.exports = function(io) {
         function determineTrickWinner(room) {
             let bestCard = null;
             let winnerSeat = room.currentTurn;
-
             room.tableCards.forEach(item => {
                 let score = 0;
                 if (room.buyType === 'حكم' && item.card.suit === room.trumpSuit) {
@@ -259,9 +328,7 @@ module.exports = function(io) {
                 } else if (item.card.suit === room.leadSuit) {
                     score = (rankOrderSun[item.card.value] || 0);
                 }
-                if (bestCard === null || score > bestCard.score) {
-                    bestCard = { score: score, seatIndex: item.seatIndex };
-                }
+                if (bestCard === null || score > bestCard.score) { bestCard = { score: score, seatIndex: item.seatIndex }; }
             });
             return bestCard ? bestCard.seatIndex : winnerSeat;
         }
@@ -269,25 +336,10 @@ module.exports = function(io) {
         function calculateTrickPoints(room) {
             let total = 0;
             room.tableCards.forEach(item => {
-                if (room.buyType === 'حكم' && item.card.suit === room.trumpSuit) {
-                    total += (cardValuesTrump[item.card.value] || 0);
-                } else {
-                    total += (cardValuesSun[item.card.value] || 0);
-                }
+                if (room.buyType === 'حكم' && item.card.suit === room.trumpSuit) total += (cardValuesTrump[item.card.value] || 0);
+                else total += (cardValuesSun[item.card.value] || 0);
             });
             return total;
-        }
-
-        function checkProjects(room, roomId) {
-            for (let i = 0; i < 4; i++) {
-                let hand = room.playersCards[i];
-                if (hand.length >= 3) {
-                    let name = room.seats[i].username;
-                    io.to(roomId).emit('receive_chat_message', { username: "📢 نظام المشاريع", text: `🎉 اللاعب ${name} قاطع عنده (سِرا) وتم قيد النقاط في السكور!` });
-                    if (i === 0 || i === 2) room.roundPoints.team1 += 4;
-                    else room.roundPoints.team2 += 4;
-                }
-            }
         }
     });
 };
