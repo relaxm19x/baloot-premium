@@ -12,7 +12,7 @@ module.exports = function(io) {
         console.log(`📡 لاعب اتصل بالسيرفر: ${socket.id}`);
 
         socket.on('join_matchmaking', (data) => {
-            let roomId = "1000"; // الغرفة المشتركة الثابتة لك ولأخوك
+            let roomId = "1000"; 
             
             if (!rooms[roomId]) {
                 rooms[roomId] = {
@@ -21,14 +21,13 @@ module.exports = function(io) {
                     gameStage: 'lobby',
                     scores: { team1: 0, team2: 0 },
                     currentTurn: 0,
+                    buyRound: 1,
                     tableCards: [],
                     playersCards: [[], [], [], []]
                 };
             }
             
             let targetRoom = rooms[roomId];
-            
-            // فحص إذا كان اللاعب موجوداً مسبقاً بنفس الـ socketId لمنع التكرار
             let existingSeat = targetRoom.seats.findIndex(s => s && s.socketId === socket.id);
             
             if (existingSeat === -1) {
@@ -44,43 +43,61 @@ module.exports = function(io) {
             io.to(roomId).emit('game_state_changed', targetRoom);
         });
 
-        // 🎯 تحديث دالة البوتات الذكية للعب الجماعي (أنت وأخوك والبوتات)
+        // 🎯 الدالة الذكية والمطورة لتوزيع الورق وإطلاق أزرار الشراء فوراً
         socket.on('start_game_with_bots', () => {
             let roomId = socket.roomId || "1000";
             if (!rooms[roomId]) return;
             let room = rooms[roomId];
             
-            // تعبئة أي مقعد خالي متبقي ببوت ديوانية فوراً
+            // تعبئة المقاعد الخالية ببوتات الديوانية
             for (let i = 0; i < 4; i++) {
                 if (!room.seats[i]) {
-                    room.seats[i] = { socketId: 'bot_' + i, username: "🤖 بوت ديوانية " + (i+1) };
+                    room.seats[i] = { socketId: 'bot_' + i, username: "🤖 بوت " + (i+1) };
                 }
             }
             
+            // ضبط حالة اللعبة وبدء دورة الشراء الأولى فوراً
             room.gameStage = 'buying';
             room.buyRound = 1;
-            room.currentTurn = 0; // يبدأ الدور عند مقعدك أنت
+            room.currentTurn = 0; // يبدأ الدور عندك أنت (مقعد 0) لإطلاق الأزرار
             
-            // نظام توليد وخلط وتوزيع كروت البلوت أوتوماتيكياً فوراً
+            // توليد الكروت وخلطها
             let suits = ['♠', '♥', '♦', '♣'];
             let values = ['A', 'K', 'Q', 'J', '10', '9', '8', '7'];
             let fullDeck = [];
-            
             suits.forEach(s => values.forEach(v => fullDeck.push({ suit: s, value: v })));
-            
-            // خلط الورق بشكل عشوائي صارم (Shuffle)
             fullDeck.sort(() => Math.random() - 0.5);
             
-            // كرت الشراء المكشوف بالطاولة
+            // كرت الشراء المكشوف في وسط الطاولة
             room.flipCard = fullDeck.pop();
             
-            // توزيع الـ 5 كروت الأولى لكل مقعد (سواء لاعب حقيقي أو بوت)
+            // توزيع الـ 5 كروت لكل لاعب
             for (let i = 0; i < 4; i++) {
                 room.playersCards[i] = [fullDeck.pop(), fullDeck.pop(), fullDeck.pop(), fullDeck.pop(), fullDeck.pop()];
             }
             
-            // إرسال البيانات المحدثة لايف للمتصفحات لتبدأ الصكة فوراً!
+            // 🚀 إرسال التحديث الصارم فوراً للجميع لتفعيل أزرار (صن / حكم / بس) لايف!
             io.to(roomId).emit('room_updated', room);
+            io.to(roomId).emit('game_state_changed', room);
+        });
+
+        // معالجة قرارات الشراء والتمرير من اللاعبين
+        socket.on('player_buy_decision', (data) => {
+            let roomId = socket.roomId || "1000";
+            if (!rooms[roomId]) return;
+            let room = rooms[roomId];
+
+            if (data.decision === 'buy') {
+                room.gameStage = 'playing';
+                room.buyType = data.buyType;
+                // هنا تبدأ الصكة الفعلية بعد الشراء
+            } else {
+                // الانتقال للاعب التالي في حال قال "بس" أو "طوّف"
+                room.currentTurn = (room.currentTurn + 1) % 4;
+                if (room.currentTurn === 0 && room.buyRound === 1) {
+                    room.buyRound = 2; // الانتقال للدورة الثانية
+                }
+            }
             io.to(roomId).emit('game_state_changed', room);
         });
 
@@ -98,9 +115,7 @@ module.exports = function(io) {
             let roomId = socket.roomId || "1000";
             if (rooms[roomId]) {
                 let seatIndex = rooms[roomId].seats.findIndex(s => s && s.socketId === socket.id);
-                if (seatIndex !== -1) {
-                    rooms[roomId].seats[seatIndex] = null;
-                }
+                if (seatIndex !== -1) { rooms[roomId].seats[seatIndex] = null; }
                 io.to(roomId).emit('room_updated', rooms[roomId]);
             }
         });
