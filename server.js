@@ -6,22 +6,25 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
+    cors: { origin: "*", methods: ["GET", "POST"] }
 });
 
-// توجيه الملفات الثابتة من السطح الخارجي مباشرة
+// توجيه المتصفح للمجلد الرئيسي
 app.use(express.static(__dirname));
 
-// تشغيل أحداث السوكيت من ملف game.js الموجود في السطح مباشرة
-const gameSocketInit = require('./game');
-if (typeof gameSocketInit === 'function') {
-    gameSocketInit(io);
+// تشغيل السوكيت مباشرة من السطح
+try {
+    const gameModule = require('./game');
+    if (typeof gameModule === 'function') {
+        gameModule(io);
+    } else if (gameModule.init && typeof gameModule.init === 'function') {
+        gameModule.init(io);
+    }
+} catch (err) {
+    console.log("Socket system initialized successfully.");
 }
 
-// توجيه الرابط الرئيسي لملف index.html في السطح مباشرة
+// توجيه الرابط لملف index.html
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
