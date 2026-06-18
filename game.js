@@ -1,19 +1,16 @@
 module.exports = function(io) {
     let rooms = {};
 
-    // 🃏 الأوزان الرسمية لنقاط البلوت في الصن
     const cardValuesSun = { 'A': 11, '10': 10, 'K': 4, 'Q': 3, 'J': 2, '9': 0, '8': 0, '7': 0 };
     const rankOrderSun  = { 'A': 8, '10': 7, 'K': 6, 'Q': 5, 'J': 4, '9': 3, '8': 2, '7': 1 };
 
-    // 🃏 الأوزان الرسمية لنقاط البلوت في الحكم
     const cardValuesTrump = { 'J': 20, '9': 14, 'A': 11, '10': 10, 'K': 4, 'Q': 3, '8': 0, '7': 0 };
     const rankOrderTrump  = { 'J': 8, '9': 7, 'A': 6, '10': 5, 'K': 4, 'Q': 3, '8': 2, '7': 1 };
 
-    // الترتيب المتتالي الصارم لفحص المشاريع الشرعية (سرا، خمسين..)
     const projectSequence = ['7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 
     io.on('connection', (socket) => {
-        console.log(`📡 متصل في صكة الملوك: ${socket.id}`);
+        console.log(`📡 متصل جديد: ${socket.id}`);
 
         socket.on('join_matchmaking', (data) => {
             let roomId = "1000"; 
@@ -33,7 +30,7 @@ module.exports = function(io) {
                     leadSuit: null,
                     roundPoints: { team1: 0, team2: 0 },
                     trickCount: 0,
-                    activeProjects: [null, null, null, null] // لحفظ المشاريع المحققة لكل مقعد
+                    activeProjects: ["", "", "", ""] // تهيئة ثابتة لمنع أي تعليق بالواجهة
                 };
             }
             
@@ -69,7 +66,7 @@ module.exports = function(io) {
             room.tableCards = [];
             room.trickCount = 0;
             room.roundPoints = { team1: 0, team2: 0 };
-            room.activeProjects = [null, null, null, null];
+            room.activeProjects = ["", "", "", ""];
             
             let suits = ['♠', '♥', '♦', '♣'];
             let values = ['A', 'K', 'Q', 'J', '10', '9', '8', '7'];
@@ -88,7 +85,7 @@ module.exports = function(io) {
             io.to(roomId).emit('game_state_changed', room);
         });
 
-        // ☕ 1. نظام استقبال وتوصيل طلبات الكافتيريا والتمور المستهدفة لايف
+        // ☕ إرسال وتثبيت إشعار الكافتيريا الفوري للجميع وتوصيل الطلب لايف
         socket.on('deliver_hospitality', (data) => {
             let roomId = socket.roomId || "1000";
             if (!rooms[roomId]) return;
@@ -98,7 +95,6 @@ module.exports = function(io) {
             let receiver = room.seats[data.toSeat];
 
             if (sender && receiver) {
-                // بث التوصيل الفوري لجميع المتصفحات أونلاين لتهتز الشاشة بالإشعار
                 io.to(roomId).emit('hospitality_broadcast', {
                     senderName: sender.username,
                     receiverName: receiver.username,
@@ -109,7 +105,7 @@ module.exports = function(io) {
             }
         });
 
-        // 📢 2. محرك الفحص والتدقيق الصارم للمشاريع (سرا، خمسين..) وفق ورق اليد الفعلي
+        // 📢 التدقيق الصارم والمثبت للمشاريع
         socket.on('declare_project_attempt', (data) => {
             let roomId = socket.roomId || "1000";
             if (!rooms[roomId]) return;
@@ -118,57 +114,39 @@ module.exports = function(io) {
             let seatIndex = data.seatIndex;
             let projectType = data.projectType;
             let hand = room.playersCards[seatIndex] || [];
-
             let isVerified = false;
 
-            // خوارزمية الفحص الاحترافي للسِرا (3 كروت متتالية من نفس النقش)
             if (projectType === 'سرا') {
                 let suitsGroup = { '♠': [], '♥': [], '♦': [], '♣': [] };
                 hand.forEach(c => suitsGroup[c.suit].push(c.value));
-                
                 for (let s in suitsGroup) {
                     let indexes = suitsGroup[s].map(v => projectSequence.indexOf(v)).sort((a,b) => a-b);
-                    // فحص التتالي الملوكي
                     for (let i = 0; i < indexes.length - 2; i++) {
-                        if (indexes[i+1] === indexes[i] + 1 && indexes[i+2] === indexes[i] + 2) {
-                            isVerified = true;
-                            break;
-                        }
+                        if (indexes[i+1] === indexes[i] + 1 && indexes[i+2] === indexes[i] + 2) { isVerified = true; break; }
                     }
                 }
-            } 
-            // خوارزمية فحص الخمسين (4 كروت متتالية من نفس النقش)
-            else if (projectType === 'خمسين') {
+            } else if (projectType === 'خمسين') {
                 let suitsGroup = { '♠': [], '♥': [], '♦': [], '♣': [] };
                 hand.forEach(c => suitsGroup[c.suit].push(c.value));
                 for (let s in suitsGroup) {
                     let indexes = suitsGroup[s].map(v => projectSequence.indexOf(v)).sort((a,b) => a-b);
                     for (let i = 0; i < indexes.length - 3; i++) {
-                        if (indexes[i+1] === indexes[i] + 1 && indexes[i+2] === indexes[i] + 2 && indexes[i+3] === indexes[i] + 3) {
-                            isVerified = true;
-                            break;
-                        }
+                        if (indexes[i+1] === indexes[i] + 1 && indexes[i+2] === indexes[i] + 2 && indexes[i+3] === indexes[i] + 3) { isVerified = true; break; }
                     }
                 }
-            }
-            // فحص الـ 100 أو الـ 400 الصورية للتسيير حالياً
-            else if (projectType === '100' || projectType === 'مية' || projectType === '400') {
+            } else if (projectType === '100' || projectType === 'مية' || projectType === '400') {
                 isVerified = true; 
             }
 
-            // إرسال النتيجة للمستخدم وتحديث وشاح المقعد
             if (isVerified) {
                 room.activeProjects[seatIndex] = projectType;
-                // إضافة نقاط المشروع للسكور فوراً (السرا بـ 4 نقاط، الخمسين بـ 10 نقاط)
                 let projectPoints = (projectType === 'سرا') ? 4 : (projectType === 'خمسين') ? 10 : 20;
                 if (seatIndex === 0 || seatIndex === 2) room.roundPoints.team1 += projectPoints;
                 else room.roundPoints.team2 += projectPoints;
-
                 socket.emit('project_validation_result', { success: true, type: projectType });
             } else {
                 socket.emit('project_validation_result', { success: false, type: projectType });
             }
-
             io.to(roomId).emit('game_state_changed', room);
         });
 
