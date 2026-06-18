@@ -12,16 +12,19 @@ const io = socketIo(server, {
     }
 });
 
-// 🌐 توجيه السيرفر لقرأة الملفات من المجلد الرئيسي مباشرة أونلاين
+// توجيه الملفات الثابتة من السطح الخارجي مباشرة
 app.use(express.static(__dirname));
 
-// 🎯 عند فتح الرابط الرئيسي، يتم إرسال ملف index.html فوراً للمتصفح
+// تشغيل أحداث السوكيت من ملف game.js الموجود في السطح مباشرة
+const gameSocketInit = require('./game');
+if (typeof gameSocketInit === 'function') {
+    gameSocketInit(io);
+}
+
+// توجيه الرابط الرئيسي لملف index.html في السطح مباشرة
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
-
-// ربط أحداث الصكة الجماعية بالباكيند
-require('./sockets/game')(io);
 
 const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => {
