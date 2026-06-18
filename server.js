@@ -9,10 +9,10 @@ const io = socketIo(server, {
     cors: { origin: "*", methods: ["GET", "POST"] }
 });
 
-// توجيه المتصفح للمجلد الرئيسي
+// 1. توجيه المتصفح لقراءة الملفات الثابتة من المجلد الرئيسي أولاً
 app.use(express.static(__dirname));
 
-// تشغيل السوكيت مباشرة من السطح
+// 2. تشغيل السوكيت ونظام أحداث اللعبة مباشرة
 try {
     const gameModule = require('./game');
     if (typeof gameModule === 'function') {
@@ -24,14 +24,14 @@ try {
     console.log("Socket system initialized successfully.");
 }
 
-// توجيه الرابط لملف index.html
-app.get('*', (req, res) => {
+// 3. الحل العبقري: استقبال أي طلب يتبقى وتوجيهه فوراً لصفحة اللعبة بدون فحص نصي معقد
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => {
-    console.log(`==================================================`);
-    console.log(` 🃏 صكة الملوك تعمل بنجاح دولي على المنفذ ${PORT} 🃏`);
-    console.log(`==================================================`);
+    console.log("==================================================");
+    console.log(` 🃏 صكة الملوك تعمل بنجاح قاطع على المنفذ ${PORT} 🃏`);
+    console.log("==================================================");
 });
