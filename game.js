@@ -1,5 +1,4 @@
-const { createDeck, shuffleDeck, dealInitialCards, dealRemainingCards, determineTrickWinner, isValidMove, checkPlayerProjects } = require('../engines/balootEngine');
-
+const { createDeck, shuffleDeck, dealInitialCards, dealRemainingCards, determineTrickWinner, isValidMove, checkPlayerProjects } = require('./balootEngine');
 let activeRooms = {}; 
 
 module.exports = function(io) {
