@@ -55,24 +55,29 @@
         }
         .btn-link { background: var(--gold-gradient); color:#060a13; border:none; border-radius:8px; padding:6px 14px; font-weight:bold; cursor:pointer; font-size:12px; }
 
+        /* تصفيف أزرار المتجر والكافتيريا والمحفظة */
+        .top-shop-bar { display: flex; gap: 6px; justify-content: space-between; width: 100%; align-items: center; }
         .btn-shop-toggle {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            color: #ffe066; border: 1px solid var(--luxury-gold); padding: 8px 16px;
-            border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer;
-            box-shadow: var(--gold-glow); transition: all 0.2s;
+            color: #ffe066; border: 1px solid var(--luxury-gold); padding: 6px 12px;
+            border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer;
+            box-shadow: var(--gold-glow);
         }
-        .btn-shop-toggle:hover { transform: scale(1.05); }
+        .wallet-display {
+            background: #060a13; border: 1px solid #4caf50; padding: 4px 10px;
+            border-radius: 15px; color: #4caf50; font-size: 12px; font-weight: bold;
+        }
 
         .shop-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(6, 10, 19, 0.95); border: 2px solid var(--luxury-gold);
+            background: rgba(6, 10, 19, 0.97); border: 2px solid var(--luxury-gold);
             border-radius: 24px; z-index: 500; display: none; flex-direction: column;
-            padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            padding: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.9); overflow-y: auto;
         }
-        .shop-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(204,164,59,0.3); padding-bottom: 10px; margin-bottom: 15px; }
+        .shop-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(204,164,59,0.3); padding-bottom: 8px; margin-bottom: 12px; }
         .shop-item {
             background: #0f1626; border: 1px solid rgba(204,164,59,0.2); border-radius: 14px;
-            padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+            padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
         }
         .btn-buy-item { background: var(--gold-gradient); color: #060a13; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px; }
 
@@ -93,14 +98,19 @@
 
         .player-seat {
             position: absolute; background: linear-gradient(180deg, #16223f 0%, #0f1626 100%);
-            border: 1.5px solid var(--luxury-gold); padding: 8px 14px; border-radius: 14px;
-            font-weight: bold; font-size: 13px; min-width: 95px; text-align: center; color: #ffe066;
+            border: 1.5px solid var(--luxury-gold); padding: 6px 10px; border-radius: 14px;
+            font-weight: bold; font-size: 12px; min-width: 105px; text-align: center; color: #ffe066;
             box-shadow: 0 6px 12px rgba(0,0,0,0.6); z-index: 20; transition: all 0.3s ease;
         }
-        .seat-0 { bottom: -15px; left: calc(50% - 47px); border-color: #4caf50; color: white; } 
-        .seat-1 { left: -15px; top: calc(50% - 18px); } 
-        .seat-2 { top: -15px; left: calc(50% - 47px); }  
-        .seat-3 { right: -15px; top: calc(50% - 18px); } 
+        .seat-0 { bottom: -15px; left: calc(50% - 52px); border-color: #4caf50; color: white; } 
+        .seat-1 { left: -15px; top: calc(50% - 30px); } 
+        .seat-2 { top: -15px; left: calc(50% - 52px); }  
+        .seat-3 { right: -15px; top: calc(50% - 30px); } 
+
+        /* أزرار الدعم السريع والضيافة الميكروية بجانب المقاعد */
+        .gift-buttons-container { display: flex; gap: 3px; justify-content: center; margin-top: 4px; }
+        .btn-gift-micro { background: #060a13; border: 0.5px solid var(--luxury-gold); border-radius: 4px; font-size: 10px; cursor: pointer; padding: 2px 4px; color: #fff; }
+        .btn-gift-micro:hover { background: var(--luxury-gold); color: #060a13; }
 
         .active-turn-glow { box-shadow: var(--strong-glow); border-color: #ffe066; transform: scale(1.04); }
 
@@ -114,13 +124,12 @@
 
         .chat-bubble {
             position: absolute; background: #ffffff; color: #0b0f19; padding: 7px 14px;
-            border-radius: 14px; font-size: 12px; font-weight: bold; min-width: 100px; max-width: 145px;
+            border-radius: 14px; font-size: 12px; font-weight: bold; min-width: 110px; max-width: 160px;
             box-shadow: 0 6px 18px rgba(0,0,0,0.4); display: none; z-index: 100; text-align: center;
-            transition: all 0.2s ease;
         }
-        .bubble-pos-0 { bottom: 35px; left: calc(50% - 50px); border-bottom: 4px solid #fff; }
+        .bubble-pos-0 { bottom: 45px; left: calc(50% - 55px); border-bottom: 4px solid #fff; }
         .bubble-pos-1 { left: 95px; top: calc(50% - 15px); }
-        .bubble-pos-2 { top: 35px; left: calc(50% - 50px); }
+        .bubble-pos-2 { top: 45px; left: calc(50% - 55px); }
         .bubble-pos-3 { right: 95px; top: calc(50% - 15px); }
 
         .chat-bubble.vip-bubble {
@@ -167,9 +176,6 @@
         .player-hand { display: flex; justify-content: center; margin-top: 25px; padding-bottom: 25px; }
         .player-hand .card { position: relative; bottom: 0; left: 0; margin-right: -28px; cursor: pointer; border: 1.5px solid var(--luxury-gold) !important; }
         .player-hand .card:hover { transform: translateY(-25px) rotate(-1deg) scale(1.08); z-index: 100; box-shadow: 0 15px 30px rgba(0,0,0,0.6), var(--gold-glow); }
-
-        .projects-bar { width: 100%; display: flex; justify-content: center; margin-top: 5px; gap: 10px; }
-        .btn-projects-guide { background: rgba(15, 22, 38, 0.9); color: var(--luxury-gold); border: 1px solid var(--luxury-gold); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: bold; }
         
         .btn-declare-now {
             background: var(--gold-gradient); color: #060a13; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; display: none; margin-top: 5px; width: 100%;
@@ -181,9 +187,6 @@
         .btn-action { padding: 10px 14px; font-size: 13px; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; }
         .btn-buy { background: var(--gold-gradient); color: #060a13; }
         .btn-pass { background: #4a5568; color: white; }
-
-        .btn-suit-choice { padding: 8px 12px; font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold; border: 1px solid #cca43b; background: #060a13; color: #fff; }
-        .btn-suit-choice.red { color: #d63031; border-color: #d63031; }
 
         .mobile-chat-bar {
             width: 100%; display: flex; gap: 6px; background: rgba(15, 22, 38, 0.8); padding: 8px; border-radius: 12px; border: 1px solid rgba(204,164,59,0.2); margin-top: 10px;
@@ -198,7 +201,7 @@
 
     <div class="lobby-container" id="lobby-screen">
         <h1 style="background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; font-size: 28px; font-weight: 900;">🃏 صكة الملوك Premium</h1>
-        <p style="font-size: 13px; color: #a0aec0; margin-bottom: 20px;" id="lobby-subtitle">نسخة النشرة الدولية + المتجر الملوكي</p>
+        <p style="font-size: 13px; color: #a0aec0; margin-bottom: 20px;">نظام الكافتيريا الفورية والمحفظة الرقمية د.ك</p>
         <input type="text" id="usernameInput" class="luxury-input" placeholder="ادخل اسم اللاعب">
         <button class="luxury-button" onclick="connectToTable()">دخول مجلس الصكة</button>
     </div>
@@ -207,46 +210,79 @@
         <div class="game-container">
             
             <div class="multiplayer-bar">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>طاولة: <span id="room-id-span" style="color:#ffe066; font-weight:bold;">#0000</span></div>
-                    <button class="btn-shop-toggle" onclick="toggleShopOverlay()">🛒 المتجر الملوكي VIP</button>
+                <div class="top-shop-bar">
+                    <button class="btn-shop-toggle" onclick="toggleOverlay('shop-panel')">🛒 متجر VIP</button>
+                    <button class="btn-shop-toggle" style="border-color:#4caf50; color:#4caf50;" onclick="toggleOverlay('cafeteria-panel')">☕ كافتيريا الديوانية</button>
+                    <div class="wallet-display" id="wallet-balance-text">محفظتك: 5.000 د.ك</div>
                 </div>
-                <div style="display:flex; gap:10px; justify-content:center;">
-                    <button class="btn-link" onclick="copyWhatsAppLink()">🔗 نسخ رابط الواتساب للربع</button>
-                    <button class="btn-link" id="btn-fill-bots" style="background:#4caf50; color:#fff;" onclick="fillTableWithBots()">🤖 بدء الصكة فوراً</button>
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:4px;">
+                    <button class="btn-link" onclick="copyWhatsAppLink()">🔗 رابط الواتساب للربع</button>
+                    <button class="btn-link" id="btn-fill-bots" style="background:#4caf50; color:#fff;" onclick="fillTableWithBots()">🤖 بدء الصكة</button>
                 </div>
             </div>
 
+            <!-- 👑 1. لوحة المتجر الملوكي المعدلة بأسعار بومحمد الجديدة -->
             <div class="shop-overlay" id="shop-panel">
                 <div class="shop-header">
-                    <h3 style="color:var(--luxury-gold); margin:0;">👑 متجر الديوانية الفخم</h3>
-                    <button style="background:#4a5568; color:#fff; border:none; padding:4px 10px; border-radius:6px; cursor:pointer; font-weight:bold;" onclick="toggleShopOverlay()">إغلاق ❌</button>
+                    <h3 style="color:var(--luxury-gold); margin:0;">👑 متجر التميز VIP</h3>
+                    <button style="background:#4a5568; color:#fff; border:none; padding:4px 10px; border-radius:6px; cursor:pointer;" onclick="toggleOverlay('shop-panel')">إغلاق ❌</button>
                 </div>
-                
                 <div class="shop-item">
                     <div>
                         <b style="color:#fff; display:block; font-size:14px;">اشتراك VIP الذهبي</b>
-                        <span style="color:#a0aec0; font-size:11px;">توهج اسمك بالذهب وإطار متفجر + فقاعة شات ملوكية</span>
+                        <span style="color:#a0aec0; font-size:11px;">توهج الاسم بالكامل وفقاعة شات ملوكية ذهبية</span>
                     </div>
-                    <button class="btn-buy-item" onclick="buyFeature('vip')">شراء 60 KD</button>
+                    <button class="btn-buy-item" onclick="buyFeature('vip', 3.000)">3.000 د.ك</button>
                 </div>
-
                 <div class="shop-item">
                     <div>
-                        <b style="color:#fff; display:block; font-size:14px;">سكن الكروت الأميري</b>
-                        <span style="color:#a0aec0; font-size:11px;">كروت بخلفية زرقاء داكنة وأطراف ذهبية</span>
+                        <b style="color:#fff; display:block; font-size:14px;">سكن الكروت الأميري الفخم</b>
+                        <span style="color:#a0aec0; font-size:11px;">شراء دائم لكروت ملكية داكنة بحواف مذهبة</span>
                     </div>
-                    <button class="btn-buy-item" onclick="buyFeature('skin')">تفعيل مجاني</button>
+                    <button class="btn-buy-item" onclick="buyFeature('skin', 5.000)">5.000 د.ك</button>
                 </div>
-
                 <div class="shop-item">
                     <div>
-                        <b style="color:#fff; display:block; font-size:14px;">طاولة الخشب المخملي</b>
-                        <span style="color:#a0aec0; font-size:11px;">تغيير أرضية الطاولة إلى مظهر ملكي داكن</span>
+                        <b style="color:#fff; display:block; font-size:14px;">طاولة الخشب الملكي</b>
+                        <span style="color:#a0aec0; font-size:11px;">تغيير مظهر الطاولة الحالي إلى خشب فخم داكن</span>
                     </div>
-                    <button class="btn-buy-item" onclick="buyFeature('table')">تغيير المظهر</button>
+                    <button class="btn-buy-item" onclick="buyFeature('table', 2.500)">2.500 د.ك</button>
                 </div>
-                <p style="font-size:10px; color:#a0aec0; text-align:center; margin-top:auto;">جميع الأسعار قابلة للربط بقنوات الدفع المحلية عند الإطلاق الفعلي</p>
+                <button class="luxury-button" style="margin-top:20px; font-size:14px; padding:10px;" onclick="rechargeWallet()">➕ شحن رصيد المحفظة (K-Net)</button>
+            </div>
+
+            <!-- ☕ 2. لوحة كافتيريا الديوانية الجديدة كلياً لطقطقة وضيافة الربع -->
+            <div class="shop-overlay" id="cafeteria-panel">
+                <div class="shop-header">
+                    <h3 style="color:#4caf50; margin:0;">☕ كافتيريا صكة الملوك</h3>
+                    <button style="background:#4a5568; color:#fff; border:none; padding:4px 10px; border-radius:6px; cursor:pointer;" onclick="toggleOverlay('cafeteria-panel')">إغلاق ❌</button>
+                </div>
+                <p style="font-size:11px; color:#a0aec0; margin-top:-5px; margin-bottom:12px;">أكرم خويك في الفريق أو وزّع ضيافة كاملة على الطاولة بأسعار ميكروية مذهلة!</p>
+                
+                <div class="shop-item">
+                    <div><b>☕ استكانة شاي مخدر حار</b></div>
+                    <button class="btn-buy-item" style="background:#e53e3e; color:white;" onclick="buyCafeteriaItem('شاي', 0.100)">0.100 فلس</button>
+                </div>
+                <div class="shop-item">
+                    <div><b>☕ فنجان قهوة عربية بالهيل</b></div>
+                    <button class="btn-buy-item" style="background:#dd6b20; color:white;" onclick="buyCafeteriaItem('قهوة', 0.100)">0.100 فلس</button>
+                </div>
+                <div class="shop-item">
+                    <div><b>🌴 تمرة إخلاص فاخرة</b></div>
+                    <button class="btn-buy-item" style="background:#b7791f; color:white;" onclick="buyCafeteriaItem('تمرة', 0.050)">0.050 فلس</button>
+                </div>
+                <div class="shop-item">
+                    <div><b>🥤 قوطي مشروب غازي بارد</b></div>
+                    <button class="btn-buy-item" style="background:#3182ce; color:white;" onclick="buyCafeteriaItem('غازي', 0.100)">0.100 فلس</button>
+                </div>
+                <div class="shop-item">
+                    <div><b>💧 بطلي ماء بارد منعش</b></div>
+                    <button class="btn-buy-item" style="background:#319795; color:white;" onclick="buyCafeteriaItem('ماء', 0.050)">0.050 فلس</button>
+                </div>
+                <div class="shop-item" style="border: 1px dashed #cca43b;">
+                    <div><b style="color:#ffe066;">👑 صينية ضيافة عامة (للأربعة)</b></div>
+                    <button class="btn-buy-item" onclick="buyCafeteriaItem('صينية كاملة', 0.250)">0.250 فلس</button>
+                </div>
             </div>
 
             <div class="score-board">
@@ -257,28 +293,34 @@
 
             <div id="game-status">بانتظار اكتمال المجلس...</div>
 
-            <div class="projects-bar">
-                <div class="btn-projects-guide">🏆 مظهر الكروت الفخم VIP</div>
-            </div>
-
             <div class="baloot-table" id="main-baloot-table">
                 <div class="round-result-overlay" id="round-result-panel">
-                    <h2 style="color: #ffe066; margin: 0 0 10px 0; font-size: 20px;">📊 نشرة الجولة الحالية</h2>
+                    <h2 style="color: #ffe066; margin: 0 0 10px 0; font-size: 20px;">📊 نشرة الجولة</h2>
                     <div style="font-size: 16px; color: #fff; margin: 5px 0;" id="round-points-text"></div>
                     <div style="font-size: 14px; color: #cca43b; margin: 5px 0;" id="round-projects-text"></div>
                     <hr style="width:80%; border: 0; border-top: 1px solid #cca43b; margin: 10px 0;">
                     <div style="font-size: 18px; color: #ffe066; font-weight: bold;" id="total-scores-text"></div>
                 </div>
 
-                <div id="seat_2" class="player-seat seat-2">مقعد خالٍ</div>
+                <!-- مقعد لاعب 2 (أعلى) مع ميزة الطقطقة السريعة -->
+                <div id="seat_2" class="player-seat seat-2">مقعد خالٍ
+                    <div class="gift-buttons-container"><button class="btn-gift-micro" onclick="sendQuickGift(2, 'شاي')">☕</button><button class="btn-gift-micro" onclick="sendQuickGift(2, 'تمرة')">🌴</button></div>
+                </div>
                 <div id="bubble_2" class="chat-bubble bubble-pos-2"></div>
 
-                <div id="seat_1" class="player-seat seat-1">مقعد خالٍ</div>
+                <!-- مقعد لاعب 1 (يسار) مع ميزة الطقطقة السريعة -->
+                <div id="seat_1" class="player-seat seat-1">مقعد خالٍ
+                    <div class="gift-buttons-container"><button class="btn-gift-micro" onclick="sendQuickGift(1, 'شاي')">☕</button><button class="btn-gift-micro" onclick="sendQuickGift(1, 'غازي')">🥤</button></div>
+                </div>
                 <div id="bubble_1" class="chat-bubble bubble-pos-1"></div>
 
-                <div id="seat_3" class="player-seat seat-3">مقعد خالٍ</div>
+                <!-- مقعد لاعب 3 (يمين) مع ميزة الطقطقة السريعة -->
+                <div id="seat_3" class="player-seat seat-3">مقعد خالٍ
+                    <div class="gift-buttons-container"><button class="btn-gift-micro" onclick="sendQuickGift(3, 'شاي')">☕</button><button class="btn-gift-micro" onclick="sendQuickGift(3, 'تمرة')">🌴</button></div>
+                </div>
                 <div id="bubble_3" class="chat-bubble bubble-pos-3"></div>
 
+                <!-- أنت (لاعب 0 أسفل) -->
                 <div id="seat_0" class="player-seat seat-0">
                     <span id="my-name-span" style="transition: color 0.3s;">أنت</span>
                     <button id="btn-declare-project-now" class="btn-declare-now" onclick="declareMyProject()">📢 أعلن مشروعي!</button>
@@ -300,7 +342,6 @@
     </div>
 
 <script>
-    // 🎯 تحديث ديناميكي ملوكي: قراءة رابط السيرفر أوتوماتيكياً عند الرفع على الدومين
     const socket = io(); 
     let mySeatIndex = null;
     let localCards = [];
@@ -309,65 +350,91 @@
     let currentGlobalGameType = 'صن';
     let currentGlobalTrumpSuit = null;
     
+    // متغيرات المحفظة والمنتجات الجديدة الفاخرة لبومحمد
+    let playerWalletBalance = 5.000; // رصيد افتراضي 5 دنانير
     let hasPremiumSkin = false;
     let isUserVIP = false;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const roomFromUrl = urlParams.get('room');
-    if (roomFromUrl) {
-        currentRoomId = roomFromUrl;
-        document.getElementById('lobby-subtitle').innerText = `طاولة رقم #${currentRoomId}`;
+    function updateWalletUI() {
+        document.getElementById('wallet-balance-text').innerText = `محفظتك: ${playerWalletBalance.toFixed(3)} د.ك`;
     }
 
-    document.getElementById('usernameInput').value = "محمد";
-
-    function connectToTable() {
-        const username = document.getElementById('usernameInput').value;
-        if(!username) return alert("الرجاء كتابة الاسم!");
-        document.getElementById('lobby-screen').style.display = 'none';
-        document.getElementById('game-layout').style.display = 'flex';
-        socket.emit('join_matchmaking', { username: username, roomId: currentRoomId });
-    }
-
-    function toggleShopOverlay() {
-        const panel = document.getElementById('shop-panel');
+    function toggleOverlay(id) {
+        const panel = document.getElementById(id);
         panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
     }
 
-    function buyFeature(type) {
+    // شراء المنتجات الكبرى من المتجر
+    function buyFeature(type, cost) {
+        if (playerWalletBalance < cost) return alert("❌ رصيدك غير كافٍ! اشحن محفظتك عبر كي نت.");
+        playerWalletBalance -= cost;
+        updateWalletUI();
+
         if(type === 'vip') {
             isUserVIP = true;
-            const mySeat = document.getElementById('seat_0');
-            mySeat.classList.add('vip-active');
+            document.getElementById('seat_0').classList.add('vip-active');
             document.getElementById('my-name-span').style.color = '#ffdf00';
-            alert("👑 كفو بومحمد! تم تفعيل اشتراك VIP بنجاح. مقعدك وفقاعات الشات الخاصة بك الآن تشع بالذهب الملوكي!");
+            alert("👑 كفو بومحمد! تم تفعيل اشتراك VIP بنجاح بـ 3 دنانير فقط!");
         } else if(type === 'skin') {
             hasPremiumSkin = true;
             renderHand();
-            alert("🎨 تم تفعيل سكن الكروت الأميري الفاخر بنجاح!");
+            alert("🎨 تم شراء وتفعيل سكن الكروت الأميري الفاخر بـ 5 دنانير!");
         } else if(type === 'table') {
             document.getElementById('main-baloot-table').style.background = 'radial-gradient(circle, #2d1f10 30%, #140d06 80%)';
             document.getElementById('main-baloot-table').style.border = '14px solid #cca43b';
-            alert("🪵 تم تحويل مظهر الطاولة إلى الخشب الملكي المخملي!");
+            alert("🪵 تم تغيير مظهر الطاولة إلى الخشب الملكي بـ 2.500 د.ك!");
         }
-        toggleShopOverlay();
+        toggleOverlay('shop-panel');
+    }
+
+    // شراء من كافتيريا الصفحة الرئيسية
+    function buyCafeteriaItem(name, cost) {
+        if (playerWalletBalance < cost) return alert("❌ الرصيد غير كافٍ لشراء الضيافة!");
+        playerWalletBalance -= cost;
+        updateWalletUI();
+        alert(`☕ تم شراء ${name} بنجاح خصماً من رصيدك، يمكنك الآن توزيعه على الطاولة لطقطقة الربع!`);
+        toggleOverlay('cafeteria-panel');
+    }
+
+    // ميزة الضيافة والدعم الفوري على الطاولة بـ 100 فلس
+    function sendQuickGift(targetRelativePos, giftType) {
+        const cost = (giftType === 'تمرة') ? 0.050 : 0.100;
+        if (playerWalletBalance < cost) return alert("❌ رصيد محفظتك لا يكفي لصب الضيافة!");
+        
+        playerWalletBalance -= cost;
+        updateWalletUI();
+
+        // محاكاة إرسال حركة الضيافة لايف على الطاولة عبر نظام الدردشة والفقاعات
+        let giftText = "";
+        if (giftType === 'شاي') giftText = "☕ صب لك استكانة شاي مخدر!";
+        if (giftType === 'تمرة') giftText = "🌴 قند راسك بتمرة إخلاص فاخرة!";
+        if (giftType === 'غازي') giftText = "🥤 عطاك قوطي غازي بارد ينعشك!";
+
+        const bubble = document.getElementById(`bubble_${targetRelativePos}`);
+        if(bubble) {
+            bubble.innerText = giftText;
+            bubble.style.background = "#4caf50";
+            bubble.style.color = "#fff";
+            bubble.style.display = 'block';
+            setTimeout(() => { bubble.style.display = 'none'; bubble.style.background = "#fff"; bubble.style.color = "#0b0f19"; }, 4500);
+        }
+    }
+
+    function rechargeWallet() {
+        playerWalletBalance += 5.000;
+        updateWalletUI();
+        alert("💳 محاكاة نجاح الدفع عبر K-Net: تم شحن محفظتك بـ 5.000 د.ك إضافية!");
     }
 
     function copyWhatsAppLink() {
         const inviteUrl = `${window.location.origin}${window.location.pathname}?room=${currentRoomId}`;
         navigator.clipboard.writeText(inviteUrl).then(() => {
-            alert(`🔗 تم نسخ الرابط الملوكي!\nارسله الحين للربع بالواتساب:\n${inviteUrl}`);
+            alert(`🔗 تم نسخ رابط الصكة!\nارسله الحين للربع بالواتساب:\n${inviteUrl}`);
         });
     }
 
-    function fillTableWithBots() {
-        socket.emit('start_game_with_bots');
-    }
-
-    function declareMyProject() {
-        socket.emit('declare_my_project_manually');
-        document.getElementById('btn-declare-project-now').style.display = 'none';
-    }
+    function fillTableWithBots() { socket.emit('start_game_with_bots'); }
+    function declareMyProject() { socket.emit('declare_my_project_manually'); document.getElementById('btn-declare-project-now').style.display = 'none'; }
 
     socket.on('room_updated', (data) => {
         currentRoomId = data.roomId;
@@ -386,7 +453,13 @@
             if (data.seats[i]) {
                 if (relativePos === 0) {
                     document.getElementById('my-name-span').innerText = data.seats[i].username;
-                } else { seatDiv.innerText = data.seats[i].username; }
+                } else { 
+                    // الحفاظ على أزرار الهدايا عند تحديث الاسم
+                    let giftHTML = (relativePos === 2) ? `<div class="gift-buttons-container"><button class="btn-gift-micro" onclick="sendQuickGift(2, 'شاي')">☕</button><button class="btn-gift-micro" onclick="sendQuickGift(2, 'تمرة')">🌴</button></div>` :
+                                   (relativePos === 1) ? `<div class="gift-buttons-container"><button class="btn-gift-micro" onclick="sendQuickGift(1, 'شاي')">☕</button><button class="btn-gift-micro" onclick="sendQuickGift(1, 'غازي')">🥤</button></div>` :
+                                   `<div class="gift-buttons-container"><button class="btn-gift-micro" onclick="sendQuickGift(3, 'شاي')">☕</button><button class="btn-gift-micro" onclick="sendQuickGift(3, 'تمرة')">🌴</button></div>`;
+                    seatDiv.innerHTML = data.seats[i].username + giftHTML; 
+                }
             } else {
                 if (relativePos !== 0) seatDiv.innerText = "مقعد خالٍ";
             }
@@ -434,8 +507,6 @@
                 } else {
                     buyingPanel.innerHTML = `
                         <button class="btn-action btn-buy" onclick="makeDecision('buy', 'صن')">صن ☀️</button>
-                        <button class="btn-action btn-buy" style="background:#0f1626; color:#ffe066; border:1px solid #cca43b;" onclick="showSuitSelectionOverlay()">حكم ثاني 🃏</button>
-                        <button class="btn-action btn-buy" onclick="makeDecision('buy', 'أشكل')">أشكل 👑</button>
                         <button class="btn-action btn-pass" onclick="makeDecision('pass', null)">طوّف 🛡️</button>
                     `;
                 }
@@ -467,48 +538,19 @@
         }
     });
 
-    function showSuitSelectionOverlay() {
-        const buyingPanel = document.getElementById('buying-panel');
-        buyingPanel.innerHTML = `
-            <div style="width:100%; text-align:center; color:#ffe066; font-size:12px; margin-bottom:5px;">اختر زات الحكم الثاني:</div>
-            <button class="btn-suit-choice black" onclick="makeDecision('buy', 'حكم_ثاني_♠')">♠ سبيت</button>
-            <button class="btn-suit-choice red" onclick="makeDecision('buy', 'حكم_ثاني_♥')">♥ هاص</button>
-            <button class="btn-suit-choice red" onclick="makeDecision('buy', 'حكم_ثاني_♦')">♦ ديمَن</button>
-            <button class="btn-suit-choice black" onclick="makeDecision('buy', 'حكم_ثاني_♣')">♣ شريا</button>
-            <button class="btn-action btn-pass" style="width:100%; margin-top:5px;" onclick="socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: 'pass' })">الغاء ❌</button>
-        `;
-    }
-
-    socket.on('show_round_result_board', (data) => {
-        const resultPanel = document.getElementById('round-result-panel');
-        document.getElementById('round-points-text').innerHTML = `أبناط اللمّات الكسبانة:<br><b>لنا:</b> ${data.roundPoints.team1} بنط ┃ <b>لهم:</b> ${data.roundPoints.team2} بنط`;
-        document.getElementById('round-projects-text').innerHTML = `نقاط المشاريع المقيدة:<br><b>لنا:</b> ${data.projectPoints.team1} ┃ <b>لهم:</b> ${data.projectPoints.team2}`;
-        document.getElementById('total-scores-text').innerText = `🏆 المجموع التراكمي: لنا [ ${data.totalScores.team1} ] - لهم [ ${data.totalScores.team2} ]`;
-        resultPanel.style.display = 'flex';
-    });
-
-    socket.on('invalid_move_alert', (data) => { alert(data.message); });
-
-    socket.on('game_over_announcement', (data) => {
-        alert(`🏆 صكة الملوك الختامية 🏆\n\n${data.winnerText}\n\nالنتيجة النهائية:\nلنا: ${data.finalScores.team1} ┃ لهم: ${data.finalScores.team2}`);
-    });
-
     socket.on('receive_chat_message', (data) => {
         let senderRelPos = -1;
         for(let i=0; i<4; i++) {
             const seatDiv = document.getElementById(`seat_${seatMapping[i]}`);
             let currentName = (seatMapping[i] === 0) ? document.getElementById('my-name-span').innerText : (seatDiv ? seatDiv.innerText : "");
-            if(currentName === data.username) { senderRelPos = seatMapping[i]; break; }
+            if(currentName.includes(data.username)) { senderRelPos = seatMapping[i]; break; }
         }
         if(senderRelPos !== -1) {
             const bubble = document.getElementById(`bubble_${senderRelPos}`);
             if(bubble) {
                 bubble.innerText = data.text;
-                if (senderRelPos === 0 && isUserVIP) {
-                    bubble.classList.add('vip-bubble');
-                } else {
-                    bubble.classList.remove('vip-bubble');
-                }
+                if (senderRelPos === 0 && isUserVIP) bubble.classList.add('vip-bubble');
+                else bubble.classList.remove('vip-bubble');
                 bubble.style.display = 'block';
                 setTimeout(() => { bubble.style.display = 'none'; }, 4000);
             }
@@ -526,7 +568,6 @@
 
     function isCardStrong(card) {
         if (currentGlobalGameType === 'صن' && card.value === 'A') return true;
-        if (currentGlobalGameType === 'حكم' && card.suit === currentGlobalTrumpSuit && (card.value === 'J' || card.value === '9')) return true;
         return false;
     }
 
