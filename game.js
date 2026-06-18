@@ -96,82 +96,96 @@ module.exports = function(io) {
                 }
                 
                 room.flipCard = null;
-                room.currentTurn = 0; // يبدأ اللعب من لاعب 0
+                room.currentTurn = 0; // يبدأ اللعب الفعلي من عندك
                 
-                // 🤖 فحص فوري: إذا كان لاعب 0 بوت خليه يلعب، وإذا كان أنت بيفك القفل الحين لتلعب!
-                let activePlayer = room.seats[room.currentTurn];
-                if (activePlayer && activePlayer.socketId.startsWith('bot_')) {
-                    makeBotPlayCard(room, roomId);
-                }
+                io.to(roomId).emit('game_state_changed', room);
+                
+                // إذا كان المقعد الحالي بوت خليه يلعب
+                checkAndRunBotGameplay(room, roomId);
                 
             } else {
                 room.currentTurn = (room.currentTurn + 1) % 4;
                 if (room.currentTurn === 0 && room.buyRound === 1) {
                     room.buyRound = 2;
                 }
-                checkAndRunBotTurns(room, roomId);
+                checkAndRunBotBuying(room, roomId);
+                io.to(roomId).emit('game_state_changed', room);
             }
-            
-            io.to(roomId).emit('game_state_changed', room);
         });
 
-        // 🎯 استقبال كرت اللعب المقذوف من يدك وتمرير الدور فوراً للبوتات
+        // 🎯 معالجة رمي الورق الصارم مع الحفاظ على ترتيب الأكلات والتأخير الزمني
         socket.on('play_card', (data) => {
             let roomId = socket.roomId || "1000";
             if (!rooms[roomId]) return;
             let room = rooms[roomId];
 
-            // التأكد أن الدور على اللاعب فعلياً
             if (room.currentTurn !== data.seatIndex) return;
+            if (room.tableCards.length >= 4) return; // قفل لمنع الرمي الزائد أثناء التجميد التلقائي
 
-            // إنزال الكرت على الطاولة
+            // إنزال الكرت
             room.tableCards.push({ seatIndex: data.seatIndex, card: data.card });
 
-            // إزالة الكرت من يد اللاعب
+            // حذف الكرت من اليد
             room.playersCards[data.seatIndex] = room.playersCards[data.seatIndex].filter(
                 c => !(c.suit === data.card.suit && c.value === data.card.value)
             );
 
-            // لمة الأوراق إذا اكتملت الأكلة (4 كروت على الأرض)
-            if (room.tableCards.length === 4) {
-                setTimeout(() => {
-                    room.tableCards = []; // تصفير الأرضية للأكلة الجديدة
-                    room.currentTurn = (room.currentTurn + 1) % 4; // من يأكل يبدأ، نفترض التالي مؤقتاً للتسيير
-                    io.to(roomId).emit('game_state_changed', room);
-                }, 1500);
-            } else {
-                // نقل الدور للاعب التالي
-                room.currentTurn = (room.currentTurn + 1) % 4;
-                
-                // إذا كان اللاعب التالي بوووت، خليه يرمي كرت فوراً أوتوماتيكياً!
-                let nextPlayer = room.seats[room.currentTurn];
-                if (nextPlayer && nextPlayer.socketId.startsWith('bot_')) {
-                    makeBotPlayCard(room, roomId);
-                }
-            }
-
             io.to(roomId).emit('game_state_changed', room);
+
+            // فحص اكتمال الأكلة الحالية (4 كروت بالوسط)
+            if (room.tableCards.length === 4) {
+                // ⏱️ تجميد الشاشة لمدة 2 ثانية لكي يرى بومحمد الكروت بوضوح على الطاولة
+                setTimeout(() => {
+                    room.tableCards = []; // لمة الورق وتصفير الأرضية
+                    room.currentTurn = (room.currentTurn + 1) % 4; // نقل الدور للتالي لبدء الأكلة الجديدة
+                    io.to(roomId).emit('game_state_changed', room);
+                    
+                    // تشغيل البوتات للأكلة الجديدة إذا جاء دورها
+                    checkAndRunBotGameplay(room, roomId);
+                }, 2000);
+            } else {
+                // نقل الدور العادي للاعب التالي في نفس الأكلة
+                room.currentTurn = (room.currentTurn + 1) % 4;
+                io.to(roomId).emit('game_state_changed', room);
+                
+                // تشغيل البوت الحين إذا كان عليه الدور في نفس الأكلة
+                checkAndRunBotGameplay(room, roomId);
+            }
         });
 
-        // دالة جعل البوت يرمي كرت من يده أوتوماتيكياً
-        function makeBotPlayCard(room, roomId) {
-            let botHand = room.playersCards[room.currentTurn];
-            if (botHand && botHand.length > 0) {
-                let thrownCard = botHand.pop(); // رمي آخر كرت بيده
-                room.tableCards.push({ seatIndex: room.currentTurn, card: thrownCard });
-                
-                // الانتقال للاعب التالي
-                room.currentTurn = (room.currentTurn + 1) % 4;
-                
-                // إذا كان التالي أيضاً بوت.. خليه يلعب بتكرار ذكي
-                let nextPlayer = room.seats[room.currentTurn];
-                if (nextPlayer && nextPlayer.socketId.startsWith('bot_') && room.tableCards.length < 4) {
-                    makeBotPlayCard(room, roomId);
-                }
+        // دالة تحريك لعب البوتات في مرحلة الصكة الفعلية بالتتالي
+        function checkAndRunBotGameplay(room, roomId) {
+            if (room.gameStage !== 'playing' || room.tableCards.length >= 4) return;
+            
+            let activePlayer = room.seats[room.currentTurn];
+            if (activePlayer && activePlayer.socketId.startsWith('bot_')) {
+                // البوت يلعب بعد تأخير بسيط جداً (500ms) لكي يبدو اللعب طبيعياً ومريحاً
+                setTimeout(() => {
+                    if (room.gameStage !== 'playing' || room.tableCards.length >= 4) return;
+                    let botHand = room.playersCards[room.currentTurn];
+                    if (botHand && botHand.length > 0) {
+                        let thrown = botHand.pop(); // رمي كرت
+                        room.tableCards.push({ seatIndex: room.currentTurn, card: thrown });
+                        
+                        if (room.tableCards.length === 4) {
+                            io.to(roomId).emit('game_state_changed', room);
+                            setTimeout(() => {
+                                room.tableCards = [];
+                                room.currentTurn = (room.currentTurn + 1) % 4;
+                                io.to(roomId).emit('game_state_changed', room);
+                                checkAndRunBotGameplay(room, roomId);
+                            }, 2000);
+                        } else {
+                            room.currentTurn = (room.currentTurn + 1) % 4;
+                            io.to(roomId).emit('game_state_changed', room);
+                            checkAndRunBotGameplay(room, roomId);
+                        }
+                    }
+                }, 500);
             }
         }
 
-        function checkAndRunBotTurns(room, roomId) {
+        function checkAndRunBotBuying(room, roomId) {
             let attempts = 0;
             while (room.seats[room.currentTurn] && room.seats[room.currentTurn].socketId.startsWith('bot_') && room.gameStage === 'buying' && attempts < 4) {
                 room.currentTurn = (room.currentTurn + 1) % 4;
