@@ -16,16 +16,15 @@
         }
 
         body {
-            margin: 0; padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg-color); color: #ffffff;
             display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; overflow: hidden;
-            -webkit-user-select: none; user-select: none;
+            min-height: 100vh; overflow: hidden; -webkit-user-select: none; user-select: none;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
 
+        /* 👑 البار العلوي */
         .top-score-bar {
             width: 100%; max-width: 420px; background: linear-gradient(180deg, #44464a 0%, #1e1f22 100%);
             padding: 8px 14px; border-bottom-left-radius: 18px; border-bottom-right-radius: 18px;
@@ -36,50 +35,55 @@
             display: flex; background: #000000; border-radius: 12px; border: 1.5px solid #555;
             padding: 3px 16px; gap: 16px; font-weight: 900; font-size: 16px; color: #ffffff;
         }
+        .top-action-btn { background: #333; border: 1px solid #ffe066; color: #ffe066; font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 8px; cursor: pointer; }
 
+        .lobby-container {
+            background: #181b22; padding: 35px 25px; border-radius: 24px;
+            border: 2px solid var(--luxury-gold); text-align: center; margin-top: 70px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8); width: 88%; max-width: 370px;
+        }
+
+        .luxury-input {
+            width: 100%; padding: 12px; margin: 12px 0; border-radius: 12px;
+            border: 1px solid var(--luxury-gold); background: #0c0f16; color: white; text-align: center; font-size: 15px;
+        }
+
+        /* 📱 الطاولة */
         .baloot-table {
-            width: 94%; max-width: 410px; height: 350px; background: var(--table-green);
-            border: 14px solid #33200f; border-radius: 45px; position: relative; margin: 8px auto;
-            box-shadow: inset 0 0 60px rgba(0,0,0,0.85), 0 16px 32px rgba(0,0,0,0.6);
-            z-index: 10;
+            width: 94%; max-width: 410px; height: 340px; background: var(--table-green);
+            border: 14px solid #33200f; border-radius: 45px; position: relative; margin: 5px auto;
+            box-shadow: inset 0 0 60px rgba(0,0,0,0.85), 0 16px 32px rgba(0,0,0,0.6); z-index: 10;
         }
 
-        .player-seat-avatar {
-            position: absolute; display: flex; flex-direction: column; align-items: center;
-            width: 85px; z-index: 20; text-align: center;
-        }
+        .player-seat-avatar { position: absolute; display: flex; flex-direction: column; align-items: center; width: 85px; z-index: 20; }
         .seat-0 { bottom: -18px; left: calc(50% - 42.5px); }
         .seat-1 { left: -18px; top: calc(50% - 45px); }
         .seat-2 { top: -18px; left: calc(50% - 42.5px); }
         .seat-3 { right: -18px; top: calc(50% - 45px); }
 
         .avatar-circle {
-            width: 52px; height: 52px; border-radius: 50%; border: 3px solid #bba374;
+            width: 50px; height: 50px; border-radius: 50%; border: 2.5px solid #bba374;
             box-shadow: 0 6px 12px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
-        .avatar-circle img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .avatar-circle img { width: 100%; height: 100%; border-radius: 50%; }
         
         .name-plate {
             background: linear-gradient(180deg, #eeddb2 0%, #b39659 100%); color: #000;
-            font-size: 10.5px; font-weight: 900; padding: 2px 8px; border-radius: 8px;
-            margin-top: -8px; z-index: 25; width: 75px; text-shadow: 0 0 1px #fff;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3); overflow: hidden; white-space: nowrap;
+            font-size: 10px; font-weight: 900; padding: 2px 6px; border-radius: 8px;
+            margin-top: -8px; z-index: 25; width: 72px; text-shadow: 0 0 1px #fff; text-align: center;
         }
 
-        /* 👑 الوشاح الذهبي الفخم لعرض كلمة "بس" أو "المشروع" فوق الرأس لايف */
         .live-action-bubble {
             background: linear-gradient(180deg, #444 0%, #222 100%); color: #ffe066;
             font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 6px;
-            border: 1px solid var(--luxury-gold); margin-top: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            display: none; animation: popIn 0.2s ease-out;
+            border: 1px solid var(--luxury-gold); margin-top: 4px; display: none;
         }
 
-        @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
+        /* 🃏 الكروت */
         .card {
-            width: 64px; height: 92px; background: #ffffff; color: #212121; border-radius: 8px; display: flex;
-            flex-direction: column; justify-content: space-between; padding: 5px; font-weight: 900; font-size: 16px;
+            width: 62px; height: 88px; background: #ffffff; color: #212121; border-radius: 8px; display: flex;
+            flex-direction: column; justify-content: space-between; padding: 4px; font-weight: 900; font-size: 16px;
             box-shadow: var(--card-shadow); border: 1.2px solid #b1b2b5; position: absolute;
         }
         .card.red { color: #d63031; }
@@ -88,51 +92,43 @@
         .card-corner-bottom { display: flex; justify-content: flex-end; line-height: 0.8; transform: rotate(180deg); }
         .card-center-icon { text-align: center; font-size: 20px; }
 
-        .card-pos-0 { bottom: 80px; left: calc(50% - 32px); }
-        .card-pos-1 { top: calc(50% - 46px); left: 65px; }
-        .card-pos-2 { top: 80px; left: calc(50% - 32px); }
-        .card-pos-3 { top: calc(50% - 46px); right: 65px; }
+        .card-pos-0 { bottom: 75px; left: calc(50% - 31px); }
+        .card-pos-1 { top: calc(50% - 44px); left: 60px; }
+        .card-pos-2 { top: 75px; left: calc(50% - 31px); }
+        .card-pos-3 { top: calc(50% - 44px); right: 60px; }
 
-        .action-panel-bar {
-            display: none; justify-content: center; gap: 6px;
-            margin: 10px auto 4px auto; width: 96%; max-width: 410px; z-index: 100;
-        }
-        .btn-action-kamalna {
-            flex: 1; background: var(--panel-gray); border: var(--btn-border);
-            color: #111111; font-weight: 900; font-size: 14px; padding: 12px 10px;
-            border-radius: 12px; cursor: pointer;
-        }
+        .action-panel-bar { display: none; justify-content: center; gap: 6px; margin: 8px auto 2px auto; width: 96%; max-width: 410px; z-index: 100; }
+        .btn-action-kamalna { flex: 1; background: var(--panel-gray); border: var(--btn-border); color: #111111; font-weight: 900; font-size: 13px; padding: 10px 8px; border-radius: 10px; cursor: pointer; }
 
-        .project-counters-row {
-            display: none; gap: 6px; justify-content: center; width: 96%; max-width: 410px; margin-top: 6px;
-        }
-        .counter-badge-item {
-            flex: 1; background: linear-gradient(180deg, #ededed 0%, #bfbfbf 100%); border: var(--btn-border);
-            border-radius: 10px; color: #333; font-weight: 900; font-size: 12px; padding: 6px;
-            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.15); cursor: pointer;
-        }
-        .counter-number-circle {
-            background: #fff; color: #000; border-radius: 50%; width: 18px; height: 18px;
-            display: flex; align-items: center; justify-content: center; font-size: 10px; border: 1px solid #555;
-        }
+        .project-counters-row { display: none; gap: 6px; justify-content: center; width: 96%; max-width: 410px; margin-top: 4px; }
+        .counter-badge-item { flex: 1; background: linear-gradient(180deg, #ededed 0%, #bfbfbf 100%); border: var(--btn-border); border-radius: 8px; color: #333; font-weight: 900; font-size: 11px; padding: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .counter-number-circle { background: #fff; color: #000; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 9px; }
 
-        .player-hand-container {
-            display: flex; justify-content: center; width: 100%; max-width: 410px;
-            position: relative; height: 110px; margin-top: 10px; margin-bottom: 25px; z-index: 200;
-        }
-        .player-hand-container .card {
-            position: absolute; bottom: 12px; transition: all 0.15s ease;
-            cursor: pointer; transform-origin: bottom center; border: 1.2px solid #555 !important;
-        }
-        .player-hand-container .card:hover {
-            bottom: 30px; z-index: 999 !important; transform: scale(1.15) !important;
-        }
+        /* 📊 مروحة اليد الحرة والمضمونة */
+        .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 410px; position: relative; height: 100px; margin-top: 4px; z-index: 200; }
+        .player-hand-container .card { position: absolute; bottom: 10px; cursor: pointer; transform-origin: bottom center; border: 1.2px solid #555 !important; }
+        .player-hand-container .card:hover { bottom: 25px; z-index: 999 !important; transform: scale(1.12) !important; }
 
-        .royal-toast {
-            position: fixed; top: 15px; left: 50%; transform: translateX(-50%) translateY(-100px);
-            background: #222; border: 1.5px solid var(--luxury-gold); padding: 10px 20px; border-radius: 12px;
-            color: #ffe066; font-weight: bold; text-align: center; z-index: 9999; opacity: 0; transition: all 0.3s ease;
+        /* 💬 خانة الدردشة الاحترافية التحتانية للكتابة */
+        .chat-input-footer-bar {
+            width: 100%; max-width: 410px; background: #22252a; border-top: 1.5px solid var(--luxury-gold);
+            padding: 8px; display: flex; gap: 6px; align-items: center; position: fixed; bottom: 0; z-index: 300;
         }
+        .chat-text-field { flex: 1; background: #111; border: 1px solid #555; border-radius: 20px; padding: 6px 14px; color: white; font-size: 13px; outline: none; }
+        .chat-send-btn { background: var(--gold-gradient); color: #000; border: none; padding: 6px 14px; font-weight: bold; border-radius: 20px; cursor: pointer; font-size: 12px; }
+
+        /* ☕ درج الانزلاق */
+        .cafeteria-tray-slide {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
+            width: 100%; max-width: 410px; background: #22252a; border-top-left-radius: 20px;
+            border-top-right-radius: 20px; border-top: 3px solid var(--luxury-gold); z-index: 999;
+            padding: 14px; transition: transform 0.25s ease-out; box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
+        }
+        .cafeteria-tray-slide.open { transform: translateX(-50%) translateY(0); }
+        .grid-gift-items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+        .gift-card-btn { background: #1a1c20; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; font-size: 12px; color: #fff; }
+
+        .royal-toast { position: fixed; top: 15px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #222; border: 1.5px solid var(--luxury-gold); padding: 10px 20px; border-radius: 12px; color: #ffe066; font-weight: bold; text-align: center; z-index: 9999; opacity: 0; transition: all 0.3s ease; }
         .royal-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
@@ -140,19 +136,20 @@
 
     <div class="royal-toast" id="global-toast">🚨 ديوانية كملنا الاحترافية</div>
 
+    <!-- البار العلوي كملنا المفعل بالكامل -->
     <div class="top-score-bar" id="top-nav-bar" style="display:none;">
-        <div style="font-size:12px; font-weight:bold; color:#a0aec0;">💬 تعابير</div>
+        <div class="top-action-btn" onclick="openTray('تعابير')">💬 تعابير</div>
         <div class="score-display-box">
             <div>لنا: <span id="score-t1">0</span></div>
             <div style="color:#444;">┃</div>
             <div>لهم: <span id="score-t2">0</span></div>
         </div>
-        <div style="font-size:11px; font-weight:bold; color:#a0aec0;" id="session-lbl">جلسة 1253</div>
+        <div class="top-action-btn" style="color:#4caf50; border-color:#4caf50;" onclick="openTray('ضيافة')">☕ ضيافة</div>
     </div>
 
     <div class="lobby-container" id="lobby-screen">
         <h1 style="background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 24px; font-weight: 900; margin:0 0 15px 0;">🃏 صكة الملوك الاحترافية</h1>
-        <input type="text" id="usernameInput" class="luxury-input" placeholder="ادخل اسم اللاعب">
+        <input type="text" id="usernameInput" class="luxury-input" placeholder="ادخل اسم اللاعب الفخم">
         <button class="btn-action-kamalna" style="width:100%; padding:12px;" onclick="connectToTable()">دخول مجلس الصكة</button>
     </div>
 
@@ -177,7 +174,7 @@
             </div>
             <div id="seat_0" class="player-seat-avatar seat-0">
                 <div class="avatar-circle" style="border-color:#4caf50;"><img src="https://cdn-icons-png.flaticon.com/512/219/219970.png"></div>
-                <div class="name-plate" id="my-name-span" style="background:linear-gradient(180deg, #fff 0%, #b39659 100%); color:#000;">Mohammad RTL</div>
+                <div class="name-plate" id="my-name-span" style="background:linear-gradient(180deg, #fff 0%, #b39659 100%); color:#000;">Mohammad</div>
                 <div class="live-action-bubble" id="action_tag_0"></div>
             </div>
             <div class="center-area" id="center-table"></div>
@@ -185,7 +182,6 @@
 
         <div class="action-panel-bar" id="buying-panel"></div>
 
-        <!-- 📊 لوحة العدادات التلقائية للمشاريع أسفل الطاولة -->
         <div class="project-counters-row" id="counters-row-area">
             <div class="counter-badge-item" onclick="declareProject('سرا')"><span>سرا</span><div class="counter-number-circle">١</div></div>
             <div class="counter-badge-item" onclick="declareProject('خمسين')"><span>٥٠</span><div class="counter-number-circle">٠</div></div>
@@ -194,39 +190,70 @@
         </div>
         
         <div class="player-hand-container" id="my-hand"></div>
+
+        <!-- 💬 صندوق الدردشة والكتابة السفلي الفخم الجديد المحاكي بالملي لكملنا -->
+        <div class="chat-input-footer-bar" id="chat-footer-box" style="display:none;">
+            <input type="text" id="chatMessageInput" class="chat-text-field" placeholder="اكتب رسالة أو تصريح للمجلس الحين...">
+            <button class="chat-send-btn" onclick="sendChatMsg()">إرسال 💬</button>
+        </div>
+    </div>
+
+    <!-- الدرج الانزلاقي للضيافة والتعابير -->
+    <div class="cafeteria-tray-slide" id="tray-overlay">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:6px;">
+            <b id="tray-title" style="color:var(--luxury-gold); font-size:14px;">قائمة كملنا</b>
+            <button style="background:none; border:none; color:#ff4d4d; font-weight:bold; cursor:pointer;" onclick="closeTray()">❌</button>
+        </div>
+        <div class="grid-gift-items" id="tray-grid-content"></div>
     </div>
 
 <script>
     const socket = io(); 
-    let mySeatIndex = null;
-    let localCards = [];
-    let seatMapping = {}; 
-    let currentLeadSuit = null;
+    let mySeatIndex = null; let localCards = []; let seatMapping = {}; let currentLeadSuit = null;
 
-    function showToast(message) { const toast = document.getElementById('global-toast'); toast.innerText = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3000); }
-    
-    function connectToTable() {
-        const username = document.getElementById('usernameInput').value.trim();
-        if(!username) return alert("الرجاء إدخال اسم اللاعب!");
-        document.getElementById('lobby-screen').style.display = 'none';
-        document.getElementById('game-layout').style.display = 'flex';
-        document.getElementById('top-nav-bar').style.display = 'flex';
-        socket.emit('join_matchmaking', { username: username });
-        setTimeout(() => { socket.emit('start_game_with_bots'); }, 500);
+    function openTray(mode) {
+        const tray = document.getElementById('tray-overlay'); const title = document.getElementById('tray-title'); const grid = document.getElementById('tray-grid-content');
+        grid.innerHTML = "";
+        if(mode === 'تعابير') {
+            title.innerText = "💬 إرسال تعابير وتصاريح لايف للديوانية";
+            const phrases = ["كفوك الطيب", "العب عجل!", "صن يا ولد", "اشرب شاي مخدر", "الحظر يا رفيقي"];
+            phrases.forEach(p => { grid.innerHTML += `<div class="gift-card-btn" onclick="sendEmojiText('${p}')">${p}</div>`; });
+        } else {
+            title.innerText = "☕ إكرام رفقاء المجلس بالضيافة والقهوة";
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(1)">☕ استكانة شاي لـ (Abomidal)</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(2)">☕ فنجان قهوة لـ (Thamer)</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(3)">🥜 طاسة مكسرات لـ (Seemo)</div>`;
+        }
+        tray.classList.add('open');
+    }
+    function closeTray() { document.getElementById('tray-overlay').classList.remove('open'); }
+    function sendEmojiText(msg) { socket.emit('deliver_hospitality', { fromSeat: mySeatIndex, toSeat: mySeatIndex, item: msg }); closeTray(); }
+    function sendHospitalityDirect(relSeat) {
+        let actual = 0; for(let i=0; i<4; i++) { if(seatMapping[i] === relSeat) { actual = i; break; } }
+        socket.emit('deliver_hospitality', { fromSeat: mySeatIndex, toSeat: actual, item: "فنجان قهوة كويتي" }); closeTray();
+    }
+    function sendChatMsg() {
+        const input = document.getElementById('chatMessageInput'); const val = input.value.trim();
+        if(!val) return; socket.emit('deliver_hospitality', { fromSeat: mySeatIndex, toSeat: mySeatIndex, item: val }); input.value = "";
     }
 
-    function declareProject(type) { socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type }); }
+    function showToast(message) { const toast = document.getElementById('global-toast'); toast.innerText = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3000); }
+    function connectToTable() {
+        const username = document.getElementById('usernameInput').value.trim(); if(!username) return alert("الرجاء إدخال اسم اللاعب!");
+        document.getElementById('lobby-screen').style.display = 'none'; document.getElementById('game-layout').style.display = 'flex';
+        document.getElementById('top-nav-bar').style.display = 'flex'; document.getElementById('chat-footer-box').style.display = 'flex';
+        socket.emit('join_matchmaking', { username: username }); setTimeout(() => { socket.emit('start_game_with_bots'); }, 500);
+    }
+    function declareProject(type) { socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type }); showToast(`📢 أعلنت: ${type}`); }
 
+    socket.on('hospitality_broadcast', (data) => { showToast(`💬 ${data.senderName}: [ ${data.item} ]`); });
     socket.on('round_ended_announcement', (data) => { showToast(data.summary); });
 
     socket.on('room_updated', (data) => {
         for(let i=0; i<4; i++) { if(data.seats[i] && data.seats[i].socketId === socket.id) { mySeatIndex = i; } }
-        if(mySeatIndex === null) mySeatIndex = 0;
-        seatMapping = {};
+        if(mySeatIndex === null) mySeatIndex = 0; seatMapping = {};
         for(let i=0; i<4; i++) {
-            let relativePos = (i - mySeatIndex + 4) % 4;
-            seatMapping[i] = relativePos;
-            const seatDiv = document.getElementById(`seat_${relativePos}`);
+            let relativePos = (i - mySeatIndex + 4) % 4; seatMapping[i] = relativePos; const seatDiv = document.getElementById(`seat_${relativePos}`);
             if (data.seats[i]) {
                 if (relativePos === 0) { document.getElementById('my-name-span').innerText = data.seats[i].username; }
                 else { seatDiv.querySelector('.seat-name').innerText = data.seats[i].username; }
@@ -235,37 +262,24 @@
     });
 
     socket.on('game_state_changed', (data) => {
-        document.getElementById('score-t1').innerText = data.scores.team1;
-        document.getElementById('score-t2').innerText = data.scores.team2;
+        document.getElementById('score-t1').innerText = data.scores.team1; document.getElementById('score-t2').innerText = data.scores.team2;
         currentLeadSuit = data.leadSuit || null;
 
-        // إخفاء ذكي للمشاريع وقت الشراء وعرضها فقط وقت اللعب الفعلي
         const countersRow = document.getElementById('counters-row-area');
-        if(data.gameStage === 'playing') {
-            countersRow.style.display = 'flex';
-        } else {
-            countersRow.style.display = 'none';
-        }
+        if(data.gameStage === 'playing') countersRow.style.display = 'flex'; else countersRow.style.display = 'none';
 
-        // تحديث وعرض أوشحة "بس" أو "المشروع" لايف فوق رأس كل لاعب
         for(let i=0; i<4; i++) {
-            let relPos = seatMapping[i];
-            const actionTag = document.getElementById(`action_tag_${relPos}`);
+            let relPos = seatMapping[i]; const actionTag = document.getElementById(`action_tag_${relPos}`);
             if(data.playerActionsText && data.playerActionsText[i] && data.playerActionsText[i] !== "") {
-                actionTag.innerText = data.playerActionsText[i];
-                actionTag.style.display = 'inline-block';
-            } else {
-                actionTag.style.display = 'none';
-            }
+                actionTag.innerText = data.playerActionsText[i]; actionTag.style.display = 'inline-block';
+            } else { actionTag.style.display = 'none'; }
         }
 
-        const centerTable = document.getElementById('center-table');
-        const buyingPanel = document.getElementById('buying-panel');
+        const centerTable = document.getElementById('center-table'); const buyingPanel = document.getElementById('buying-panel');
 
         if(data.gameStage === 'buying') {
-            document.getElementById('game-status').innerText = `دور شراء القيد - مقعد ${data.currentTurn}`;
-            if(data.flipCard) { centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 46px); left:calc(50% - 32px); border: 1.5px dashed #cca43b; border-radius:8px;">` + createCardMarkup(data.flipCard) + `</div>`; }
-            
+            document.getElementById('game-status').innerText = `دور الشراء - مقعد ${data.currentTurn}`;
+            if(data.flipCard) { centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 44px); left:calc(50% - 31px); border: 1.5px dashed #cca43b; border-radius:8px;">` + createCardMarkup(data.flipCard) + `</div>`; }
             if (data.currentTurn === mySeatIndex) {
                 buyingPanel.style.display = 'flex';
                 buyingPanel.innerHTML = `
@@ -274,22 +288,19 @@
                     <button class="btn-action-kamalna" onclick="makeDecision('buy', 'أشكل')">أشكل</button>
                     <button class="btn-action-kamalna" style="background:#5a5a5a; color:#fff;" onclick="makeDecision('pass', null)">بس</button>
                 `;
-            } else { buyingPanel.style.display = 'none'; }
+            } else buyingPanel.style.display = 'none';
         } else {
-            document.getElementById('game-status').innerText = `الأكلة الجارية [${data.trickCount + 1}/8]`;
-            buyingPanel.style.display = 'none';
+            document.getElementById('game-status').innerText = `الأكلة الجارية [${data.trickCount + 1}/8]`; buyingPanel.style.display = 'none';
             centerTable.innerHTML = "";
             if (data.tableCards && data.tableCards.length > 0) {
                 data.tableCards.forEach(item => { centerTable.innerHTML += createCardHTMLWithPosition(item.card, seatMapping[item.seatIndex]); });
             }
         }
-
         const myCards = data.playersCards[mySeatIndex] || [];
         if(myCards.length > 0) { localCards = myCards; sortMyHand(); renderHand(); }
     });
 
     function makeDecision(decision, buyType) { socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: decision, buyType: buyType }); }
-
     function throwCardFromHand(cardIndex) {
         const selectedCard = localCards[cardIndex];
         if (currentLeadSuit && selectedCard.suit !== currentLeadSuit) {
@@ -303,21 +314,14 @@
     function createCardHTMLWithPosition(card, relPos) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass} card-pos-${relPos}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
     
     function renderHand() {
-        const handDiv = document.getElementById('my-hand'); handDiv.innerHTML = "";
-        const totalCards = localCards.length;
+        const handDiv = document.getElementById('my-hand'); handDiv.innerHTML = ""; const totalCards = localCards.length;
         localCards.forEach((card, index) => {
             const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
-            const mid = (totalCards - 1) / 2;
-            const angle = (index - mid) * 7.5; 
-            const xOffset = (index - mid) * 27; 
-            const yOffset = Math.abs(index - mid) * 2.5;
-            
-            handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index}; left:calc(50% + ${xOffset}px - 32px); transform: rotate(${angle}deg); bottom:${15 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
+            const mid = (totalCards - 1) / 2; const angle = (index - mid) * 7.5; const xOffset = (index - mid) * 27; const yOffset = Math.abs(index - mid) * 2.5;
+            handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index}; left:calc(50% + ${xOffset}px - 31px); transform: rotate(${angle}deg); bottom:${15 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
         });
     }
-
-    const suitOrder = { '♠': 1, '♥': 2, '♦': 3, '♣': 4 };
-    const cardRankOrder = { 'A': 1, '10': 2, 'K': 3, 'Q': 4, 'J': 5, '9': 6, '8': 7, '7': 8 };
+    const suitOrder = { '♠': 1, '♥': 2, '♦': 3, '♣': 4 }; const cardRankOrder = { 'A': 1, '10': 2, 'K': 3, 'Q': 4, 'J': 5, '9': 6, '8': 7, '7': 8 };
     function sortMyHand() { localCards.sort((a, b) => { if (suitOrder[a.suit] !== suitOrder[b.suit]) return suitOrder[a.suit] - suitOrder[b.suit]; return cardRankOrder[a.value] - cardRankOrder[b.value]; }); }
 </script>
 </body>
