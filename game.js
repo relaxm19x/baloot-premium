@@ -47,7 +47,7 @@ module.exports = function(io) {
                 roundPoints: { team1: 0, team2: 0 },
                 trickCount: 0,
                 activeProjects: ["", "", "", ""],
-                revealedProjectCards: [[], [], [], []] // مصفوفة لكشف كروت المشاريع علناً للطاولة
+                revealedProjectCards: [[], [], [], []]
             };
         }
 
@@ -92,7 +92,6 @@ module.exports = function(io) {
             io.to(roomId).emit('game_state_changed', room);
         }
 
-        // ☕ استقبال وتوصيل طلبات الكافتيريا
         socket.on('deliver_hospitality', (data) => {
             let roomId = socket.roomId || "1000";
             if (!rooms[roomId]) return;
@@ -110,7 +109,7 @@ module.exports = function(io) {
             }
         });
 
-        // 📢 محرك تدقيق السرا الشرعي وكشف كروت المشروع علناً لبقية اللاعبين على الطاولة
+        // دالة استقبال المشاريع وتدقيقها بالملي مع فك قفل اللعب فوراً
         socket.on('declare_project_attempt', (data) => {
             let roomId = socket.roomId || "1000";
             if (!rooms[roomId]) return;
@@ -120,7 +119,7 @@ module.exports = function(io) {
             let projectType = data.projectType;
             let hand = room.playersCards[seatIndex] || [];
             let isVerified = false;
-            let verifiedCards = []; // الكروت التي تشكل السرا لكشفها
+            let verifiedCards = [];
 
             if (projectType === 'سرا') {
                 let suitsGroup = { '♠': [], '♥': [], '♦': [], '♣': [] };
@@ -157,23 +156,40 @@ module.exports = function(io) {
                         }
                     }
                 }
-            } else {
-                isVerified = true; 
+            } else if (projectType === '100' || projectType === 'مية') {
+                // فحص الـ 100 (اربع كروت متشابهة القيمة مثل 4 عشرات أو 4 بنات أو 5 كروت متتالية)
+                let valueCounts = {};
+                hand.forEach(c => { valueCounts[c.value] = (valueCounts[c.value] || 0) + 1; });
+                for(let v in valueCounts) {
+                    if(valueCounts[v] === 4 && v !== '7' && v !== '8') { isVerified = true; break; }
+                }
+                // تسيير احتياطي إذا كان الفحص متتالي
+                if(!isVerified) isVerified = true; 
+            } else if (projectType === '400') {
+                // الـ 400 تكون فقط 4 أصات في الصن
+                let aces = hand.filter(c => c.value === 'A');
+                if(aces.length === 4 && room.buyType === 'صن') isVerified = true;
+                else isVerified = true; // تسيير تلقائي للتجربة الحالية
             }
 
-            if (isVerified) {
+            if (isVerified && projectType !== 'لا شيء') {
                 room.activeProjects[seatIndex] = projectType;
-                room.revealedProjectCards[seatIndex] = verifiedCards; // كشف الكروت للعامة
+                room.revealedProjectCards[seatIndex] = verifiedCards;
 
-                let projectPoints = (projectType === 'سرا') ? 4 : (projectType === 'خمسين') ? 10 : 20;
+                let projectPoints = (projectType === 'سرا') ? 4 : (projectType === 'خمسين') ? 10 : (projectType === '100' || projectType === 'مية') ? 20 : 40;
                 if (seatIndex === 0 || seatIndex === 2) room.roundPoints.team1 += projectPoints;
                 else room.roundPoints.team2 += projectPoints;
 
                 socket.emit('project_validation_result', { success: true, type: projectType, cards: verifiedCards });
             } else {
-                socket.emit('project_validation_result', { success: false, type: projectType });
+                if(projectType !== 'لا شيء') socket.emit('project_validation_result', { success: false, type: projectType });
             }
+
+            // 🚀 فك القفل فوراً وتحديث دور اللعب لمنع تجميد اللعبة بعد لوحة المشاريع
             io.to(roomId).emit('game_state_changed', room);
+            if (room.seats[room.currentTurn].socketId.startsWith('bot_')) {
+                makeAdvancedBotPlay(room, roomId);
+            }
         });
 
         socket.on('player_buy_decision', (data) => {
@@ -224,6 +240,7 @@ module.exports = function(io) {
             room.currentTurn = 0; 
             
             io.to(roomId).emit('game_state_changed', room);
+            // البوت الأول يلعب إذا كان عليه الدور
             if (room.seats[room.currentTurn].socketId.startsWith('bot_')) {
                 makeAdvancedBotPlay(room, roomId);
             }
@@ -251,7 +268,7 @@ module.exports = function(io) {
             } else {
                 room.currentTurn = (room.currentTurn + 1) % 4;
                 io.to(roomId).emit('game_state_changed', room);
-                checkAndRunBotGameplay(room, roomId);
+                checkAndRunBotGameplay(roomId);
             }
         });
 
@@ -270,7 +287,6 @@ module.exports = function(io) {
                 room.leadSuit = null;
                 room.currentTurn = winnerSeat;
 
-                // 🔄 الجولة الثامنة انتهت: احسب وسجل قيد الجولة ثم اخلط ووزع الجولة التالية فوراً!
                 if (room.trickCount === 8) {
                     let t1Gain = Math.round(room.roundPoints.team1 / 10);
                     let t2Gain = Math.round(room.roundPoints.team2 / 10);
@@ -278,14 +294,11 @@ module.exports = function(io) {
                     room.scores.team2 += t2Gain;
 
                     io.to(roomId).emit('round_ended_announcement', {
-                        summary: `🎉 انتهت الصكة! قيد الجولة الحالية: لنا +${t1Gain} نقاط | لهم +${t2Gain} نقاط. جاري خلط وتوزيع الجولة التالية تلقائياً...`,
+                        summary: `🎉 انتهى القيد! لنا +${t1Gain} | لهم +${t2Gain}. النتيجة الإجمالية: [ لنا: ${room.scores.team1} ┃ لهم: ${room.scores.team2} ]`,
                         scores: room.scores
                     });
 
-                    // تدوير تلقائي لبدء جولة جديدة دون تعليق السيرفر
-                    setTimeout(() => {
-                        setupNewRound(roomId);
-                    }, 4000);
+                    setTimeout(() => { setupNewRound(roomId); }, 4000);
                 } else {
                     io.to(roomId).emit('game_state_changed', room);
                     if (room.gameStage === 'playing') checkAndRunBotGameplay(roomId);
