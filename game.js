@@ -9,9 +9,12 @@ module.exports = function(io) {
     let rooms = {};
 
     io.on('connection', (socket) => {
-        // إدارة غرف اللعب وحسابات البوتات والتوزيع القانوني الملوكي الصارم
+        console.log(`📡 لاعب جديد اتصل بالسيرفر: ${socket.id}`);
+
+        // 🎯 حدث دخول مجلس الصكة
         socket.on('join_matchmaking', (data) => {
-            let roomId = data.roomId || Math.floor(1000 + Math.random() * 9000).toString();
+            let roomId = data.roomId || "1000"; // تثبيت غرفة افتراضية مؤقتاً للتجربة السريعة
+            
             if (!rooms[roomId]) {
                 rooms[roomId] = {
                     roomId: roomId,
@@ -25,13 +28,22 @@ module.exports = function(io) {
             }
             
             let targetRoom = rooms[roomId];
-            let freeSeat = targetRoom.seats.findIndex(s => s === null);
-            if (freeSeat !== -1) {
-                targetRoom.seats[freeSeat] = { socketId: socket.id, username: data.username || "لاعب" };
-                socket.join(roomId);
-                socket.roomId = roomId;
-                io.to(roomId).emit('room_updated', targetRoom);
+            
+            // فحص إذا كان اللاعب موجوداً مسبقاً لمنع التكرار
+            let existingSeat = targetRoom.seats.findIndex(s => s && s.socketId === socket.id);
+            
+            if (existingSeat === -1) {
+                let freeSeat = targetRoom.seats.findIndex(s => s === null);
+                if (freeSeat !== -1) {
+                    targetRoom.seats[freeSeat] = { socketId: socket.id, username: data.username || "لاعب ملوكي" };
+                    socket.join(roomId);
+                    socket.roomId = roomId;
+                }
             }
+            
+            // إرسال التحديث فوراً لجميع المتصلين في الغرفة
+            io.to(roomId).emit('room_updated', targetRoom);
+            io.to(roomId).emit('game_state_changed', targetRoom);
         });
 
         socket.on('start_game_with_bots', () => {
@@ -59,14 +71,8 @@ module.exports = function(io) {
             io.to(roomId).emit('game_state_changed', room);
         });
 
-        socket.on('send_chat_message', (data) => {
-            let roomId = socket.roomId;
-            if (roomId && rooms[roomId]) {
-                let p = rooms[roomId].seats.find(s => s && s.socketId === socket.id);
-                if (p) {
-                    io.to(roomId).emit('receive_chat_message', { username: p.username, text: data.text });
-                }
-            }
+        socket.on('disconnect', () => {
+            console.log(`🔌 لاعب فصل من السيرفر: ${socket.id}`);
         });
     });
 };
