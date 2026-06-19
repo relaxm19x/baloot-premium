@@ -100,11 +100,11 @@
         .project-counters-row { display: none; gap: 4px; justify-content: center; width: 96%; max-width: 410px; margin-top: 4px; z-index: 80; }
         .counter-badge-item { flex: 1; background: linear-gradient(180deg, #fff 0%, #bfbfbf 100%); border: 1.5px solid #cca43b; border-radius: 8px; color: #111; font-weight: 900; font-size: 11px; padding: 6px; text-align: center; cursor: pointer; }
 
-        .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 410px; position: relative; height: 110px; margin-top: 6px; z-index: 9999 !important; }
-        .player-hand-container .card { position: absolute; bottom: 10px; cursor: pointer; transform-origin: bottom center; transition: all 0.15s ease-in-out; pointer-events: auto; }
-        .player-hand-container .card:hover { bottom: 28px; z-index: 99999 !important; transform: scale(1.18) !important; border-color: var(--luxury-gold) !important; box-shadow: 0 12px 24px rgba(0,0,0,0.6); }
+        /* 👑 تحسين حاوية كروت اليد لمنع التداخل والبعثرة كلياً واختفاء التلاصق 👑 */
+        .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 440px; position: relative; height: 125px; margin-top: 10px; z-index: 9999 !important; }
+        .player-hand-container .card { position: absolute; bottom: 12px; cursor: pointer; transform-origin: bottom center; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: auto; }
+        .player-hand-container .card:hover { bottom: 32px; z-index: 999999 !important; transform: scale(1.22) rotate(0deg) !important; border-color: var(--luxury-gold) !important; box-shadow: 0 16px 32px rgba(0,0,0,0.7); }
 
-        /* 👑 طبقة العرض المنفصلة للمشاريع الفائزة (Popup Layer) لمنع التجمد 👑 */
         .project-reveal-overlay {
             display: none; position: absolute; top: 22%; left: 50%; transform: translateX(-50%);
             width: 84%; background: rgba(0,0,0,0.85); border: 2px solid var(--luxury-gold);
@@ -339,9 +339,8 @@
         const centerTable = document.getElementById('center-table'); const buyingPanel = document.getElementById('buying-panel');
         const projectPopup = document.getElementById('project-popup');
 
-        // 🎯 الحل السحري: كشف السرا يظهر في نافذة علوية مستقلة تماماً دون إعاقة اللعب أو التسبب في تجميد Sockets
         if (data.revealedProjectCards) {
-            document.getElementById('project-popup-title').innerText = `🔎 مشروع الـ ${data.revealedProjectCards.text} الفائز للأرض!`;
+            document.getElementById('project-popup-title').innerText = `🔎 مشروع الـ ${data.revealedProjectCards.text} للأرض!`;
             projectPopup.style.display = 'block';
         } else {
             projectPopup.style.display = 'none';
@@ -362,7 +361,7 @@
                 `;
             } else buyingPanel.style.display = 'none';
         } else if (data.gameStage === 'double_round') {
-            document.getElementById('game-status').innerText = `⚠️ جولة الدبل والمضاعفة الحامية!`;
+            document.getElementById('game-status').innerText = `⚠️ جولة الدبل والمضاعفة!`;
             if (data.currentTurn === mySeatIndex) {
                 buyingPanel.style.display = 'flex';
                 buyingPanel.innerHTML = `
@@ -372,7 +371,7 @@
             } else buyingPanel.style.display = 'none';
         } else if(data.gameStage === 'playing') {
             let isMyTurnNow = (data.currentTurn === mySeatIndex);
-            document.getElementById('game-status').innerText = isMyTurnNow ? `⏱️ دورك العب سريعاً (١٠ ثواني!)` : `الأكلة الجارية [${data.trickCount + 1}/8]`; 
+            document.getElementById('game-status').innerText = isMyTurnNow ? `⏱️ دورك العب كرتك الحين` : `الأكلة الجارية [${data.trickCount + 1}/8]`; 
             buyingPanel.style.display = 'none';
             centerTable.innerHTML = "";
             if (data.tableCards && data.tableCards.length > 0) {
@@ -398,12 +397,16 @@
     function createCardMarkup(card) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
     function createCardHTMLWithPosition(card, relPos) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass} card-pos-${relPos}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
     
+    // 🃏 دالة عرض وفرش اليد المعدلة بزيادة المسافة الأفقية لمنع التداخل والبعثرة نهائياً 🃏
     function renderHand() {
         const handDiv = document.getElementById('my-hand'); handDiv.innerHTML = ""; const totalCards = localCards.length;
         localCards.forEach((card, index) => {
             const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
-            const mid = (totalCards - 1) / 2; const angle = (index - mid) * 8; const xOffset = (index - mid) * 28; const yOffset = Math.abs(index - mid) * 3;
-            handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index + 2000}; left:calc(50% + ${xOffset}px - 32.5px); transform: rotate(${angle}deg); bottom:${15 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
+            const mid = (totalCards - 1) / 2; 
+            const angle = (index - mid) * 6; 
+            const xOffset = (index - mid) * 38; // تم رفعها لـ 38px لضمان تباعد ممتاز ورؤية قيمة كل كرت فوراً
+            const yOffset = Math.abs(index - mid) * 2;
+            handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index + 2000}; left:calc(50% + ${xOffset}px - 32.5px); transform: rotate(${angle}deg); bottom:${16 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
         });
     }
     const suitOrder = { '♠': 1, '♥': 2, '♦': 3, '♣': 4 }; const cardRankOrder = { 'A': 1, '10': 2, 'K': 3, 'Q': 4, 'J': 5, '9': 6, '8': 7, '7': 8 };
