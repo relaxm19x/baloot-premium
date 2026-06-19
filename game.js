@@ -18,7 +18,9 @@ module.exports = function(io) {
                     buyerSeat: null, trumpSuit: null, tableCards: [], playersCards: [[], [], [], []],
                     deck: [], leadSuit: null, roundPoints: { team1: 0, team2: 0 }, trickCount: 0,
                     activeProjects: ["", "", "", ""], playerActionsText: ["", "", "", ""], passCount: 0,
-                    dealerSeat: 3, isRoundEnding: false
+                    dealerSeat: 3, isRoundEnding: false,
+                    // تفاصيل النشرة الرسمية مثل كملنا
+                    nashra: { trickPoints: { t1: 0, t2: 0 }, ground: { t1: 0, t2: 0 }, projects: { t1: 0, t2: 0 }, abnat: { t1: 0, t2: 0 }, gain: { t1: 0, t2: 0 } }
                 };
             }
             let room = rooms[roomId];
@@ -49,6 +51,8 @@ module.exports = function(io) {
             room.buyType = null; room.trumpSuit = null; room.tableCards = []; room.trickCount = 0; room.passCount = 0;
             room.roundPoints = { team1: 0, team2: 0 }; room.activeProjects = ["", "", "", ""]; room.playerActionsText = ["", "", "", ""];
             room.isRoundEnding = false;
+            
+            room.nashra = { trickPoints: { t1: 0, t2: 0 }, ground: { t1: 0, t2: 0 }, projects: { t1: 0, t2: 0 }, abnat: { t1: 0, t2: 0 }, gain: { t1: 0, t2: 0 } };
 
             room.dealerSeat = (room.dealerSeat + 1) % 4;
             room.currentTurn = (room.dealerSeat + 1) % 4;
@@ -70,23 +74,24 @@ module.exports = function(io) {
         }
 
         socket.on('player_buy_decision', (data) => {
-            let roomId = socket.roomId || "1000"; let room = rooms[roomId]; 
-            if (!room || room.currentTurn !== data.seatIndex || room.gameStage !== 'buying') return;
+            let roomId = socket.roomId || "1000"; let room = rooms[roomId]; if (!room || room.currentTurn !== data.seatIndex || room.gameStage !== 'buying') return;
 
             if (data.decision === 'buy') {
                 room.buyerSeat = data.seatIndex;
                 room.buyType = data.buyType;
+                
                 if (data.buyType === 'أشكل') {
                     room.buyType = 'صن (أشكل)'; room.trumpSuit = null;
                 } else {
                     room.trumpSuit = (data.buyType === 'حكم') ? room.flipCard.suit : null;
                 }
+                
                 room.playerActionsText[data.seatIndex] = `طلب: ${data.buyType}`;
                 executeBuy(room, roomId, data.buyType, data.seatIndex);
             } else {
                 room.playerActionsText[room.currentTurn] = "بس 🛡️"; room.passCount++;
                 if (room.passCount >= 8) {
-                    io.to(roomId).emit('round_ended_announcement', { summary: "🔄 الكل بس! جاري إعادة التوزيع...", scores: room.scores });
+                    io.to(roomId).emit('round_ended_announcement', { summary: "🔄 الكل بس! إعادة التوزيع...", scores: room.scores });
                     setTimeout(() => { setupNewRound(roomId); }, 2000); return;
                 }
                 room.currentTurn = (room.currentTurn + 1) % 4;
@@ -101,7 +106,18 @@ module.exports = function(io) {
             let activePlayer = room.seats[room.currentTurn];
             if (activePlayer && activePlayer.socketId.startsWith('bot_')) {
                 setTimeout(() => {
-                    if (room.flipCard && (room.flipCard.value === 'A' || room.flipCard.value === 'J')) {
+                    let hand = room.playersCards[room.currentTurn];
+                    // ذكاء البوت في الشراء والاشكل بالدورة الثانية
+                    if (room.buyRound === 2 && (room.currentTurn === room.dealerSeat || room.currentTurn === (room.dealerSeat + 1) % 4)) {
+                        if (Math.random() > 0.6) {
+                            room.buyerSeat = room.currentTurn; room.buyType = 'أشكل'; room.trumpSuit = null;
+                            room.playerActionsText[room.currentTurn] = "طلب: أشكل 👑";
+                            executeBuy(room, roomId, 'أشكل', room.currentTurn);
+                            return;
+                        }
+                    }
+
+                    if (room.flipCard && (room.flipCard.value === 'A' || room.flipCard.value === 'J' || room.flipCard.value === '10')) {
                         room.buyerSeat = room.currentTurn; 
                         room.buyType = (room.flipCard.value === 'J') ? 'حكم' : 'صن';
                         room.trumpSuit = (room.buyType === 'حكم') ? room.flipCard.suit : null;
@@ -147,13 +163,12 @@ module.exports = function(io) {
             if (data.projectType !== 'لا شيء') {
                 room.activeProjects[data.seatIndex] = data.projectType;
                 room.playerActionsText[data.seatIndex] = `مشروع: ${data.projectType}`;
-                let pts = (data.projectType === 'سرا') ? 4 : (data.projectType === 'خمسين') ? 10 : 20;
-                if (data.seatIndex === 0 || data.seatIndex === 2) room.roundPoints.team1 += pts; else room.roundPoints.team2 += pts;
+                let pts = (data.projectType === 'سرا') ? 20 : (data.projectType === 'خمسين') ? 50 : 100;
+                if (data.seatIndex === 0 || data.seatIndex === 2) room.nashra.projects.t1 += pts; else room.nashra.projects.t2 += pts;
             }
             io.to(roomId).emit('game_state_changed', room);
         });
 
-        // 🎯 إعادة الهندسة الجذرية: مطابقة كرت اللعب بالهوية المطلقة (Suit & Value) لمنع رمي كرت خاطئ نهائياً!
         socket.on('play_card', (data) => {
             let roomId = socket.roomId || "1000"; let room = rooms[roomId]; 
             if (!room || room.currentTurn !== data.seatIndex || room.gameStage !== 'playing' || room.isRoundEnding) return;
@@ -162,13 +177,13 @@ module.exports = function(io) {
             let reqCard = data.card;
             if (!reqCard) return;
 
-            // البحث والمطابقة عن الكرت الفعلي بالهوية داخل مصفوفة السيرفر
             let idx = hand.findIndex(c => c.suit === reqCard.suit && c.value === reqCard.value);
-            if (idx === -1) return; // حماية صارمة إذا الكرت غير موجود بيده في السيرفر
+            if (idx === -1) return; 
 
             let chosenCard = hand[idx];
-            hand.splice(idx, 1); // حذف الكرت الصحيح والمطابق تماماً
+            hand.splice(idx, 1); 
 
+            // إخفاء عبارات المشاريع تلقائياً بعد رمي أول كرت في الأكلة الأولى لحفظ النظافة
             if (room.tableCards.length === 0) { 
                 for(let i=0; i<4; i++) room.playerActionsText[i] = ""; 
                 room.leadSuit = chosenCard.suit; 
@@ -194,30 +209,33 @@ module.exports = function(io) {
                 let trickPoints = calculateActualTrickPoints(room);
                 room.trickCount++;
                 
-                if (room.trickCount === 8) trickPoints += 10; 
+                let currentTeam = (winnerSeat === 0 || winnerSeat === 2) ? 't1' : 't2';
+                room.nashra.trickPoints[currentTeam] += trickPoints;
 
-                if (winnerSeat === 0 || winnerSeat === 2) room.roundPoints.team1 += trickPoints;
-                else room.roundPoints.team2 += trickPoints;
+                if (room.trickCount === 8) {
+                    room.nashra.ground[currentTeam] += 10; // نقاط اللستة الأرضية
+                }
 
-                room.tableCards = []; 
-                room.leadSuit = null; 
-                room.currentTurn = winnerSeat; 
+                room.tableCards = []; room.leadSuit = null; room.currentTurn = winnerSeat; 
 
                 if (room.trickCount === 8) {
                     room.isRoundEnding = true; 
                     
-                    let t1Gain = Math.round(room.roundPoints.team1 / 10);
-                    let t2Gain = Math.round(room.roundPoints.team2 / 10);
-                    room.scores.team1 += t1Gain; 
-                    room.scores.team2 += t2Gain;
+                    // حساب إجمالي الأبناط لكل فريق
+                    room.nashra.abnat.t1 = room.nashra.trickPoints.t1 + room.nashra.ground.t1 + room.nashra.projects.t1;
+                    room.nashra.abnat.t2 = room.nashra.trickPoints.t2 + room.nashra.ground.t2 + room.nashra.projects.t2;
                     
+                    // تقريب الأبناط إلى القيد الرئيسي (القسمة على 10)
+                    room.nashra.gain.t1 = Math.round(room.nashra.abnat.t1 / 10);
+                    room.nashra.gain.t2 = Math.round(room.nashra.abnat.t2 / 10);
+                    
+                    room.scores.team1 += room.nashra.gain.t1;
+                    room.scores.team2 += room.nashra.gain.t2;
+                    
+                    room.gameStage = 'nashra'; // الانتقال لمرحلة عرض النشرة الكاملة
                     io.to(roomId).emit('game_state_changed', room);
-                    io.to(roomId).emit('round_ended_announcement', { 
-                        summary: `🏁 الجولة انتهت! لنا: +${t1Gain} | لهم: +${t2Gain}.`, 
-                        scores: room.scores 
-                    });
                     
-                    setTimeout(() => { setupNewRound(roomId); }, 4500);
+                    setTimeout(() => { setupNewRound(roomId); }, 6000); // 6 ثوانٍ لعرض النشرة كملنا ثم البدء من جديد
                 } else {
                     io.to(roomId).emit('game_state_changed', room);
                     checkAndRunBotGameplay(roomId);
@@ -256,12 +274,8 @@ module.exports = function(io) {
 
         function makeAdvancedBotPlay(room, roomId) {
             if (room.isRoundEnding) return; 
-            
-            let hand = room.playersCards[room.currentTurn]; 
-            if (!hand || hand.length === 0) return;
-            
-            let chosenCard = null;
-            let chosenIndex = 0;
+            let hand = room.playersCards[room.currentTurn]; if (!hand || hand.length === 0) return;
+            let chosenCard = null; let chosenIndex = 0;
 
             if (room.tableCards.length === 0) {
                 hand.sort((a,b) => (rankOrderSun[b.value] || 0) - (rankOrderSun[a.value] || 0));
@@ -278,44 +292,33 @@ module.exports = function(io) {
                     } else {
                         matchIndices.sort((a,b) => (rankOrderSun[hand[b].value] || 0) - (rankOrderSun[hand[a].value] || 0));
                     }
-                    chosenIndex = matchIndices[0];
-                    chosenCard = hand[chosenIndex];
+                    chosenIndex = matchIndices[0]; chosenCard = hand[chosenIndex];
                 } else {
                     if (room.trumpSuit) {
                         let trumpIndices = [];
                         hand.forEach((c, idx) => { if(c.suit === room.trumpSuit) trumpIndices.push(idx); });
                         if (trumpIndices.length > 0 && !isPartnerWinner) {
-                            chosenIndex = trumpIndices[0];
-                            chosenCard = hand[chosenIndex];
+                            chosenIndex = trumpIndices[0]; chosenCard = hand[chosenIndex];
                         }
                     }
                 }
             }
 
             if (!chosenCard) { chosenCard = hand[0]; chosenIndex = 0; }
-
             hand.splice(chosenIndex, 1); 
 
             if (room.tableCards.length === 0) room.leadSuit = chosenCard.suit;
             room.tableCards.push({ seatIndex: room.currentTurn, card: chosenCard });
             io.to(roomId).emit('game_state_changed', room);
-            
             if (room.tableCards.length === 4) handleTrickCompletion(room, roomId);
             else { room.currentTurn = (room.currentTurn + 1) % 4; io.to(roomId).emit('game_state_changed', room); checkAndRunBotGameplay(roomId); }
         }
 
-        // 💬 تفعيل دائم ومستقل للتعابير والضيافة دون أي تداخل مع أحداث اللعب
         socket.on('deliver_hospitality', (data) => {
-            let room = rooms[socket.roomId || "1000"]; 
-            if (!room) return;
+            let room = rooms[socket.roomId || "1000"]; if (!room) return;
             let s = room.seats[data.fromSeat];
             if (s) {
-                io.to(room.roomId).emit('hospitality_broadcast', { 
-                    fromSeat: data.fromSeat, 
-                    toSeat: data.toSeat, 
-                    senderName: s.username, 
-                    item: data.item 
-                });
+                io.to(room.roomId).emit('hospitality_broadcast', { fromSeat: data.fromSeat, toSeat: data.toSeat, senderName: s.username, item: data.item });
             }
         });
     });
