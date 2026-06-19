@@ -24,7 +24,6 @@
 
         *, *::before, *::after { box-sizing: border-box; }
 
-        /* 👑 البار العلوي */
         .top-score-bar {
             width: 100%; max-width: 420px; background: linear-gradient(180deg, #44464a 0%, #1e1f22 100%);
             padding: 8px 14px; border-bottom-left-radius: 18px; border-bottom-right-radius: 18px;
@@ -48,7 +47,6 @@
             border: 1px solid var(--luxury-gold); background: #0c0f16; color: white; text-align: center; font-size: 15px;
         }
 
-        /* 📱 الطاولة */
         .baloot-table {
             width: 94%; max-width: 410px; height: 340px; background: var(--table-green);
             border: 14px solid #33200f; border-radius: 45px; position: relative; margin: 5px auto;
@@ -80,7 +78,6 @@
             border: 1px solid var(--luxury-gold); margin-top: 4px; display: none;
         }
 
-        /* 🃏 الكروت */
         .card {
             width: 62px; height: 88px; background: #ffffff; color: #212121; border-radius: 8px; display: flex;
             flex-direction: column; justify-content: space-between; padding: 4px; font-weight: 900; font-size: 16px;
@@ -97,19 +94,19 @@
         .card-pos-2 { top: 75px; left: calc(50% - 31px); }
         .card-pos-3 { top: calc(50% - 44px); right: 60px; }
 
-        .action-panel-bar { display: none; justify-content: center; gap: 6px; margin: 8px auto 2px auto; width: 96%; max-width: 410px; z-index: 100; }
+        /* 🎛 فك مساحة الأزرار لمنع تعليق اللمس */
+        .action-panel-bar { display: none; justify-content: center; gap: 6px; margin: 4px auto; width: 96%; max-width: 410px; z-index: 90; height: auto; pointer-events: auto; }
         .btn-action-kamalna { flex: 1; background: var(--panel-gray); border: var(--btn-border); color: #111111; font-weight: 900; font-size: 13px; padding: 10px 8px; border-radius: 10px; cursor: pointer; }
 
-        .project-counters-row { display: none; gap: 6px; justify-content: center; width: 96%; max-width: 410px; margin-top: 4px; }
+        .project-counters-row { display: none; gap: 6px; justify-content: center; width: 96%; max-width: 410px; margin-top: 4px; z-index: 80; }
         .counter-badge-item { flex: 1; background: linear-gradient(180deg, #ededed 0%, #bfbfbf 100%); border: var(--btn-border); border-radius: 8px; color: #333; font-weight: 900; font-size: 11px; padding: 5px; display: flex; justify-content: space-between; align-items: center; }
         .counter-number-circle { background: #fff; color: #000; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 9px; }
 
-        /* 📊 مروحة اليد الحرة والمضمونة */
-        .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 410px; position: relative; height: 100px; margin-top: 4px; z-index: 200; }
-        .player-hand-container .card { position: absolute; bottom: 10px; cursor: pointer; transform-origin: bottom center; border: 1.2px solid #555 !important; }
-        .player-hand-container .card:hover { bottom: 25px; z-index: 999 !important; transform: scale(1.12) !important; }
+        /* 📊 مروحة اليد المعززة بأعلى مستويات الـ Z-Index لمنع تجميد التاتش */
+        .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 410px; position: relative; height: 100px; margin-top: 4px; z-index: 9999 !important; }
+        .player-hand-container .card { position: absolute; bottom: 10px; cursor: pointer; transform-origin: bottom center; border: 1.2px solid #555 !important; pointer-events: auto; }
+        .player-hand-container .card:hover { bottom: 25px; z-index: 99999 !important; transform: scale(1.12) !important; }
 
-        /* 💬 خانة الدردشة الاحترافية التحتانية للكتابة */
         .chat-input-footer-bar {
             width: 100%; max-width: 410px; background: #22252a; border-top: 1.5px solid var(--luxury-gold);
             padding: 8px; display: flex; gap: 6px; align-items: center; position: fixed; bottom: 0; z-index: 300;
@@ -117,7 +114,6 @@
         .chat-text-field { flex: 1; background: #111; border: 1px solid #555; border-radius: 20px; padding: 6px 14px; color: white; font-size: 13px; outline: none; }
         .chat-send-btn { background: var(--gold-gradient); color: #000; border: none; padding: 6px 14px; font-weight: bold; border-radius: 20px; cursor: pointer; font-size: 12px; }
 
-        /* ☕ درج الانزلاق */
         .cafeteria-tray-slide {
             position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
             width: 100%; max-width: 410px; background: #22252a; border-top-left-radius: 20px;
@@ -136,7 +132,6 @@
 
     <div class="royal-toast" id="global-toast">🚨 ديوانية كملنا الاحترافية</div>
 
-    <!-- البار العلوي كملنا المفعل بالكامل -->
     <div class="top-score-bar" id="top-nav-bar" style="display:none;">
         <div class="top-action-btn" onclick="openTray('تعابير')">💬 تعابير</div>
         <div class="score-display-box">
@@ -191,14 +186,12 @@
         
         <div class="player-hand-container" id="my-hand"></div>
 
-        <!-- 💬 صندوق الدردشة والكتابة السفلي الفخم الجديد المحاكي بالملي لكملنا -->
         <div class="chat-input-footer-bar" id="chat-footer-box" style="display:none;">
             <input type="text" id="chatMessageInput" class="chat-text-field" placeholder="اكتب رسالة أو تصريح للمجلس الحين...">
             <button class="chat-send-btn" onclick="sendChatMsg()">إرسال 💬</button>
         </div>
     </div>
 
-    <!-- الدرج الانزلاقي للضيافة والتعابير -->
     <div class="cafeteria-tray-slide" id="tray-overlay">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:6px;">
             <b id="tray-title" style="color:var(--luxury-gold); font-size:14px;">قائمة كملنا</b>
@@ -318,7 +311,7 @@
         localCards.forEach((card, index) => {
             const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
             const mid = (totalCards - 1) / 2; const angle = (index - mid) * 7.5; const xOffset = (index - mid) * 27; const yOffset = Math.abs(index - mid) * 2.5;
-            handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index}; left:calc(50% + ${xOffset}px - 31px); transform: rotate(${angle}deg); bottom:${15 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
+            handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index + 2000}; left:calc(50% + ${xOffset}px - 31px); transform: rotate(${angle}deg); bottom:${15 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
         });
     }
     const suitOrder = { '♠': 1, '♥': 2, '♦': 3, '♣': 4 }; const cardRankOrder = { 'A': 1, '10': 2, 'K': 3, 'Q': 4, 'J': 5, '9': 6, '8': 7, '7': 8 };
