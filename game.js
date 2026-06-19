@@ -18,7 +18,7 @@ module.exports = function(io) {
                     buyerSeat: null, trumpSuit: null, tableCards: [], playersCards: [[], [], [], []],
                     deck: [], leadSuit: null, roundPoints: { team1: 0, team2: 0 }, trickCount: 0,
                     activeProjects: ["", "", "", ""], playerActionsText: ["", "", "", ""], passCount: 0,
-                    dealerSeat: 3, isRoundEnding: false // قفل أمان لمنع تجمد نهاية الجولة
+                    dealerSeat: 3, isRoundEnding: false
                 };
             }
             let room = rooms[roomId];
@@ -48,7 +48,7 @@ module.exports = function(io) {
             room.gameStage = 'buying'; room.buyRound = 1; room.buyerSeat = null;
             room.buyType = null; room.trumpSuit = null; room.tableCards = []; room.trickCount = 0; room.passCount = 0;
             room.roundPoints = { team1: 0, team2: 0 }; room.activeProjects = ["", "", "", ""]; room.playerActionsText = ["", "", "", ""];
-            room.isRoundEnding = false; // فتح قفل اللعب للجولة الجديدة
+            room.isRoundEnding = false;
 
             room.dealerSeat = (room.dealerSeat + 1) % 4;
             room.currentTurn = (room.dealerSeat + 1) % 4;
@@ -66,11 +66,12 @@ module.exports = function(io) {
             io.to(roomId).emit('room_updated', room);
             io.to(roomId).emit('game_state_changed', room);
 
-            setTimeout(() => { checkAndRunBotBuying(room, roomId); }, 500);
+            setTimeout(() => { checkAndRunBotBuying(room, roomId); }, 600);
         }
 
         socket.on('player_buy_decision', (data) => {
-            let roomId = socket.roomId || "1000"; let room = rooms[roomId]; if (!room || room.currentTurn !== data.seatIndex || room.gameStage !== 'buying') return;
+            let roomId = socket.roomId || "1000"; let room = rooms[roomId]; 
+            if (!room || room.currentTurn !== data.seatIndex || room.gameStage !== 'buying') return;
 
             if (data.decision === 'buy') {
                 room.buyerSeat = data.seatIndex;
@@ -152,26 +153,21 @@ module.exports = function(io) {
             io.to(roomId).emit('game_state_changed', room);
         });
 
+        // 🎯 إعادة الهندسة الجذرية: مطابقة كرت اللعب بالهوية المطلقة (Suit & Value) لمنع رمي كرت خاطئ نهائياً!
         socket.on('play_card', (data) => {
             let roomId = socket.roomId || "1000"; let room = rooms[roomId]; 
             if (!room || room.currentTurn !== data.seatIndex || room.gameStage !== 'playing' || room.isRoundEnding) return;
 
             let hand = room.playersCards[data.seatIndex];
-            let cardIndex = data.cardIndex;
-            let chosenCard = null;
+            let reqCard = data.card;
+            if (!reqCard) return;
 
-            if (cardIndex !== undefined && cardIndex >= 0 && cardIndex < hand.length) {
-                chosenCard = hand[cardIndex];
-                hand.splice(cardIndex, 1); 
-            } else if (data.card) {
-                let idx = hand.findIndex(c => c.suit === data.card.suit && c.value === data.card.value);
-                if (idx !== -1) {
-                    chosenCard = hand[idx];
-                    hand.splice(idx, 1);
-                }
-            }
+            // البحث والمطابقة عن الكرت الفعلي بالهوية داخل مصفوفة السيرفر
+            let idx = hand.findIndex(c => c.suit === reqCard.suit && c.value === reqCard.value);
+            if (idx === -1) return; // حماية صارمة إذا الكرت غير موجود بيده في السيرفر
 
-            if (!chosenCard) return;
+            let chosenCard = hand[idx];
+            hand.splice(idx, 1); // حذف الكرت الصحيح والمطابق تماماً
 
             if (room.tableCards.length === 0) { 
                 for(let i=0; i<4; i++) room.playerActionsText[i] = ""; 
@@ -190,16 +186,15 @@ module.exports = function(io) {
             }
         });
 
-        // 🛠️ إصلاح دالة احتساب الحلة والمنع الصارم لأي حركة وهمية بعد الأكلة الثامنة
         function handleTrickCompletion(room, roomId) {
-            if (room.isRoundEnding) return; // حماية إضافية
+            if (room.isRoundEnding) return;
             
             setTimeout(() => {
                 let winnerSeat = determineActualWinner(room);
                 let trickPoints = calculateActualTrickPoints(room);
                 room.trickCount++;
                 
-                if (room.trickCount === 8) trickPoints += 10; // الأرض (اللوست)
+                if (room.trickCount === 8) trickPoints += 10; 
 
                 if (winnerSeat === 0 || winnerSeat === 2) room.roundPoints.team1 += trickPoints;
                 else room.roundPoints.team2 += trickPoints;
@@ -209,24 +204,20 @@ module.exports = function(io) {
                 room.currentTurn = winnerSeat; 
 
                 if (room.trickCount === 8) {
-                    room.isRoundEnding = true; // 🔒 تفعيل قفل الأمان! اللعب يتوقف رسمياً هنا ولا كروت تفرش
+                    room.isRoundEnding = true; 
                     
                     let t1Gain = Math.round(room.roundPoints.team1 / 10);
                     let t2Gain = Math.round(room.roundPoints.team2 / 10);
                     room.scores.team1 += t1Gain; 
                     room.scores.team2 += t2Gain;
                     
-                    // إرسال النتيجة فوراً لتظهر في لوحة التنبيهات (القيد)
                     io.to(roomId).emit('game_state_changed', room);
                     io.to(roomId).emit('round_ended_announcement', { 
-                        summary: `🏁 الجولة انتهت! القيد الحالي: لنا +${t1Gain} | لهم +${t2Gain}. جاري تجهيز الصكة التالية...`, 
+                        summary: `🏁 الجولة انتهت! لنا: +${t1Gain} | لهم: +${t2Gain}.`, 
                         scores: room.scores 
                     });
                     
-                    // انتظار 4.5 ثانية كاملة ليرى اللاعب القيد ثم يتم توزيع جولة جديدة ونظيف ورق
-                    setTimeout(() => { 
-                        setupNewRound(roomId); 
-                    }, 4500);
+                    setTimeout(() => { setupNewRound(roomId); }, 4500);
                 } else {
                     io.to(roomId).emit('game_state_changed', room);
                     checkAndRunBotGameplay(roomId);
@@ -264,7 +255,7 @@ module.exports = function(io) {
         }
 
         function makeAdvancedBotPlay(room, roomId) {
-            if (room.isRoundEnding) return; // منع البوت من اللعب إذا الجولة منتهية
+            if (room.isRoundEnding) return; 
             
             let hand = room.playersCards[room.currentTurn]; 
             if (!hand || hand.length === 0) return;
@@ -313,8 +304,10 @@ module.exports = function(io) {
             else { room.currentTurn = (room.currentTurn + 1) % 4; io.to(roomId).emit('game_state_changed', room); checkAndRunBotGameplay(roomId); }
         }
 
+        // 💬 تفعيل دائم ومستقل للتعابير والضيافة دون أي تداخل مع أحداث اللعب
         socket.on('deliver_hospitality', (data) => {
-            let room = rooms[socket.roomId || "1000"]; if (!room) return;
+            let room = rooms[socket.roomId || "1000"]; 
+            if (!room) return;
             let s = room.seats[data.fromSeat];
             if (s) {
                 io.to(room.roomId).emit('hospitality_broadcast', { 
