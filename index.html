@@ -12,7 +12,7 @@
             --panel-gray: linear-gradient(180deg, #aeaeae 0%, #8e8e8e 100%);
             --btn-border: 2px solid #5a5a5a;
             --table-green: radial-gradient(circle, #2b6f39 40%, #174621 80%, #0c2b14 100%);
-            --card-shadow: 0 6px 14px rgba(0,0,0,0.4);
+            --card-shadow: 0 8px 18px rgba(0,0,0,0.5);
         }
 
         body {
@@ -78,21 +78,22 @@
             border: 1px solid #ffffff; margin-top: 4px; display: none; z-index: 99; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
 
+        /* ✨ تصميم جديد ثوري عالي الوضوح للكروت لتظهر الأرقام والرموز بشكل ضخم وقوي ✨ */
         .card {
-            width: 62px; height: 88px; background: #ffffff; color: #212121; border-radius: 8px; display: flex;
-            flex-direction: column; justify-content: space-between; padding: 4px; font-weight: 900; font-size: 16px;
-            box-shadow: var(--card-shadow); border: 1.2px solid #b1b2b5; position: absolute;
+            width: 65px; height: 92px; background: #ffffff; color: #111111; border-radius: 10px; display: flex;
+            flex-direction: column; justify-content: space-between; padding: 6px; font-weight: 900; font-size: 20px;
+            box-shadow: var(--card-shadow); border: 2px solid #a1b0bd; position: absolute;
         }
         .card.red { color: #d63031; }
-        .card.black { color: #2d3436; }
-        .card-corner-top { display: flex; justify-content: flex-start; line-height: 0.8; }
-        .card-corner-bottom { display: flex; justify-content: flex-end; line-height: 0.8; transform: rotate(180deg); }
-        .card-center-icon { text-align: center; font-size: 20px; }
+        .card.black { color: #1e272e; }
+        .card-corner-top { display: flex; justify-content: flex-start; line-height: 0.9; font-size: 15px; }
+        .card-corner-bottom { display: flex; justify-content: flex-end; line-height: 0.9; transform: rotate(180deg); font-size: 15px; }
+        .card-center-icon { text-align: center; font-size: 28px; font-weight: 900; margin-top: -2px; }
 
-        .card-pos-0 { bottom: 75px; left: calc(50% - 31px); }
-        .card-pos-1 { top: calc(50% - 44px); left: 60px; }
-        .card-pos-2 { top: 75px; left: calc(50% - 31px); }
-        .card-pos-3 { top: calc(50% - 44px); right: 60px; }
+        .card-pos-0 { bottom: 75px; left: calc(50% - 32.5px); }
+        .card-pos-1 { top: calc(50% - 46px); left: 60px; }
+        .card-pos-2 { top: 75px; left: calc(50% - 32.5px); }
+        .card-pos-3 { top: calc(50% - 46px); right: 60px; }
 
         .action-panel-bar { display: none; justify-content: center; gap: 6px; margin: 4px auto; width: 96%; max-width: 410px; z-index: 90; }
         .btn-action-kamalna { flex: 1; background: var(--panel-gray); border: var(--btn-border); color: #111111; font-weight: 900; font-size: 13px; padding: 10px 8px; border-radius: 10px; cursor: pointer; }
@@ -100,9 +101,9 @@
         .project-counters-row { display: none; gap: 4px; justify-content: center; width: 96%; max-width: 410px; margin-top: 4px; z-index: 80; }
         .counter-badge-item { flex: 1; background: linear-gradient(180deg, #fff 0%, #bfbfbf 100%); border: 1.5px solid #cca43b; border-radius: 8px; color: #111; font-weight: 900; font-size: 11px; padding: 6px; text-align: center; cursor: pointer; }
 
-        .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 410px; position: relative; height: 100px; margin-top: 4px; z-index: 9999 !important; }
-        .player-hand-container .card { position: absolute; bottom: 10px; cursor: pointer; transform-origin: bottom center; border: 1.2px solid #555 !important; pointer-events: auto; }
-        .player-hand-container .card:hover { bottom: 25px; z-index: 99999 !important; transform: scale(1.12) !important; }
+        .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 410px; position: relative; height: 110px; margin-top: 6px; z-index: 9999 !important; }
+        .player-hand-container .card { position: absolute; bottom: 10px; cursor: pointer; transform-origin: bottom center; transition: all 0.15s ease-in-out; pointer-events: auto; }
+        .player-hand-container .card:hover { bottom: 28px; z-index: 99999 !important; transform: scale(1.18) !important; border-color: var(--luxury-gold) !important; box-shadow: 0 12px 24px rgba(0,0,0,0.6); }
 
         .nashra-overlay-card {
             display: none; position: fixed; top: 18%; left: 50%; transform: translateX(-50%);
@@ -119,7 +120,7 @@
             padding: 8px; display: flex; gap: 6px; align-items: center; position: fixed; bottom: 0; z-index: 300;
         }
         .chat-text-field { flex: 1; background: #111; border: 1px solid #555; border-radius: 20px; padding: 6px 14px; color: white; font-size: 13px; outline: none; }
-        .chat-send-btn { background: var(--gold-gradient); color: #000; border: none; padding: 6px 14px; font-weight: bold; border-radius: 20px; cursor: pointer; font-size: 12px; }
+        .chat-send-btn { background: #cca43b; color: #000; border: none; padding: 6px 14px; font-weight: bold; border-radius: 20px; cursor: pointer; font-size: 12px; }
 
         .cafeteria-tray-slide {
             position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
@@ -171,7 +172,7 @@
     </div>
 
     <div class="lobby-container" id="lobby-screen">
-        <h1 style="background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 24px; font-weight: 900; margin:0 0 15px 0;">🃏 صكة الملوك الاحترافية</h1>
+        <h1 style="color: var(--luxury-gold); font-size: 24px; font-weight: 900; margin:0 0 15px 0;">🃏 صكة الملوك الاحترافية</h1>
         <input type="text" id="usernameInput" class="luxury-input" placeholder="ادخل اسم اللاعب الفخم">
         <button class="btn-action-kamalna" style="width:100%; padding:12px;" onclick="connectToTable()">دخول مجلس الصكة</button>
     </div>
@@ -241,9 +242,9 @@
             phrases.forEach(p => { grid.innerHTML += `<div class="gift-card-btn" onclick="sendEmojiText('${p}')">${p}</div>`; });
         } else {
             title.innerText = "☕ إكرام رفقاء المجلس بالضيافة الفاخرة";
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(1, '☕ استكانة شاي')">☕ شاي لـ Abomidal (0.100 فلس)</div>`;
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(2, '☕ فنجان قهوة')">☕ قهوة لـ Thamer (0.150 فلس)</div>`;
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(3, '🌴 حبة تمر')">🌴 تمر لـ Seemo (0.050 فلس)</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(1, '☕ استكانة شاي')">☕ شاي لـ Abomidal</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(2, '☕ فنجان قهوة')">☕ قهوة لـ Thamer</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(3, '🌴 حبة تمر')">🌴 تمر لـ Seemo</div>`;
         }
         tray.classList.add('open');
     }
@@ -322,18 +323,16 @@
 
         const centerTable = document.getElementById('center-table'); const buyingPanel = document.getElementById('buying-panel');
 
+        // إصلاح فخم لعرض مشاريع الأرض لـ 3 ثوانٍ دون إيقاف كود الرسم والترتيب لليد والأرضية
         if (data.revealedProjectCards) {
             let pPos = seatMapping[data.revealedProjectCards.seatIndex];
-            centerTable.innerHTML = `<div style="color:#ffe066; font-size:13px; font-weight:bold; width:100%; text-align:center; position:absolute; top:20px;">🔎 كشف مشروع الـ ${data.revealedProjectCards.text} الفائز للأرض!</div>`;
-            centerTable.innerHTML += `<div class="card black" style="left:28%; top:35%; transform:rotate(-10deg);"><div class="card-corner-top"><span>A♣</span></div><div class="card-center-icon">♣</div></div>`;
-            centerTable.innerHTML += `<div class="card black" style="left:42%; top:35%;"><div class="card-corner-top"><span>K♣</span></div><div class="card-center-icon">♣</div></div>`;
-            centerTable.innerHTML += `<div class="card black" style="left:56%; top:35%; transform:rotate(10deg);"><div class="card-corner-top"><span>Q♣</span></div><div class="card-center-icon">♣</div></div>`;
-            return;
-        }
-
-        if(data.gameStage === 'buying') {
+            centerTable.innerHTML = `<div style="color:#ffe066; font-size:14px; font-weight:bold; width:100%; text-align:center; position:absolute; top:15px; background:rgba(0,0,0,0.6); padding:4px; border-radius:8px;">🔎 مشروع الـ ${data.revealedProjectCards.text} الفائز للأرض!</div>`;
+            centerTable.innerHTML += `<div class="card black" style="left:24%; top:35%; transform:rotate(-10deg); z-index:99;"><div class="card-corner-top"><span>A♣</span></div><div class="card-center-icon">♣</div></div>`;
+            centerTable.innerHTML += `<div class="card black" style="left:42%; top:35%; z-index:99;"><div class="card-corner-top"><span>K♣</span></div><div class="card-center-icon">♣</div></div>`;
+            centerTable.innerHTML += `<div class="card black" style="left:60%; top:35%; transform:rotate(10deg); z-index:99;"><div class="card-corner-top"><span>Q♣</span></div><div class="card-center-icon">♣</div></div>`;
+        } else if(data.gameStage === 'buying') {
             document.getElementById('game-status').innerText = `دور الشراء - لفة ${data.buyRound}`;
-            if(data.flipCard) { centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 44px); left:calc(50% - 31px); border: 1.5px dashed #cca43b; border-radius:8px;">` + createCardMarkup(data.flipCard) + `</div>`; }
+            if(data.flipCard) { centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 46px); left:calc(50% - 32.5px); border: 2.5px dashed #cca43b; border-radius:10px; padding:2px;">` + createCardMarkup(data.flipCard) + `</div>`; }
             
             if (data.currentTurn === mySeatIndex) {
                 buyingPanel.style.display = 'flex';
@@ -355,15 +354,15 @@
                 `;
             } else buyingPanel.style.display = 'none';
         } else if(data.gameStage === 'playing') {
-            // إضافة تنبيه مرئي للاعب الفعلي إذا كان دوره الحالي ليلعب سريعاً قبل انقضاء الـ 10 ثواني
             let isMyTurnNow = (data.currentTurn === mySeatIndex);
             document.getElementById('game-status').innerText = isMyTurnNow ? `⏱️ دورك العب سريعاً (١٠ ثواني!)` : `الأكلة الجارية [${data.trickCount + 1}/8]`; 
             buyingPanel.style.display = 'none';
-            centerTable.innerHTML = "";
-            if (data.tableCards && data.tableCards.length > 0) {
+            if (!data.revealedProjectCards) centerTable.innerHTML = "";
+            if (data.tableCards && data.tableCards.length > 0 && !data.revealedProjectCards) {
                 data.tableCards.forEach(item => { centerTable.innerHTML += createCardHTMLWithPosition(item.card, seatMapping[item.seatIndex]); });
             }
         }
+        
         const myCards = data.playersCards[mySeatIndex] || [];
         if(myCards.length > 0) { localCards = myCards; sortMyHand(); renderHand(); }
         else { document.getElementById('my-hand').innerHTML = ""; }
@@ -381,12 +380,13 @@
 
     function createCardMarkup(card) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
     function createCardHTMLWithPosition(card, relPos) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass} card-pos-${relPos}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
+    
     function renderHand() {
         const handDiv = document.getElementById('my-hand'); handDiv.innerHTML = ""; const totalCards = localCards.length;
         localCards.forEach((card, index) => {
             const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
-            const mid = (totalCards - 1) / 2; const angle = (index - mid) * 7.5; const xOffset = (index - mid) * 27; const yOffset = Math.abs(index - mid) * 2.5;
-            handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index + 2000}; left:calc(50% + ${xOffset}px - 31px); transform: rotate(${angle}deg); bottom:${15 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
+            const mid = (totalCards - 1) / 2; const angle = (index - mid) * 8; const xOffset = (index - mid) * 28; const yOffset = Math.abs(index - mid) * 3;
+            handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index + 2000}; left:calc(50% + ${xOffset}px - 32.5px); transform: rotate(${angle}deg); bottom:${15 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
         });
     }
     const suitOrder = { '♠': 1, '♥': 2, '♦': 3, '♣': 4 }; const cardRankOrder = { 'A': 1, '10': 2, 'K': 3, 'Q': 4, 'J': 5, '9': 6, '8': 7, '7': 8 };
