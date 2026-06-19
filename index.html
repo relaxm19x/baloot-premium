@@ -12,7 +12,7 @@
             --panel-gray: linear-gradient(180deg, #aeaeae 0%, #8e8e8e 100%);
             --btn-border: 2px solid #5a5a5a;
             --table-green: radial-gradient(circle, #2b6f39 40%, #174621 80%, #0c2b14 100%);
-            --card-shadow: 0 10px 22px rgba(0,0,0,0.55);
+            --card-shadow: 0 8px 18px rgba(0,0,0,0.55);
         }
 
         body {
@@ -78,7 +78,7 @@
             border: 1.5px solid #ffffff; margin-top: 4px; display: none; z-index: 99; box-shadow: 0 5px 10px rgba(0,0,0,0.35);
         }
 
-        /* 👑 تصميم كروت عالي التباين وواضح جداً للرموز والأرقام الكبرى 👑 */
+        /* 👑 كروت عريضة، داكنة وواضحة جداً للرموز والقيم بالمركز 👑 */
         .card {
             width: 66px; height: 94px; background: #ffffff; color: #111111; border-radius: 10px; display: flex;
             flex-direction: column; justify-content: space-between; padding: 6px; font-weight: 900; font-size: 21px;
@@ -101,14 +101,15 @@
         .project-counters-row { display: none; gap: 4px; justify-content: center; width: 96%; max-width: 410px; margin-top: 4px; z-index: 80; }
         .counter-badge-item { flex: 1; background: linear-gradient(180deg, #fff 0%, #bfbfbf 100%); border: 1.5px solid #cca43b; border-radius: 8px; color: #111; font-weight: 900; font-size: 11px; padding: 6px; text-align: center; cursor: pointer; }
 
-        /* 👑 تباعد عريض وممتاز لليد (xOffset = 36px) لتظهر مصفوفة بالكامل ومكشوفة بدون تداخل 👑 */
+        /* 👑 تباعد مروحي عريض ممتاز ومفتوح (38px) لتظهر الكروت مصفوفة كلياً دون أي تلاصق 👑 */
         .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 450px; position: relative; height: 125px; margin-top: 10px; z-index: 9999 !important; }
         .player-hand-container .card { position: absolute; bottom: 12px; cursor: pointer; transform-origin: bottom center; transition: all 0.18s ease-out; pointer-events: auto; }
-        .player-hand-container .card:hover { bottom: 35px; z-index: 99999 !important; transform: scale(1.24) !important; border-color: var(--luxury-gold) !important; box-shadow: 0 16px 32px rgba(0,0,0,0.7); }
+        .player-hand-container .card:hover { bottom: 35px; z-index: 999999 !important; transform: scale(1.24) !important; border-color: var(--luxury-gold) !important; box-shadow: 0 16px 32px rgba(0,0,0,0.7); }
 
+        /* بوب أب المشاريع المكشوفة المعزول والآمن */
         .project-reveal-overlay {
             display: none; position: absolute; top: 22%; left: 50%; transform: translateX(-50%);
-            width: 84%; background: rgba(0,0,0,0.88); border: 2px solid var(--luxury-gold);
+            width: 84%; background: rgba(0,0,0,0.9); border: 2px solid var(--luxury-gold);
             border-radius: 14px; padding: 12px; text-align: center; z-index: 8500; box-shadow: 0 12px 30px rgba(0,0,0,0.8);
         }
 
@@ -284,6 +285,14 @@
     }
     function declareProject(type) { socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type }); showToast(`📢 سجلت مشروع: ${type}`); }
 
+    // 📡 معالج كشف السرا والمشاريع المستقل والآمن كلياً لثانيتين فقط ثم يختفي تلقائياً
+    socket.on('project_reveal_broadcast', (data) => {
+        const projectPopup = document.getElementById('project-popup');
+        document.getElementById('project-popup-title').innerText = `🔎 مشروع الـ ${data.text} للأرض!`;
+        projectPopup.style.display = 'block';
+        setTimeout(() => { projectPopup.style.display = 'none'; }, 2000);
+    });
+
     socket.on('hospitality_broadcast', (data) => {
         let relPos = seatMapping[data.toSeat]; const actionTag = document.getElementById(`action_tag_${relPos}`);
         if(actionTag) {
@@ -338,14 +347,6 @@
         }
 
         const centerTable = document.getElementById('center-table'); const buyingPanel = document.getElementById('buying-panel');
-        const projectPopup = document.getElementById('project-popup');
-
-        if (data.revealedProjectCards) {
-            document.getElementById('project-popup-title').innerText = `🔎 مشروع الـ ${data.revealedProjectCards.text} للأرض!`;
-            projectPopup.style.display = 'block';
-        } else {
-            projectPopup.style.display = 'none';
-        }
 
         if(data.gameStage === 'buying') {
             document.getElementById('game-status').innerText = `دور الشراء - لفة ${data.buyRound}`;
@@ -404,7 +405,7 @@
             const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
             const mid = (totalCards - 1) / 2; 
             const angle = (index - mid) * 5.5; 
-            const xOffset = (index - mid) * 36; // مسافة 36 بكسل متباعدة وثابتة لترى الأوراق مكشوفة تماماً بدون تلاصق
+            const xOffset = (index - mid) * 36; 
             const yOffset = Math.abs(index - mid) * 1.8;
             handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index + 2000}; left:calc(50% + ${xOffset}px - 33px); transform: rotate(${angle}deg); bottom:${16 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
         });
