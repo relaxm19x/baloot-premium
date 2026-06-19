@@ -64,6 +64,11 @@ module.exports = function(io) {
 
             io.to(roomId).emit('room_updated', room);
             io.to(roomId).emit('game_state_changed', room);
+
+            // 🎯 الحل السحري: إعطاء تأخير زمني تأميني بنصف ثانية قبل بدء فحص البوتات للشراء لمنع تعليق الـ 5 كروت!
+            setTimeout(() => {
+                checkAndRunBotBuying(room, roomId);
+            }, 500);
         }
 
         socket.on('player_buy_decision', (data) => {
@@ -149,7 +154,6 @@ module.exports = function(io) {
             io.to(roomId).emit('game_state_changed', room);
         });
 
-        // 🎯 تعديل جذري لآلية رمي الكرت بالاعتماد على الفهرس (Index) لمنع التعليق إطلاقاً
         socket.on('play_card', (data) => {
             let roomId = socket.roomId || "1000"; let room = rooms[roomId]; 
             if (!room || room.currentTurn !== data.seatIndex) return;
@@ -158,12 +162,10 @@ module.exports = function(io) {
             let cardIndex = data.cardIndex;
             let chosenCard = null;
 
-            // تحديد الكرت برقم الفهرس لضمان الحذف الدقيق بنسبة 100%
             if (cardIndex !== undefined && cardIndex >= 0 && cardIndex < hand.length) {
                 chosenCard = hand[cardIndex];
-                hand.splice(cardIndex, 1); // مسح الكرت فوراً من يد اللاعب
+                hand.splice(cardIndex, 1); 
             } else if (data.card) {
-                // تراجع حمايتي في حال لم يرسل الفرونت إند الفهرس
                 let idx = hand.findIndex(c => c.suit === data.card.suit && c.value === data.card.value);
                 if (idx !== -1) {
                     chosenCard = hand[idx];
@@ -171,7 +173,7 @@ module.exports = function(io) {
                 }
             }
 
-            if (!chosenCard) return; // حماية ضد الضغطات الوهمية
+            if (!chosenCard) return;
 
             if (room.tableCards.length === 0) { 
                 for(let i=0; i<4; i++) room.playerActionsText[i] = ""; 
@@ -279,7 +281,7 @@ module.exports = function(io) {
 
             if (!chosenCard) { chosenCard = hand[0]; chosenIndex = 0; }
 
-            hand.splice(chosenIndex, 1); // حذف كرت البوت بالفهرس دغري
+            hand.splice(chosenIndex, 1); 
 
             if (room.tableCards.length === 0) room.leadSuit = chosenCard.suit;
             room.tableCards.push({ seatIndex: room.currentTurn, card: chosenCard });
