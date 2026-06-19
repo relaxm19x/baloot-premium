@@ -18,7 +18,7 @@ module.exports = function(io) {
                     buyerSeat: null, trumpSuit: null, tableCards: [], playersCards: [[], [], [], []],
                     deck: [], leadSuit: null, roundPoints: { team1: 0, team2: 0 }, trickCount: 0,
                     activeProjects: ["", "", "", ""], playerActionsText: ["", "", "", ""], passCount: 0,
-                    dealerSeat: 3 // مقعد الموزع الافتراضي
+                    dealerSeat: 3
                 };
             }
             let room = rooms[roomId];
@@ -49,9 +49,8 @@ module.exports = function(io) {
             room.buyType = null; room.trumpSuit = null; room.tableCards = []; room.trickCount = 0; room.passCount = 0;
             room.roundPoints = { team1: 0, team2: 0 }; room.activeProjects = ["", "", "", ""]; room.playerActionsText = ["", "", "", ""];
             
-            // تدوير الموزع كل جولة لضبط قوانين الأشكل
             room.dealerSeat = (room.dealerSeat + 1) % 4;
-            room.currentTurn = (room.dealerSeat + 1) % 4; // اللعب يبدأ من يسار الموزع
+            room.currentTurn = (room.dealerSeat + 1) % 4;
 
             let suits = ['♠', '♥', '♦', '♣'];
             let values = ['A', 'K', 'Q', 'J', '10', '9', '8', '7'];
@@ -73,30 +72,21 @@ module.exports = function(io) {
             if (data.decision === 'buy') {
                 room.buyerSeat = data.seatIndex;
                 room.buyType = data.buyType;
-                
-                // تطبيق قانون الأشكل الاحترافي: إذا طلب أشكل، اللعبة تصبح "صن" فوراً
                 if (data.buyType === 'أشكل') {
-                    room.buyType = 'صن (أشكل)';
-                    room.trumpSuit = null; // الأشكل يعامل معاملة الصن
+                    room.buyType = 'صن (أشكل)'; room.trumpSuit = null;
                 } else {
                     room.trumpSuit = (data.buyType === 'حكم') ? room.flipCard.suit : null;
                 }
-                
                 room.playerActionsText[data.seatIndex] = `طلب: ${data.buyType}`;
                 executeBuy(room, roomId, data.buyType, data.seatIndex);
             } else {
                 room.playerActionsText[room.currentTurn] = "بس 🛡️"; room.passCount++;
-                
-                // إصلاح خطأ بقاء الورقة: إذا طاف 8 بس (لفتين كاملتين)، يتم إعادة التوزيع فوراً
                 if (room.passCount >= 8) {
-                    io.to(roomId).emit('round_ended_announcement', { summary: "🔄 الكل طوّف بس (مرتين)! جاري إعادة التوزيع بكرت جديد...", scores: room.scores });
-                    setTimeout(() => { setupNewRound(roomId); }, 2000); 
-                    return;
+                    io.to(roomId).emit('round_ended_announcement', { summary: "🔄 الكل بس! جاري إعادة التوزيع...", scores: room.scores });
+                    setTimeout(() => { setupNewRound(roomId); }, 2000); return;
                 }
-
                 room.currentTurn = (room.currentTurn + 1) % 4;
                 if (room.passCount === 4) room.buyRound = 2;
-                
                 io.to(roomId).emit('game_state_changed', room);
                 checkAndRunBotBuying(room, roomId);
             }
@@ -107,7 +97,6 @@ module.exports = function(io) {
             let activePlayer = room.seats[room.currentTurn];
             if (activePlayer && activePlayer.socketId.startsWith('bot_')) {
                 setTimeout(() => {
-                    // ذكاء البوت في الشراء: يشتري إذا عنده كرت فخم
                     if (room.flipCard && (room.flipCard.value === 'A' || room.flipCard.value === 'J')) {
                         room.buyerSeat = room.currentTurn; 
                         room.buyType = (room.flipCard.value === 'J') ? 'حكم' : 'صن';
@@ -129,33 +118,22 @@ module.exports = function(io) {
         function executeBuy(room, roomId, buyType, buyerIndex) {
             room.gameStage = 'playing';
             for(let i=0; i<4; i++) { if(room.playerActionsText[i] === "بس 🛡️") room.playerActionsText[i] = ""; }
-            
-            let savedFlipCard = room.flipCard; 
-            room.flipCard = null;
+            let savedFlipCard = room.flipCard; room.flipCard = null;
 
-            // تحديد من يستقبل كرت الأرض (إذا أشكل يروح للشريك، وإلا يروح للمشتري نفسه)
             let cardReceiver = buyerIndex;
-            if (buyType === 'أشكل') {
-                cardReceiver = (buyerIndex + 2) % 4; // الشريك المقابل في البلوت
-            }
+            if (buyType === 'أشكل') cardReceiver = (buyerIndex + 2) % 4;
 
             for (let i = 0; i < 4; i++) {
                 if (i === cardReceiver) {
                     room.playersCards[i].push(savedFlipCard);
-                    room.playersCards[i].push(room.deck.pop());
-                    room.playersCards[i].push(room.deck.pop());
+                    room.playersCards[i].push(room.deck.pop()); room.playersCards[i].push(room.deck.pop());
                 } else if (i === buyerIndex && buyType === 'أشكل') {
-                    // المشتري في الأشكل يأخذ 3 كروت عادية لأن كرت الأرض ذهب لشريكه
-                    room.playersCards[i].push(room.deck.pop());
-                    room.playersCards[i].push(room.deck.pop());
-                    room.playersCards[i].push(room.deck.pop());
+                    room.playersCards[i].push(room.deck.pop()); room.playersCards[i].push(room.deck.pop()); room.playersCards[i].push(room.deck.pop());
                 } else {
-                    room.playersCards[i].push(room.deck.pop());
-                    room.playersCards[i].push(room.deck.pop());
-                    room.playersCards[i].push(room.deck.pop());
+                    room.playersCards[i].push(room.deck.pop()); room.playersCards[i].push(room.deck.pop()); room.playersCards[i].push(room.deck.pop());
                 }
             }
-            room.currentTurn = (room.dealerSeat + 1) % 4; // يبدأ اللعب دائماً من يسار الموزع
+            room.currentTurn = (room.dealerSeat + 1) % 4;
             io.to(roomId).emit('game_state_changed', room);
             if (room.seats[room.currentTurn].socketId.startsWith('bot_')) makeAdvancedBotPlay(room, roomId);
         }
@@ -164,7 +142,7 @@ module.exports = function(io) {
             let roomId = socket.roomId || "1000"; let room = rooms[roomId]; if (!room) return;
             if (data.projectType !== 'لا شيء') {
                 room.activeProjects[data.seatIndex] = data.projectType;
-                room.playerActionsText[data.seatIndex] = `مشروع: ${data.projectType}`;
+                room.playerActionsText[data.projectType] = `مشروع: ${data.projectType}`;
                 let pts = (data.projectType === 'سرا') ? 4 : (data.projectType === 'خمسين') ? 10 : 20;
                 if (data.seatIndex === 0 || data.seatIndex === 2) room.roundPoints.team1 += pts; else room.roundPoints.team2 += pts;
             }
@@ -191,16 +169,13 @@ module.exports = function(io) {
             setTimeout(() => {
                 let winnerSeat = determineActualWinner(room);
                 let trickPoints = calculateActualTrickPoints(room);
-                
                 room.trickCount++;
-                if (room.trickCount === 8) trickPoints += 10; 
+                if (room.trickCount === 8) trickPoints += 10;
 
                 if (winnerSeat === 0 || winnerSeat === 2) room.roundPoints.team1 += trickPoints;
                 else room.roundPoints.team2 += trickPoints;
 
-                room.tableCards = [];
-                room.leadSuit = null;
-                room.currentTurn = winnerSeat; 
+                room.tableCards = []; room.leadSuit = null; room.currentTurn = winnerSeat;
 
                 if (room.trickCount === 8) {
                     let t1Gain = Math.round(room.roundPoints.team1 / 10);
@@ -243,45 +218,36 @@ module.exports = function(io) {
             if (room.seats[room.currentTurn].socketId.startsWith('bot_')) setTimeout(() => { makeAdvancedBotPlay(room, roomId); }, 600);
         }
 
-        // 🤖 محرك ذكاء البوت عالي الاحترافية والصعوبة:
+        // 🛠️ تأمين وتثبيت الذكاء لمنع التجميد والوقوف نهائياً:
         function makeAdvancedBotPlay(room, roomId) {
             let hand = room.playersCards[room.currentTurn]; if (!hand || hand.length === 0) return;
             let chosenCard = null;
 
-            // إذا كان البوت هو أول من يفرش بالأكلة الجارية
             if (room.tableCards.length === 0) {
-                // يلعب أعلى كرت عنده ليضمن السيطرة
                 hand.sort((a,b) => (rankOrderSun[b.value] || 0) - (rankOrderSun[a.value] || 0));
                 chosenCard = hand[0];
             } else {
-                // البوت يفحص منو مسيطر على الأرض حالياً
                 let currentWinner = determineActualWinner(room);
                 let isPartnerWinner = (currentWinner === (room.currentTurn + 2) % 4);
-
                 let match = hand.filter(c => c.suit === room.leadSuit);
+                
                 if (match.length > 0) {
                     if (isPartnerWinner) {
-                        // إذا خوية فايز بالأكلة، البوت يمشي له كرت صغير (تمشاية ذكية)
                         match.sort((a,b) => (rankOrderSun[a.value] || 0) - (rankOrderSun[b.value] || 0));
                         chosenCard = match[0];
                     } else {
-                        // إذا الخصم فايز، البوت يحاول يقطع بأعلى كرت عنده ليفوز بالأكلة
                         match.sort((a,b) => (rankOrderSun[b.value] || 0) - (rankOrderSun[a.value] || 0));
                         chosenCard = match[0];
                     }
                 } else {
-                    // إذا ما عنده نفس النوع، يكسر بالحكم أو يتخلص من كرت ميت
                     if (room.trumpSuit) {
                         let trumps = hand.filter(c => c.suit === room.trumpSuit);
                         if (trumps.length > 0 && !isPartnerWinner) chosenCard = trumps[0];
                     }
-                    if (!chosenCard) {
-                        hand.sort((a,b) => (rankOrderSun[a.value] || 0) - (rankOrderSun[b.value] || 0));
-                        chosenCard = hand[0];
-                    }
                 }
             }
 
+            // خيار الحماية الحاسم: إذا لم تتطابق أي شروط يرمي أول كرت ميت بيده فوراً لمنع توقف اللعب!
             if (!chosenCard) chosenCard = hand[0];
 
             room.tableCards.push({ seatIndex: room.currentTurn, card: chosenCard });
@@ -293,10 +259,18 @@ module.exports = function(io) {
             else { room.currentTurn = (room.currentTurn + 1) % 4; io.to(roomId).emit('game_state_changed', room); checkAndRunBotGameplay(roomId); }
         }
 
+        // دالة إرسال الضيافة والتعابير المباشرة
         socket.on('deliver_hospitality', (data) => {
             let room = rooms[socket.roomId || "1000"]; if (!room) return;
-            let s = room.seats[data.fromSeat]; let r = room.seats[data.toSeat];
-            if (s && r) io.to(room.roomId).emit('hospitality_broadcast', { senderName: s.username, receiverName: r.username, item: data.item });
+            let s = room.seats[data.fromSeat];
+            if (s) {
+                io.to(room.roomId).emit('hospitality_broadcast', { 
+                    fromSeat: data.fromSeat, 
+                    toSeat: data.toSeat, 
+                    senderName: s.username, 
+                    item: data.item 
+                });
+            }
         });
     });
 };
