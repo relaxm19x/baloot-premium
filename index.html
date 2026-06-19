@@ -202,7 +202,6 @@
     const socket = io(); 
     let mySeatIndex = null; let localCards = []; let seatMapping = {}; let currentLeadSuit = null;
 
-    // ☕ تفعيل المنيو بأسعار كافيتيريا الديوانية الحقيقية (0.050 - 0.250 فلس)
     function openTray(mode) {
         const tray = document.getElementById('tray-overlay'); const title = document.getElementById('tray-title'); const grid = document.getElementById('tray-grid-content');
         grid.innerHTML = "";
@@ -273,12 +272,17 @@
         if(data.gameStage === 'buying') {
             document.getElementById('game-status').innerText = `دور الشراء - مقعد ${data.currentTurn}`;
             if(data.flipCard) { centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 44px); left:calc(50% - 31px); border: 1.5px dashed #cca43b; border-radius:8px;">` + createCardMarkup(data.flipCard) + `</div>`; }
+            
             if (data.currentTurn === mySeatIndex) {
                 buyingPanel.style.display = 'flex';
+                
+                // شروط إظهار زر "الأشكل" قانونياً: فقط باللفة الثانية (passCount >= 4) وللموزع أو يساره
+                let showAshkal = (data.buyRound === 2); 
+                
                 buyingPanel.innerHTML = `
                     <button class="btn-action-kamalna" onclick="makeDecision('buy', 'صن')">صن</button>
                     <button class="btn-action-kamalna" onclick="makeDecision('buy', 'حكم')">حكم</button>
-                    <button class="btn-action-kamalna" onclick="makeDecision('buy', 'أشكل')">أشكل</button>
+                    ${showAshkal ? `<button class="btn-action-kamalna" style="background:#cca43b; color:#000;" onclick="makeDecision('buy', 'أشكل')">أشكل 👑</button>` : ''}
                     <button class="btn-action-kamalna" style="background:#5a5a5a; color:#fff;" onclick="makeDecision('pass', null)">بس</button>
                 `;
             } else buyingPanel.style.display = 'none';
