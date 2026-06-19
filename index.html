@@ -78,14 +78,13 @@
             border: 1px solid #ffffff; margin-top: 4px; display: none; z-index: 99; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
 
-        /* ✨ تصميم جديد ثوري عالي الوضوح للكروت لتظهر الأرقام والرموز بشكل ضخم وقوي ✨ */
         .card {
             width: 65px; height: 92px; background: #ffffff; color: #111111; border-radius: 10px; display: flex;
             flex-direction: column; justify-content: space-between; padding: 6px; font-weight: 900; font-size: 20px;
             box-shadow: var(--card-shadow); border: 2px solid #a1b0bd; position: absolute;
         }
         .card.red { color: #d63031; }
-        .card.black { color: #1e272e; }
+        .black { color: #1e272e; }
         .card-corner-top { display: flex; justify-content: flex-start; line-height: 0.9; font-size: 15px; }
         .card-corner-bottom { display: flex; justify-content: flex-end; line-height: 0.9; transform: rotate(180deg); font-size: 15px; }
         .card-center-icon { text-align: center; font-size: 28px; font-weight: 900; margin-top: -2px; }
@@ -104,6 +103,13 @@
         .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 410px; position: relative; height: 110px; margin-top: 6px; z-index: 9999 !important; }
         .player-hand-container .card { position: absolute; bottom: 10px; cursor: pointer; transform-origin: bottom center; transition: all 0.15s ease-in-out; pointer-events: auto; }
         .player-hand-container .card:hover { bottom: 28px; z-index: 99999 !important; transform: scale(1.18) !important; border-color: var(--luxury-gold) !important; box-shadow: 0 12px 24px rgba(0,0,0,0.6); }
+
+        /* 👑 طبقة العرض المنفصلة للمشاريع الفائزة (Popup Layer) لمنع التجمد 👑 */
+        .project-reveal-overlay {
+            display: none; position: absolute; top: 22%; left: 50%; transform: translateX(-50%);
+            width: 84%; background: rgba(0,0,0,0.85); border: 2px solid var(--luxury-gold);
+            border-radius: 14px; padding: 10px; text-align: center; z-index: 5000; box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+        }
 
         .nashra-overlay-card {
             display: none; position: fixed; top: 18%; left: 50%; transform: translateX(-50%);
@@ -181,6 +187,15 @@
         <div id="game-status" style="font-size:11px; color:#111; font-weight:bold; margin-top:2px;">جاري التوزيع...</div>
 
         <div class="baloot-table" id="main-baloot-table">
+            <div class="project-reveal-overlay" id="project-popup">
+                <div id="project-popup-title" style="color:#ffe066; font-size:13px; font-weight:bold; margin-bottom:6px;"></div>
+                <div style="display:flex; justify-content:center; gap:8px; height:94px; position:relative;">
+                    <div class="card black" style="position:static;"><div class="card-corner-top"><span>A♣</span></div><div class="card-center-icon">♣</div></div>
+                    <div class="card black" style="position:static;"><div class="card-corner-top"><span>K♣</span></div><div class="card-center-icon">♣</div></div>
+                    <div class="card black" style="position:static;"><div class="card-corner-top"><span>Q♣</span></div><div class="card-center-icon">♣</div></div>
+                </div>
+            </div>
+
             <div id="seat_2" class="player-seat-avatar seat-2">
                 <div class="avatar-circle"><img src="https://cdn-icons-png.flaticon.com/512/219/219983.png"></div>
                 <div class="name-plate seat-name">Thamer</div>
@@ -322,15 +337,17 @@
         }
 
         const centerTable = document.getElementById('center-table'); const buyingPanel = document.getElementById('buying-panel');
+        const projectPopup = document.getElementById('project-popup');
 
-        // إصلاح فخم لعرض مشاريع الأرض لـ 3 ثوانٍ دون إيقاف كود الرسم والترتيب لليد والأرضية
+        // 🎯 الحل السحري: كشف السرا يظهر في نافذة علوية مستقلة تماماً دون إعاقة اللعب أو التسبب في تجميد Sockets
         if (data.revealedProjectCards) {
-            let pPos = seatMapping[data.revealedProjectCards.seatIndex];
-            centerTable.innerHTML = `<div style="color:#ffe066; font-size:14px; font-weight:bold; width:100%; text-align:center; position:absolute; top:15px; background:rgba(0,0,0,0.6); padding:4px; border-radius:8px;">🔎 مشروع الـ ${data.revealedProjectCards.text} الفائز للأرض!</div>`;
-            centerTable.innerHTML += `<div class="card black" style="left:24%; top:35%; transform:rotate(-10deg); z-index:99;"><div class="card-corner-top"><span>A♣</span></div><div class="card-center-icon">♣</div></div>`;
-            centerTable.innerHTML += `<div class="card black" style="left:42%; top:35%; z-index:99;"><div class="card-corner-top"><span>K♣</span></div><div class="card-center-icon">♣</div></div>`;
-            centerTable.innerHTML += `<div class="card black" style="left:60%; top:35%; transform:rotate(10deg); z-index:99;"><div class="card-corner-top"><span>Q♣</span></div><div class="card-center-icon">♣</div></div>`;
-        } else if(data.gameStage === 'buying') {
+            document.getElementById('project-popup-title').innerText = `🔎 مشروع الـ ${data.revealedProjectCards.text} الفائز للأرض!`;
+            projectPopup.style.display = 'block';
+        } else {
+            projectPopup.style.display = 'none';
+        }
+
+        if(data.gameStage === 'buying') {
             document.getElementById('game-status').innerText = `دور الشراء - لفة ${data.buyRound}`;
             if(data.flipCard) { centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 46px); left:calc(50% - 32.5px); border: 2.5px dashed #cca43b; border-radius:10px; padding:2px;">` + createCardMarkup(data.flipCard) + `</div>`; }
             
@@ -357,8 +374,8 @@
             let isMyTurnNow = (data.currentTurn === mySeatIndex);
             document.getElementById('game-status').innerText = isMyTurnNow ? `⏱️ دورك العب سريعاً (١٠ ثواني!)` : `الأكلة الجارية [${data.trickCount + 1}/8]`; 
             buyingPanel.style.display = 'none';
-            if (!data.revealedProjectCards) centerTable.innerHTML = "";
-            if (data.tableCards && data.tableCards.length > 0 && !data.revealedProjectCards) {
+            centerTable.innerHTML = "";
+            if (data.tableCards && data.tableCards.length > 0) {
                 data.tableCards.forEach(item => { centerTable.innerHTML += createCardHTMLWithPosition(item.card, seatMapping[item.seatIndex]); });
             }
         }
