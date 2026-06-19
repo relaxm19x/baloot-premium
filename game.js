@@ -142,18 +142,43 @@ module.exports = function(io) {
             let roomId = socket.roomId || "1000"; let room = rooms[roomId]; if (!room) return;
             if (data.projectType !== 'لا شيء') {
                 room.activeProjects[data.seatIndex] = data.projectType;
-                room.playerActionsText[data.projectType] = `مشروع: ${data.projectType}`;
+                room.playerActionsText[data.seatIndex] = `مشروع: ${data.projectType}`;
                 let pts = (data.projectType === 'سرا') ? 4 : (data.projectType === 'خمسين') ? 10 : 20;
                 if (data.seatIndex === 0 || data.seatIndex === 2) room.roundPoints.team1 += pts; else room.roundPoints.team2 += pts;
             }
             io.to(roomId).emit('game_state_changed', room);
         });
 
+        // 🎯 تعديل جذري لآلية رمي الكرت بالاعتماد على الفهرس (Index) لمنع التعليق إطلاقاً
         socket.on('play_card', (data) => {
-            let roomId = socket.roomId || "1000"; let room = rooms[roomId]; if (!room || room.currentTurn !== data.seatIndex) return;
-            if (room.tableCards.length === 0) { for(let i=0; i<4; i++) room.playerActionsText[i] = ""; room.leadSuit = data.card.suit; }
-            room.tableCards.push({ seatIndex: data.seatIndex, card: data.card });
-            room.playersCards[data.seatIndex] = room.playersCards[data.seatIndex].filter(c => !(c.suit === data.card.suit && c.value === data.card.value));
+            let roomId = socket.roomId || "1000"; let room = rooms[roomId]; 
+            if (!room || room.currentTurn !== data.seatIndex) return;
+
+            let hand = room.playersCards[data.seatIndex];
+            let cardIndex = data.cardIndex;
+            let chosenCard = null;
+
+            // تحديد الكرت برقم الفهرس لضمان الحذف الدقيق بنسبة 100%
+            if (cardIndex !== undefined && cardIndex >= 0 && cardIndex < hand.length) {
+                chosenCard = hand[cardIndex];
+                hand.splice(cardIndex, 1); // مسح الكرت فوراً من يد اللاعب
+            } else if (data.card) {
+                // تراجع حمايتي في حال لم يرسل الفرونت إند الفهرس
+                let idx = hand.findIndex(c => c.suit === data.card.suit && c.value === data.card.value);
+                if (idx !== -1) {
+                    chosenCard = hand[idx];
+                    hand.splice(idx, 1);
+                }
+            }
+
+            if (!chosenCard) return; // حماية ضد الضغطات الوهمية
+
+            if (room.tableCards.length === 0) { 
+                for(let i=0; i<4; i++) room.playerActionsText[i] = ""; 
+                room.leadSuit = chosenCard.suit; 
+            }
+
+            room.tableCards.push({ seatIndex: data.seatIndex, card: chosenCard });
             io.to(roomId).emit('game_state_changed', room);
             
             if (room.tableCards.length === 4) {
@@ -218,10 +243,10 @@ module.exports = function(io) {
             if (room.seats[room.currentTurn].socketId.startsWith('bot_')) setTimeout(() => { makeAdvancedBotPlay(room, roomId); }, 600);
         }
 
-        // 🛠️ تأمين وتثبيت الذكاء لمنع التجميد والوقوف نهائياً:
         function makeAdvancedBotPlay(room, roomId) {
             let hand = room.playersCards[room.currentTurn]; if (!hand || hand.length === 0) return;
             let chosenCard = null;
+            let chosenIndex = 0;
 
             if (room.tableCards.length === 0) {
                 hand.sort((a,b) => (rankOrderSun[b.value] || 0) - (rankOrderSun[a.value] || 0));
@@ -229,37 +254,41 @@ module.exports = function(io) {
             } else {
                 let currentWinner = determineActualWinner(room);
                 let isPartnerWinner = (currentWinner === (room.currentTurn + 2) % 4);
-                let match = hand.filter(c => c.suit === room.leadSuit);
+                let matchIndices = [];
+                hand.forEach((c, idx) => { if(c.suit === room.leadSuit) matchIndices.push(idx); });
                 
-                if (match.length > 0) {
+                if (matchIndices.length > 0) {
                     if (isPartnerWinner) {
-                        match.sort((a,b) => (rankOrderSun[a.value] || 0) - (rankOrderSun[b.value] || 0));
-                        chosenCard = match[0];
+                        matchIndices.sort((a,b) => (rankOrderSun[hand[a].value] || 0) - (rankOrderSun[hand[b].value] || 0));
                     } else {
-                        match.sort((a,b) => (rankOrderSun[b.value] || 0) - (rankOrderSun[a.value] || 0));
-                        chosenCard = match[0];
+                        matchIndices.sort((a,b) => (rankOrderSun[hand[b].value] || 0) - (rankOrderSun[hand[a].value] || 0));
                     }
+                    chosenIndex = matchIndices[0];
+                    chosenCard = hand[chosenIndex];
                 } else {
                     if (room.trumpSuit) {
-                        let trumps = hand.filter(c => c.suit === room.trumpSuit);
-                        if (trumps.length > 0 && !isPartnerWinner) chosenCard = trumps[0];
+                        let trumpIndices = [];
+                        hand.forEach((c, idx) => { if(c.suit === room.trumpSuit) trumpIndices.push(idx); });
+                        if (trumpIndices.length > 0 && !isPartnerWinner) {
+                            chosenIndex = trumpIndices[0];
+                            chosenCard = hand[chosenIndex];
+                        }
                     }
                 }
             }
 
-            // خيار الحماية الحاسم: إذا لم تتطابق أي شروط يرمي أول كرت ميت بيده فوراً لمنع توقف اللعب!
-            if (!chosenCard) chosenCard = hand[0];
+            if (!chosenCard) { chosenCard = hand[0]; chosenIndex = 0; }
 
+            hand.splice(chosenIndex, 1); // حذف كرت البوت بالفهرس دغري
+
+            if (room.tableCards.length === 0) room.leadSuit = chosenCard.suit;
             room.tableCards.push({ seatIndex: room.currentTurn, card: chosenCard });
-            room.playersCards[room.currentTurn] = hand.filter(c => !(c.suit === chosenCard.suit && c.value === chosenCard.value));
-            if (room.tableCards.length === 1) room.leadSuit = chosenCard.suit;
             io.to(roomId).emit('game_state_changed', room);
             
             if (room.tableCards.length === 4) handleTrickCompletion(room, roomId);
             else { room.currentTurn = (room.currentTurn + 1) % 4; io.to(roomId).emit('game_state_changed', room); checkAndRunBotGameplay(roomId); }
         }
 
-        // دالة إرسال الضيافة والتعابير المباشرة
         socket.on('deliver_hospitality', (data) => {
             let room = rooms[socket.roomId || "1000"]; if (!room) return;
             let s = room.seats[data.fromSeat];
