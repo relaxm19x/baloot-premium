@@ -237,7 +237,6 @@
     }
     function declareProject(type) { socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type }); showToast(`📢 أعلنت: ${type}`); }
 
-    // 🎯 تحديث دالة الاستقبال لعرض الهدايا لايف فوق رأس المستلم دغري وتختفي بعد 4 ثواني
     socket.on('hospitality_broadcast', (data) => {
         let relPos = seatMapping[data.toSeat];
         const actionTag = document.getElementById(`action_tag_${relPos}`);
@@ -274,6 +273,8 @@
             let relPos = seatMapping[i]; const actionTag = document.getElementById(`action_tag_${relPos}`);
             if(data.playerActionsText && data.playerActionsText[i] && data.playerActionsText[i] !== "") {
                 actionTag.innerText = data.playerActionsText[i]; actionTag.style.display = 'inline-block';
+            } else if (data.gameStage === 'buying' && (!data.playerActionsText || data.playerActionsText[i] === "")) {
+                actionTag.style.display = 'none';
             }
         }
 
@@ -305,13 +306,15 @@
     });
 
     function makeDecision(decision, buyType) { socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: decision, buyType: buyType }); }
+    
+    // 🎯 تحديث دالة الرمي لإرسال الفهرس (Index) لضمان فك القفل ومطابقة الباكيند بدقة
     function throwCardFromHand(cardIndex) {
         const selectedCard = localCards[cardIndex];
         if (currentLeadSuit && selectedCard.suit !== currentLeadSuit) {
             const hasLeadSuitInHand = localCards.some(c => c.suit === currentLeadSuit);
             if (hasLeadSuitInHand) { showToast(`🚨 الأرض ملعوب فيها [${currentLeadSuit}]!`); return; }
         }
-        socket.emit('play_card', { seatIndex: mySeatIndex, card: selectedCard });
+        socket.emit('play_card', { seatIndex: mySeatIndex, cardIndex: cardIndex, card: selectedCard });
     }
 
     function createCardMarkup(card) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
