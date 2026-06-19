@@ -74,7 +74,7 @@
 
         .live-action-bubble {
             background: linear-gradient(180deg, #ffe066 0%, #cca43b 100%); color: #000000;
-            font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 8px;
+            font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 8px;
             border: 1px solid #ffffff; margin-top: 4px; display: none; z-index: 99; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
 
@@ -105,7 +105,6 @@
         .player-hand-container .card { position: absolute; bottom: 10px; cursor: pointer; transform-origin: bottom center; border: 1.2px solid #555 !important; pointer-events: auto; }
         .player-hand-container .card:hover { bottom: 25px; z-index: 99999 !important; transform: scale(1.12) !important; }
 
-        /* 📋 لوحة النشرة الرسمية المحاكية لكمالنا بالملي */
         .nashra-overlay-card {
             display: none; position: fixed; top: 18%; left: 50%; transform: translateX(-50%);
             width: 88%; max-width: 360px; background: linear-gradient(180deg, #2b2e35 0%, #181a1f 100%);
@@ -266,11 +265,10 @@
         document.getElementById('top-nav-bar').style.display = 'flex'; document.getElementById('chat-footer-box').style.display = 'flex';
         socket.emit('join_matchmaking', { username: username }); setTimeout(() => { socket.emit('start_game_with_bots'); }, 500);
     }
-    function declareProject(type) { socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type }); showToast(`📢 أعلنت: ${type}`); }
+    function declareProject(type) { socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type }); showToast(`📢 سجلت مشروع: ${type}`); }
 
     socket.on('hospitality_broadcast', (data) => {
-        let relPos = seatMapping[data.toSeat];
-        const actionTag = document.getElementById(`action_tag_${relPos}`);
+        let relPos = seatMapping[data.toSeat]; const actionTag = document.getElementById(`action_tag_${relPos}`);
         if(actionTag) {
             actionTag.innerText = data.item; actionTag.style.display = 'inline-block';
             setTimeout(() => { actionTag.style.display = 'none'; }, 4000);
@@ -279,7 +277,6 @@
     });
 
     socket.on('round_ended_announcement', (data) => { showToast(data.summary); });
-
     socket.on('room_updated', (data) => {
         for(let i=0; i<4; i++) { if(data.seats[i] && data.seats[i].socketId === socket.id) { mySeatIndex = i; } }
         if(mySeatIndex === null) mySeatIndex = 0; seatMapping = {};
@@ -299,7 +296,6 @@
         const countersRow = document.getElementById('counters-row-area');
         if(data.gameStage === 'playing') countersRow.style.display = 'flex'; else countersRow.style.display = 'none';
 
-        // إدارة لوحة النشرة التلقائية لكملنا
         const nashraBoard = document.getElementById('nashra-board');
         if(data.gameStage === 'nashra') {
             document.getElementById('n-tricks-t1').innerText = data.nashra.trickPoints.t1;
@@ -313,10 +309,9 @@
             document.getElementById('n-gain-t1').innerText = data.nashra.gain.t1;
             document.getElementById('n-gain-t2').innerText = data.nashra.gain.t2;
             nashraBoard.style.display = 'block';
-        } else {
-            nashraBoard.style.display = 'none';
-        }
+        } else { nashraBoard.style.display = 'none'; }
 
+        // تثبيت إظهار نص الطلب أو الدبل فوق اللاعب دائمًا طوال جولة الشراء والكشف باللعب الفعلي
         for(let i=0; i<4; i++) {
             let relPos = seatMapping[i]; const actionTag = document.getElementById(`action_tag_${relPos}`);
             if(data.playerActionsText && data.playerActionsText[i] && data.playerActionsText[i] !== "") {
@@ -342,6 +337,16 @@
                     <button class="btn-action-kamalna" style="background:#5a5a5a; color:#fff;" onclick="makeDecision('pass', null)">بس</button>
                 `;
             } else buyingPanel.style.display = 'none';
+        } else if (data.gameStage === 'double_round') {
+            // لوحة خيارات الدبل المضافة قانونياً عقب طلب الحكم
+            document.getElementById('game-status').innerText = `⚠️ جولة الدبل والمضاعفة الحامية!`;
+            if (data.currentTurn === mySeatIndex) {
+                buyingPanel.style.display = 'flex';
+                buyingPanel.innerHTML = `
+                    <button class="btn-action-kamalna" style="background:#d63031; color:#fff;" onclick="makeDecision('double', null)">دبل ⚔️</button>
+                    <button class="btn-action-kamalna" style="background:#5a5a5a; color:#fff;" onclick="makeDecision('pass', null)">بس 🛡️</button>
+                `;
+            } else buyingPanel.style.display = 'none';
         } else if(data.gameStage === 'playing') {
             document.getElementById('game-status').innerText = `الأكلة الجارية [${data.trickCount + 1}/8]`; buyingPanel.style.display = 'none';
             centerTable.innerHTML = "";
@@ -355,7 +360,6 @@
     });
 
     function makeDecision(decision, buyType) { socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: decision, buyType: buyType }); }
-    
     function throwCardFromHand(cardIndex) {
         const selectedCard = localCards[cardIndex];
         if (currentLeadSuit && selectedCard.suit !== currentLeadSuit) {
@@ -367,7 +371,6 @@
 
     function createCardMarkup(card) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
     function createCardHTMLWithPosition(card, relPos) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass} card-pos-${relPos}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
-    
     function renderHand() {
         const handDiv = document.getElementById('my-hand'); handDiv.innerHTML = ""; const totalCards = localCards.length;
         localCards.forEach((card, index) => {
