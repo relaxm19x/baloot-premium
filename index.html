@@ -105,6 +105,17 @@
         .player-hand-container .card { position: absolute; bottom: 10px; cursor: pointer; transform-origin: bottom center; border: 1.2px solid #555 !important; pointer-events: auto; }
         .player-hand-container .card:hover { bottom: 25px; z-index: 99999 !important; transform: scale(1.12) !important; }
 
+        /* 📋 لوحة النشرة الرسمية المحاكية لكمالنا بالملي */
+        .nashra-overlay-card {
+            display: none; position: fixed; top: 18%; left: 50%; transform: translateX(-50%);
+            width: 88%; max-width: 360px; background: linear-gradient(180deg, #2b2e35 0%, #181a1f 100%);
+            border: 3px solid var(--luxury-gold); border-radius: 20px; padding: 16px; z-index: 999999;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8); color: #fff; text-align: center;
+        }
+        .nashra-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+        .nashra-table th { background: #000; color: var(--luxury-gold); padding: 8px; font-weight: 900; }
+        .nashra-table td { border-bottom: 1px solid #444; padding: 8px; font-weight: bold; }
+
         .chat-input-footer-bar {
             width: 100%; max-width: 410px; background: #22252a; border-top: 1.5px solid var(--luxury-gold);
             padding: 8px; display: flex; gap: 6px; align-items: center; position: fixed; bottom: 0; z-index: 300;
@@ -129,6 +140,27 @@
 <body>
 
     <div class="royal-toast" id="global-toast">🚨 ديوانية كملنا الاحترافية</div>
+
+    <div class="nashra-overlay-card" id="nashra-board">
+        <h3 style="color:var(--luxury-gold); margin:4px 0;">📊 نشرة الصكة الحالية</h3>
+        <table class="nashra-table">
+            <thead>
+                <tr>
+                    <th>النشرة</th>
+                    <th>لنا (فريقنا)</th>
+                    <th>لهم (الخصم)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>الأكلات</td><td id="n-tricks-t1">0</td><td id="n-tricks-t2">0</td></tr>
+                <tr><td>الأرض</td><td id="n-ground-t1">0</td><td id="n-ground-t2">0</td></tr>
+                <tr><td>المشاريع</td><td id="n-proj-t1">0</td><td id="n-proj-t2">0</td></tr>
+                <tr style="background:#111; color:var(--luxury-gold);"><td>الأبناط</td><td id="n-abnat-t1">0</td><td id="n-abnat-t2">0</td></tr>
+                <tr style="font-size:16px; font-weight:900; background:#000; color:#4caf50;"><td>النتيجة القيد</td><td id="n-gain-t1">0</td><td id="n-gain-t2">0</td></tr>
+            </tbody>
+        </table>
+        <div style="font-size:11px; color:#aaa;">جاري الانتقال للتوزيع الجديد تلقائياً...</div>
+    </div>
 
     <div class="top-score-bar" id="top-nav-bar" style="display:none;">
         <div class="top-action-btn" onclick="openTray('تعابير')">💬 تعابير</div>
@@ -179,7 +211,6 @@
             <div class="counter-badge-item" onclick="declareProject('سرا')"><span>سرا</span><div class="counter-number-circle">١</div></div>
             <div class="counter-badge-item" onclick="declareProject('خمسين')"><span>٥٠</span><div class="counter-number-circle">٠</div></div>
             <div class="counter-badge-item" onclick="declareProject('100')"><span>١٠٠</span><div class="counter-number-circle">٠</div></div>
-            <div class="counter-badge-item" onclick="declareProject('بلوت')"><span>بلوت</span><div class="counter-number-circle">٠</div></div>
         </div>
         
         <div class="player-hand-container" id="my-hand"></div>
@@ -230,7 +261,7 @@
 
     function showToast(message) { const toast = document.getElementById('global-toast'); toast.innerText = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3000); }
     function connectToTable() {
-        const username = document.getElementById('usernameInput').value.trim(); if(!username) return alert("الرجاء إدخل اسم اللاعب!");
+        const username = document.getElementById('usernameInput').value.trim(); if(!username) return alert("الرجاء إدخال اسم اللاعب!");
         document.getElementById('lobby-screen').style.display = 'none'; document.getElementById('game-layout').style.display = 'flex';
         document.getElementById('top-nav-bar').style.display = 'flex'; document.getElementById('chat-footer-box').style.display = 'flex';
         socket.emit('join_matchmaking', { username: username }); setTimeout(() => { socket.emit('start_game_with_bots'); }, 500);
@@ -241,8 +272,7 @@
         let relPos = seatMapping[data.toSeat];
         const actionTag = document.getElementById(`action_tag_${relPos}`);
         if(actionTag) {
-            actionTag.innerText = data.item;
-            actionTag.style.display = 'inline-block';
+            actionTag.innerText = data.item; actionTag.style.display = 'inline-block';
             setTimeout(() => { actionTag.style.display = 'none'; }, 4000);
         }
         showToast(`💬 ${data.senderName}: [ ${data.item} ]`);
@@ -269,10 +299,37 @@
         const countersRow = document.getElementById('counters-row-area');
         if(data.gameStage === 'playing') countersRow.style.display = 'flex'; else countersRow.style.display = 'none';
 
+        // إدارة لوحة النشرة التلقائية لكملنا
+        const nashraBoard = document.getElementById('nashra-board');
+        if(data.gameStage === 'nashra') {
+            document.getElementById('n-tricks-t1').innerText = data.nashra.trickPoints.t1;
+            document.getElementById('n-tricks-t2').innerText = data.nashra.trickPoints.t2;
+            document.getElementById('n-ground-t1').innerText = data.nashra.ground.t1;
+            document.getElementById('n-ground-t2').innerText = data.nashra.ground.t2;
+            document.getElementById('n-proj-t1').innerText = data.nashra.projects.t1;
+            document.getElementById('n-proj-t2').innerText = data.nashra.projects.t2;
+            document.getElementById('n-abnat-t1').innerText = data.nashra.abnat.t1;
+            document.getElementById('n-abnat-t2').innerText = data.nashra.abnat.t2;
+            document.getElementById('n-gain-t1').innerText = data.nashra.gain.t1;
+            document.getElementById('n-gain-t2').innerText = data.nashra.gain.t2;
+            nashraBoard.style.display = 'block';
+        } else {
+            nashraBoard.style.display = 'none';
+        }
+
+        for(let i=0; i<4; i++) {
+            let relPos = seatMapping[i]; const actionTag = document.getElementById(`action_tag_${relPos}`);
+            if(data.playerActionsText && data.playerActionsText[i] && data.playerActionsText[i] !== "") {
+                actionTag.innerText = data.playerActionsText[i]; actionTag.style.display = 'inline-block';
+            } else if (data.gameStage === 'buying') {
+                actionTag.style.display = 'none';
+            }
+        }
+
         const centerTable = document.getElementById('center-table'); const buyingPanel = document.getElementById('buying-panel');
 
         if(data.gameStage === 'buying') {
-            document.getElementById('game-status').innerText = `دور الشراء - مقعد ${data.currentTurn}`;
+            document.getElementById('game-status').innerText = `دور الشراء - لفة ${data.buyRound}`;
             if(data.flipCard) { centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 44px); left:calc(50% - 31px); border: 1.5px dashed #cca43b; border-radius:8px;">` + createCardMarkup(data.flipCard) + `</div>`; }
             
             if (data.currentTurn === mySeatIndex) {
@@ -285,7 +342,7 @@
                     <button class="btn-action-kamalna" style="background:#5a5a5a; color:#fff;" onclick="makeDecision('pass', null)">بس</button>
                 `;
             } else buyingPanel.style.display = 'none';
-        } else {
+        } else if(data.gameStage === 'playing') {
             document.getElementById('game-status').innerText = `الأكلة الجارية [${data.trickCount + 1}/8]`; buyingPanel.style.display = 'none';
             centerTable.innerHTML = "";
             if (data.tableCards && data.tableCards.length > 0) {
@@ -294,12 +351,11 @@
         }
         const myCards = data.playersCards[mySeatIndex] || [];
         if(myCards.length > 0) { localCards = myCards; sortMyHand(); renderHand(); }
-        else { document.getElementById('my-hand').innerHTML = ""; } // تنظيف الشاشة عند نهاية الأوراق
+        else { document.getElementById('my-hand').innerHTML = ""; }
     });
 
     function makeDecision(decision, buyType) { socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: decision, buyType: buyType }); }
     
-    // 🎯 الحل النهائي: تمرير الكائن الكامل للكرت ليربط السيرفر الهوية المطلقة للكرت بدلاً من الفهرس المتغير!
     function throwCardFromHand(cardIndex) {
         const selectedCard = localCards[cardIndex];
         if (currentLeadSuit && selectedCard.suit !== currentLeadSuit) {
