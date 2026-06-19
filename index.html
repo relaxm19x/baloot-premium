@@ -28,7 +28,7 @@
             width: 100%; max-width: 420px; background: linear-gradient(180deg, #44464a 0%, #1e1f22 100%);
             padding: 8px 14px; border-bottom-left-radius: 18px; border-bottom-right-radius: 18px;
             display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-            z-index: 100; border-bottom: 2px solid var(--luxury-gold);
+            z-index: 1000; border-bottom: 2px solid var(--luxury-gold);
         }
         .score-display-box {
             display: flex; background: #000000; border-radius: 12px; border: 1.5px solid #555;
@@ -73,9 +73,9 @@
         }
 
         .live-action-bubble {
-            background: linear-gradient(180deg, #444 0%, #222 100%); color: #ffe066;
-            font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 6px;
-            border: 1px solid var(--luxury-gold); margin-top: 4px; display: none;
+            background: linear-gradient(180deg, #ffe066 0%, #cca43b 100%); color: #000000;
+            font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 8px;
+            border: 1px solid #ffffff; margin-top: 4px; display: none; z-index: 99; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
 
         .card {
@@ -115,14 +115,14 @@
         .cafeteria-tray-slide {
             position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
             width: 100%; max-width: 410px; background: #22252a; border-top-left-radius: 20px;
-            border-top-right-radius: 20px; border-top: 3px solid var(--luxury-gold); z-index: 999;
+            border-top-right-radius: 20px; border-top: 3px solid var(--luxury-gold); z-index: 99999;
             padding: 14px; transition: transform 0.25s ease-out; box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
         }
         .cafeteria-tray-slide.open { transform: translateX(-50%) translateY(0); }
         .grid-gift-items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
         .gift-card-btn { background: #1a1c20; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; font-size: 12px; color: #fff; }
 
-        .royal-toast { position: fixed; top: 15px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #222; border: 1.5px solid var(--luxury-gold); padding: 10px 20px; border-radius: 12px; color: #ffe066; font-weight: bold; text-align: center; z-index: 9999; opacity: 0; transition: all 0.3s ease; }
+        .royal-toast { position: fixed; top: 15px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #222; border: 1.5px solid var(--luxury-gold); padding: 10px 20px; border-radius: 12px; color: #ffe066; font-weight: bold; text-align: center; z-index: 99999; opacity: 0; transition: all 0.3s ease; }
         .royal-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
@@ -207,7 +207,7 @@
         grid.innerHTML = "";
         if(mode === 'تعابير') {
             title.innerText = "💬 إرسال تعابير وتصاريح لايف للديوانية";
-            const phrases = ["كفوك الطيب", "العب عجل!", "صن يا ولد", "اشرب شاي مخدر", "الحظر يا رفيقي"];
+            const phrases = ["كفوك الطيب 👍", "العب عجل! ⚡", "صن يا ولد 👑", "اشرب شاي مخدر ☕", "الحظر يا رفيقي 🛡️"];
             phrases.forEach(p => { grid.innerHTML += `<div class="gift-card-btn" onclick="sendEmojiText('${p}')">${p}</div>`; });
         } else {
             title.innerText = "☕ إكرام رفقاء المجلس بالضيافة الفاخرة";
@@ -230,7 +230,7 @@
 
     function showToast(message) { const toast = document.getElementById('global-toast'); toast.innerText = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3000); }
     function connectToTable() {
-        const username = document.getElementById('usernameInput').value.trim(); if(!username) return alert("الرجاء إدخال اسم اللاعب!");
+        const username = document.getElementById('usernameInput').value.trim(); if(!username) return alert("الرجاء إدخل اسم اللاعب!");
         document.getElementById('lobby-screen').style.display = 'none'; document.getElementById('game-layout').style.display = 'flex';
         document.getElementById('top-nav-bar').style.display = 'flex'; document.getElementById('chat-footer-box').style.display = 'flex';
         socket.emit('join_matchmaking', { username: username }); setTimeout(() => { socket.emit('start_game_with_bots'); }, 500);
@@ -269,15 +269,6 @@
         const countersRow = document.getElementById('counters-row-area');
         if(data.gameStage === 'playing') countersRow.style.display = 'flex'; else countersRow.style.display = 'none';
 
-        for(let i=0; i<4; i++) {
-            let relPos = seatMapping[i]; const actionTag = document.getElementById(`action_tag_${relPos}`);
-            if(data.playerActionsText && data.playerActionsText[i] && data.playerActionsText[i] !== "") {
-                actionTag.innerText = data.playerActionsText[i]; actionTag.style.display = 'inline-block';
-            } else if (data.gameStage === 'buying' && (!data.playerActionsText || data.playerActionsText[i] === "")) {
-                actionTag.style.display = 'none';
-            }
-        }
-
         const centerTable = document.getElementById('center-table'); const buyingPanel = document.getElementById('buying-panel');
 
         if(data.gameStage === 'buying') {
@@ -303,18 +294,19 @@
         }
         const myCards = data.playersCards[mySeatIndex] || [];
         if(myCards.length > 0) { localCards = myCards; sortMyHand(); renderHand(); }
+        else { document.getElementById('my-hand').innerHTML = ""; } // تنظيف الشاشة عند نهاية الأوراق
     });
 
     function makeDecision(decision, buyType) { socket.emit('player_buy_decision', { seatIndex: mySeatIndex, decision: decision, buyType: buyType }); }
     
-    // 🎯 تحديث دالة الرمي لإرسال الفهرس (Index) لضمان فك القفل ومطابقة الباكيند بدقة
+    // 🎯 الحل النهائي: تمرير الكائن الكامل للكرت ليربط السيرفر الهوية المطلقة للكرت بدلاً من الفهرس المتغير!
     function throwCardFromHand(cardIndex) {
         const selectedCard = localCards[cardIndex];
         if (currentLeadSuit && selectedCard.suit !== currentLeadSuit) {
             const hasLeadSuitInHand = localCards.some(c => c.suit === currentLeadSuit);
             if (hasLeadSuitInHand) { showToast(`🚨 الأرض ملعوب فيها [${currentLeadSuit}]!`); return; }
         }
-        socket.emit('play_card', { seatIndex: mySeatIndex, cardIndex: cardIndex, card: selectedCard });
+        socket.emit('play_card', { seatIndex: mySeatIndex, card: selectedCard });
     }
 
     function createCardMarkup(card) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
