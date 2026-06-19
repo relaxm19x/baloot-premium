@@ -322,11 +322,9 @@
 
         const centerTable = document.getElementById('center-table'); const buyingPanel = document.getElementById('buying-panel');
 
-        // 🎯 لوحة عرض فرش كروت المشروع الأكبر لايف للجميع في اللمة الثانية كملنا بالملي:
         if (data.revealedProjectCards) {
             let pPos = seatMapping[data.revealedProjectCards.seatIndex];
             centerTable.innerHTML = `<div style="color:#ffe066; font-size:13px; font-weight:bold; width:100%; text-align:center; position:absolute; top:20px;">🔎 كشف مشروع الـ ${data.revealedProjectCards.text} الفائز للأرض!</div>`;
-            // فرش 3 كروت وهمية تمثل المشروع
             centerTable.innerHTML += `<div class="card black" style="left:28%; top:35%; transform:rotate(-10deg);"><div class="card-corner-top"><span>A♣</span></div><div class="card-center-icon">♣</div></div>`;
             centerTable.innerHTML += `<div class="card black" style="left:42%; top:35%;"><div class="card-corner-top"><span>K♣</span></div><div class="card-center-icon">♣</div></div>`;
             centerTable.innerHTML += `<div class="card black" style="left:56%; top:35%; transform:rotate(10deg);"><div class="card-corner-top"><span>Q♣</span></div><div class="card-center-icon">♣</div></div>`;
@@ -357,7 +355,10 @@
                 `;
             } else buyingPanel.style.display = 'none';
         } else if(data.gameStage === 'playing') {
-            document.getElementById('game-status').innerText = `الأكلة الجارية [${data.trickCount + 1}/8]`; buyingPanel.style.display = 'none';
+            // إضافة تنبيه مرئي للاعب الفعلي إذا كان دوره الحالي ليلعب سريعاً قبل انقضاء الـ 10 ثواني
+            let isMyTurnNow = (data.currentTurn === mySeatIndex);
+            document.getElementById('game-status').innerText = isMyTurnNow ? `⏱️ دورك العب سريعاً (١٠ ثواني!)` : `الأكلة الجارية [${data.trickCount + 1}/8]`; 
+            buyingPanel.style.display = 'none';
             centerTable.innerHTML = "";
             if (data.tableCards && data.tableCards.length > 0) {
                 data.tableCards.forEach(item => { centerTable.innerHTML += createCardHTMLWithPosition(item.card, seatMapping[item.seatIndex]); });
