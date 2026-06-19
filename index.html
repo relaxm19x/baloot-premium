@@ -94,15 +94,13 @@
         .card-pos-2 { top: 75px; left: calc(50% - 31px); }
         .card-pos-3 { top: calc(50% - 44px); right: 60px; }
 
-        /* 🎛 فك مساحة الأزرار لمنع تعليق اللمس */
-        .action-panel-bar { display: none; justify-content: center; gap: 6px; margin: 4px auto; width: 96%; max-width: 410px; z-index: 90; height: auto; pointer-events: auto; }
+        .action-panel-bar { display: none; justify-content: center; gap: 6px; margin: 4px auto; width: 96%; max-width: 410px; z-index: 90; }
         .btn-action-kamalna { flex: 1; background: var(--panel-gray); border: var(--btn-border); color: #111111; font-weight: 900; font-size: 13px; padding: 10px 8px; border-radius: 10px; cursor: pointer; }
 
         .project-counters-row { display: none; gap: 6px; justify-content: center; width: 96%; max-width: 410px; margin-top: 4px; z-index: 80; }
         .counter-badge-item { flex: 1; background: linear-gradient(180deg, #ededed 0%, #bfbfbf 100%); border: var(--btn-border); border-radius: 8px; color: #333; font-weight: 900; font-size: 11px; padding: 5px; display: flex; justify-content: space-between; align-items: center; }
         .counter-number-circle { background: #fff; color: #000; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 9px; }
 
-        /* 📊 مروحة اليد المعززة بأعلى مستويات الـ Z-Index لمنع تجميد التاتش */
         .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 410px; position: relative; height: 100px; margin-top: 4px; z-index: 9999 !important; }
         .player-hand-container .card { position: absolute; bottom: 10px; cursor: pointer; transform-origin: bottom center; border: 1.2px solid #555 !important; pointer-events: auto; }
         .player-hand-container .card:hover { bottom: 25px; z-index: 99999 !important; transform: scale(1.12) !important; }
@@ -204,6 +202,7 @@
     const socket = io(); 
     let mySeatIndex = null; let localCards = []; let seatMapping = {}; let currentLeadSuit = null;
 
+    // ☕ تفعيل المنيو بأسعار كافيتيريا الديوانية الحقيقية (0.050 - 0.250 فلس)
     function openTray(mode) {
         const tray = document.getElementById('tray-overlay'); const title = document.getElementById('tray-title'); const grid = document.getElementById('tray-grid-content');
         grid.innerHTML = "";
@@ -212,18 +211,19 @@
             const phrases = ["كفوك الطيب", "العب عجل!", "صن يا ولد", "اشرب شاي مخدر", "الحظر يا رفيقي"];
             phrases.forEach(p => { grid.innerHTML += `<div class="gift-card-btn" onclick="sendEmojiText('${p}')">${p}</div>`; });
         } else {
-            title.innerText = "☕ إكرام رفقاء المجلس بالضيافة والقهوة";
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(1)">☕ استكانة شاي لـ (Abomidal)</div>`;
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(2)">☕ فنجان قهوة لـ (Thamer)</div>`;
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(3)">🥜 طاسة مكسرات لـ (Seemo)</div>`;
+            title.innerText = "☕ إكرام رفقاء المجلس بالضيافة الفاخرة";
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(1, 'استكانة شاي مخدر بـ 0.100 فلس')">☕ شاي للرفيق (0.100 فلس)</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(2, 'فنجان قهوة بالهيل بـ 0.150 فلس')">☕ قهوة للمقابل (0.150 فلس)</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(3, 'حبة تمر إخلاص بـ 0.050 فلس')">🌴 تمر لليمين (0.050 فلس)</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(1, 'بيالة لوز محمص بـ 0.250 فلس')">🥜 لوز كويتي (0.250 فلس)</div>`;
         }
         tray.classList.add('open');
     }
     function closeTray() { document.getElementById('tray-overlay').classList.remove('open'); }
     function sendEmojiText(msg) { socket.emit('deliver_hospitality', { fromSeat: mySeatIndex, toSeat: mySeatIndex, item: msg }); closeTray(); }
-    function sendHospitalityDirect(relSeat) {
+    function sendHospitalityDirect(relSeat, itemText) {
         let actual = 0; for(let i=0; i<4; i++) { if(seatMapping[i] === relSeat) { actual = i; break; } }
-        socket.emit('deliver_hospitality', { fromSeat: mySeatIndex, toSeat: actual, item: "فنجان قهوة كويتي" }); closeTray();
+        socket.emit('deliver_hospitality', { fromSeat: mySeatIndex, toSeat: actual, item: itemText }); closeTray();
     }
     function sendChatMsg() {
         const input = document.getElementById('chatMessageInput'); const val = input.value.trim();
