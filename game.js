@@ -19,7 +19,7 @@ module.exports = function(io) {
                     deck: [], leadSuit: null, roundPoints: { team1: 0, team2: 0 }, trickCount: 0,
                     activeProjects: ["", "", "", ""], playerActionsText: ["", "", "", ""], passCount: 0,
                     dealerSeat: 3, isRoundEnding: false, isDouble: false, revealedProjectCards: null,
-                    turnTimeout: null, // مخزن مؤقت الـ 10 ثواني الخاص بالسيرفر
+                    turnTimeout: null,
                     nashra: { trickPoints: { t1: 0, t2: 0 }, ground: { t1: 0, t2: 0 }, projects: { t1: 0, t2: 0 }, abnat: { t1: 0, t2: 0 }, gain: { t1: 0, t2: 0 } }
                 };
             }
@@ -82,7 +82,6 @@ module.exports = function(io) {
             startTurnTimer(room, roomId);
         }
 
-        // ⏱️ دالة إدارة وتشغيل مؤقت الـ 10 ثواني الرسمي للسيرفر
         function startTurnTimer(room, roomId) {
             if (room.turnTimeout) clearTimeout(room.turnTimeout);
             
@@ -90,15 +89,9 @@ module.exports = function(io) {
             if (!activePlayer) return;
 
             if (activePlayer.socketId.startsWith('bot_')) {
-                // إذا كان الدور على بوت حقيقي، يلعب بتأخير طبيعي (700ms)
-                room.turnTimeout = setTimeout(() => {
-                    handleBotAction(room, roomId);
-                }, 700);
+                room.turnTimeout = setTimeout(() => { handleBotAction(room, roomId); }, 800);
             } else {
-                // 🚀 إذا كان الدور على المستخدم الفخم، نعطيه 10 ثواني؛ إن طافت يلعب البوت عنه لعب مضبوط تلقائياً!
-                room.turnTimeout = setTimeout(() => {
-                    handleBotAction(room, roomId); 
-                }, 10000);
+                room.turnTimeout = setTimeout(() => { handleBotAction(room, roomId); }, 10000);
             }
         }
 
@@ -117,7 +110,7 @@ module.exports = function(io) {
             let roomId = socket.roomId || "1000"; let room = rooms[roomId]; 
             if (!room || room.currentTurn !== data.seatIndex || (room.gameStage !== 'buying' && room.gameStage !== 'double_round')) return;
 
-            if (room.turnTimeout) clearTimeout(room.turnTimeout); // إلغاء المؤقت لرجوع واستلام اللاعب للتحكم
+            if (room.turnTimeout) clearTimeout(room.turnTimeout);
 
             if (room.gameStage === 'double_round') {
                 if (data.decision === 'double') {
@@ -229,7 +222,7 @@ module.exports = function(io) {
             let roomId = socket.roomId || "1000"; let room = rooms[roomId]; 
             if (!room || room.currentTurn !== data.seatIndex || room.gameStage !== 'playing' || room.isRoundEnding) return;
 
-            if (room.turnTimeout) clearTimeout(room.turnTimeout); // فك القفل واستعادة تحكم اللاعب الفعلي
+            if (room.turnTimeout) clearTimeout(room.turnTimeout);
 
             let hand = room.playersCards[data.seatIndex];
             let reqCard = data.card; if (!reqCard) return;
@@ -242,6 +235,7 @@ module.exports = function(io) {
         });
 
         function executePlayCardLogic(room, roomId, seatIndex, chosenCard) {
+            // فحص كشف المشاريع في اللمة الثانية دون التسبب في تجميد اللعب
             if (room.trickCount === 1 && room.tableCards.length === 0) {
                 let bestSeat = -1; let maxPts = 0;
                 const projWeights = { "أربعمئة": 400, "100": 100, "خمسين": 50, "سرا": 20 };
@@ -384,7 +378,6 @@ module.exports = function(io) {
             return total;
         }
 
-        // 💬 قنوات إرسال الضيافة والتعابير مستقلة تماماً ومحررة من التجميد بنسبة 100%
         socket.on('deliver_hospitality', (data) => {
             let room = rooms[socket.roomId || "1000"]; if (!room) return;
             let s = room.seats[data.fromSeat];
