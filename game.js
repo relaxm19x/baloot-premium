@@ -19,6 +19,7 @@ module.exports = function(io) {
                     deck: [], leadSuit: null, roundPoints: { team1: 0, team2: 0 }, trickCount: 0,
                     activeProjects: ["", "", "", ""], playerActionsText: ["", "", "", ""], passCount: 0,
                     dealerSeat: 3, isRoundEnding: false, isDouble: false,
+                    revealedProjectCards: null, // الكروت التي سيتم فرشها على الطاولة ليراها الجميع
                     nashra: { trickPoints: { t1: 0, t2: 0 }, ground: { t1: 0, t2: 0 }, projects: { t1: 0, t2: 0 }, abnat: { t1: 0, t2: 0 }, gain: { t1: 0, t2: 0 } }
                 };
             }
@@ -43,13 +44,21 @@ module.exports = function(io) {
         function setupNewRound(roomId) {
             if (!rooms[roomId]) return;
             let room = rooms[roomId];
+            
+            // تحقق من سقف الفوز بـ 152 نقطة رسمياً
+            if (room.scores.team1 >= 152 || room.scores.team2 >= 152) {
+                let winner = room.scores.team1 >= 152 ? "الفريق الأول (لنا)" : "الفريق الثاني (لهم)";
+                io.to(roomId).emit('round_ended_announcement', { summary: `🏆 صكّة ملوكية منتهية! الفائز هو: ${winner} بمجموع ${Math.max(room.scores.team1, room.scores.team2)} نقطة!`, scores: room.scores });
+                room.scores = { team1: 0, team2: 0 }; // إعادة تصفير الصكة الجديدة
+            }
+
             for (let i = 0; i < 4; i++) {
                 if (!room.seats[i]) room.seats[i] = { socketId: 'bot_' + i, username: "🤖 بوت " + (i+1) };
             }
             room.gameStage = 'buying'; room.buyRound = 1; room.buyerSeat = null;
             room.buyType = null; room.trumpSuit = null; room.tableCards = []; room.trickCount = 0; room.passCount = 0;
             room.roundPoints = { team1: 0, team2: 0 }; room.activeProjects = ["", "", "", ""]; room.playerActionsText = ["", "", "", ""];
-            room.isRoundEnding = false; room.isDouble = false;
+            room.isRoundEnding = false; room.isDouble = false; room.revealedProjectCards = null;
             
             room.nashra = { trickPoints: { t1: 0, t2: 0 }, ground: { t1: 0, t2: 0 }, projects: { t1: 0, t2: 0 }, abnat: { t1: 0, t2: 0 }, gain: { t1: 0, t2: 0 } };
 
@@ -124,8 +133,7 @@ module.exports = function(io) {
         });
 
         function triggerDoubleStage(room, roomId, buyerSeat) {
-            room.gameStage = 'double_round';
-            room.currentTurn = (buyerSeat + 1) % 4; 
+            room.gameStage = 'double_round'; room.currentTurn = (buyerSeat + 1) % 4; 
             io.to(roomId).emit('game_state_changed', room);
             
             let activePlayer = room.seats[room.currentTurn];
@@ -189,7 +197,6 @@ module.exports = function(io) {
             let cardReceiver = buyerIndex;
             if (buyType === 'أشكل' || buyType.includes('أشكل')) cardReceiver = (buyerIndex + 2) % 4;
 
-            // 🎯 تطوير حاسم: دفع الكروت الإضافية لليد مباشرة مع الحفاظ التام على الكروت الـ 5 الأولى للاعب دون فقدان الأكة
             for (let i = 0; i < 4; i++) {
                 if (i === cardReceiver) {
                     room.playersCards[i].push(savedFlipCard);
@@ -201,10 +208,10 @@ module.exports = function(io) {
                 }
             }
 
-            // 🤖 تفعيل مشاريع البوتات الذكية تلقائياً بعد استلام الكروت كاملة
+            // تفعيل فحص البوتات الذكي للمشاريع الفخمة (سرا، خمسين، مئة، أربعمئة، بلوت تلقائي)
             for (let i = 1; i < 4; i++) {
                 if (Math.random() > 0.65) { 
-                    let botProj = Math.random() > 0.5 ? "سرا" : "خمسين";
+                    let botProj = Math.random() > 0.7 ? "خمسين" : "سرا";
                     room.activeProjects[i] = botProj;
                     let pts = botProj === "سرا" ? 20 : 50;
                     if (i === 2) room.nashra.projects.t1 += pts; else room.nashra.projects.t2 += pts;
@@ -220,7 +227,7 @@ module.exports = function(io) {
             let roomId = socket.roomId || "1000"; let room = rooms[roomId]; if (!room) return;
             if (data.projectType !== 'لا شيء') {
                 room.activeProjects[data.seatIndex] = data.projectType;
-                let pts = (data.projectType === 'سرا') ? 20 : (data.projectType === 'خمسين') ? 50 : 100;
+                let pts = (data.projectType === 'سرا') ? 20 : (data.projectType === 'خمسين') ? 50 : (data.projectType === '100') ? 100 : 400;
                 if (data.seatIndex === 0 || data.seatIndex === 2) room.nashra.projects.t1 += pts; else room.nashra.projects.t2 += pts;
             }
             io.to(roomId).emit('game_state_changed', room);
@@ -238,165 +245,27 @@ module.exports = function(io) {
 
             let chosenCard = hand[idx]; hand.splice(idx, 1); 
 
+            // 🎯 كود كشف وفرش المشروع الأكبر للجميع في اللمة الثانية كملنا بالملي:
+            if (room.trickCount === 1 && room.tableCards.length === 0) {
+                let bestSeat = -1; let maxPts = 0;
+                const projWeights = { "أربعمئة": 400, "100": 100, "خمسين": 50, "سرا": 20 };
+                for (let i = 0; i < 4; i++) {
+                    let w = projWeights[room.activeProjects[i]] || 0;
+                    if (w > maxPts) { maxPts = w; bestSeat = i; }
+                }
+                
+                if (bestSeat !== -1) {
+                    // السيرفر يفرش كروت وهمية للمشروع لـ 3 ثوانٍ على الطاولة ثم يمسحها تلقائياً لتنظيف الشاشة
+                    room.revealedProjectCards = { seatIndex: bestSeat, text: room.activeProjects[bestSeat] };
+                    io.to(roomId).emit('game_state_changed', room);
+                    setTimeout(() => {
+                        room.revealedProjectCards = null;
+                        for(let i=0; i<4; i++) room.playerActionsText[i] = ""; // مسح النصوص تماماً لتنظيف اللمات التالية
+                        io.to(roomId).emit('game_state_changed', room);
+                    }, 3000);
+                }
+            }
+
             if (room.tableCards.length === 0) { 
                 for(let i=0; i<4; i++) {
-                    if (room.activeProjects[i] && room.activeProjects[i] !== "") {
-                        room.playerActionsText[i] = `📢 مشروع: ${room.activeProjects[i]}`;
-                    } else {
-                        room.playerActionsText[i] = ""; 
-                    }
-                }
-                room.leadSuit = chosenCard.suit; 
-            } else {
-                for(let i=0; i<4; i++) { if(!room.activeProjects[i]) room.playerActionsText[i] = ""; }
-            }
-
-            room.tableCards.push({ seatIndex: data.seatIndex, card: chosenCard });
-            io.to(roomId).emit('game_state_changed', room);
-            
-            if (room.tableCards.length === 4) {
-                handleTrickCompletion(room, roomId);
-            } else {
-                room.currentTurn = (room.currentTurn + 1) % 4;
-                io.to(roomId).emit('game_state_changed', room);
-                checkAndRunBotGameplay(roomId);
-            }
-        });
-
-        function handleTrickCompletion(room, roomId) {
-            if (room.isRoundEnding || room.gameStage === 'nashra') return; // حماية صارمة لمنع التجميد في آخر لمة
-            
-            setTimeout(() => {
-                let winnerSeat = determineActualWinner(room);
-                let trickPoints = calculateActualTrickPoints(room);
-                room.trickCount++;
-                
-                let currentTeam = (winnerSeat === 0 || winnerSeat === 2) ? 't1' : 't2';
-                room.nashra.trickPoints[currentTeam] += trickPoints;
-
-                if (room.trickCount === 8) room.nashra.ground[currentTeam] += 10; 
-
-                room.tableCards = []; room.leadSuit = null; room.currentTurn = winnerSeat; 
-
-                if (room.trickCount === 8) {
-                    room.isRoundEnding = true; 
-                    room.gameStage = 'nashra'; // قفل المرحلة فوراً لمنع البوتات من التفكير
-                    
-                    room.nashra.abnat.t1 = room.nashra.trickPoints.t1 + room.nashra.ground.t1 + room.nashra.projects.t1;
-                    room.nashra.abnat.t2 = room.nashra.trickPoints.t2 + room.nashra.ground.t2 + room.nashra.projects.t2;
-                    
-                    let isSun = !room.trumpSuit;
-                    let buyerTeam = (room.buyerSeat === 0 || room.buyerSeat === 2) ? 't1' : 't2';
-                    let opponentTeam = buyerTeam === 't1' ? 't2' : 't1';
-
-                    let totalAbnat = room.nashra.abnat.t1 + room.nashra.abnat.t2;
-                    if (room.nashra.abnat[buyerTeam] < (totalAbnat / 2)) {
-                        room.nashra.gain[buyerTeam] = 0;
-                        room.nashra.gain[opponentTeam] = isSun ? 26 : 16;
-                    } else {
-                        if (isSun) {
-                            room.nashra.gain.t1 = Math.round((Math.round(room.nashra.abnat.t1 / 10) * 10) * 2 / 10);
-                            room.nashra.gain.t2 = Math.round((Math.round(room.nashra.abnat.t2 / 10) * 10) * 2 / 10);
-                        } else {
-                            room.nashra.gain.t1 = Math.floor(room.nashra.abnat.t1 / 10);
-                            room.nashra.gain.t2 = Math.floor(room.nashra.abnat.t2 / 10);
-                        }
-                    }
-                    
-                    if (room.isDouble) { room.nashra.gain.t1 *= 2; room.nashra.gain.t2 *= 2; }
-
-                    room.scores.team1 += room.nashra.gain.t1;
-                    room.scores.team2 += room.nashra.gain.t2;
-                    
-                    io.to(roomId).emit('game_state_changed', room);
-                    setTimeout(() => { setupNewRound(roomId); }, 6000); 
-                } else {
-                    io.to(roomId).emit('game_state_changed', room);
-                    checkAndRunBotGameplay(roomId);
-                }
-            }, 1200);
-        }
-
-        function determineActualWinner(room) {
-            let bestCard = null; let winnerSeat = room.currentTurn;
-            room.tableCards.forEach(item => {
-                let score = 0;
-                if (room.trumpSuit && item.card.suit === room.trumpSuit) {
-                    score = (rankOrderTrump[item.card.value] || 0) + 50; 
-                } else if (item.card.suit === room.leadSuit) {
-                    score = (rankOrderSun[item.card.value] || 0);
-                }
-                if (bestCard === null || score > bestCard.score) { bestCard = { score: score, seatIndex: item.seatIndex }; }
-            });
-            return bestCard ? bestCard.seatIndex : winnerSeat;
-        }
-
-        function calculateActualTrickPoints(room) {
-            let total = 0;
-            room.tableCards.forEach(item => {
-                if (room.trumpSuit && item.card.suit === room.trumpSuit) total += (cardValuesTrump[item.card.value] || 0);
-                else total += (cardValuesSun[item.card.value] || 0);
-            });
-            return total;
-        }
-
-        function checkAndRunBotGameplay(roomId) {
-            let room = rooms[roomId]; 
-            if (!room || room.gameStage !== 'playing' || room.tableCards.length >= 4 || room.isRoundEnding || room.gameStage === 'nashra') return;
-            if (room.seats[room.currentTurn].socketId.startsWith('bot_')) setTimeout(() => { makeAdvancedBotPlay(room, roomId); }, 600);
-        }
-
-        function makeAdvancedBotPlay(room, roomId) {
-            if (room.isRoundEnding || room.gameStage === 'nashra') return; 
-            let hand = room.playersCards[room.currentTurn]; if (!hand || hand.length === 0) return;
-            let chosenCard = null; let chosenIndex = 0;
-
-            let currentOrder = room.trumpSuit ? rankOrderTrump : rankOrderSun;
-
-            if (room.tableCards.length === 0) {
-                hand.sort((a,b) => (currentOrder[b.value] || 0) - (currentOrder[a.value] || 0));
-                chosenCard = hand[0];
-            } else {
-                let currentWinner = determineActualWinner(room);
-                let isPartnerWinner = (currentWinner === (room.currentTurn + 2) % 4);
-                let matchIndices = [];
-                hand.forEach((c, idx) => { if(c.suit === room.leadSuit) matchIndices.push(idx); });
-                
-                if (matchIndices.length > 0) {
-                    if (isPartnerWinner) {
-                        matchIndices.sort((a,b) => (currentOrder[hand[a].value] || 0) - (currentOrder[hand[b].value] || 0));
-                    } else {
-                        matchIndices.sort((a,b) => (currentOrder[hand[b].value] || 0) - (currentOrder[hand[a].value] || 0));
-                    }
-                    chosenIndex = matchIndices[0]; chosenCard = hand[chosenIndex];
-                } else {
-                    if (room.trumpSuit) {
-                        let trumpIndices = [];
-                        hand.forEach((c, idx) => { if(c.suit === room.trumpSuit) trumpIndices.push(idx); });
-                        if (trumpIndices.length > 0 && !isPartnerWinner) {
-                            trumpIndices.sort((a,b) => (rankOrderTrump[hand[b].value] || 0) - (rankOrderTrump[hand[a].value] || 0));
-                            chosenIndex = trumpIndices[0]; chosenCard = hand[chosenIndex];
-                        }
-                    }
-                }
-            }
-
-            if (!chosenCard) { chosenCard = hand[0]; chosenIndex = 0; }
-            hand.splice(chosenIndex, 1); 
-
-            if (room.tableCards.length === 0) room.leadSuit = chosenCard.suit;
-            room.tableCards.push({ seatIndex: room.currentTurn, card: chosenCard });
-            io.to(roomId).emit('game_state_changed', room);
-            if (room.tableCards.length === 4) handleTrickCompletion(room, roomId);
-            else { room.currentTurn = (room.currentTurn + 1) % 4; io.to(roomId).emit('game_state_changed', room); checkAndRunBotGameplay(roomId); }
-        }
-
-        socket.on('deliver_hospitality', (data) => {
-            let room = rooms[socket.roomId || "1000"]; if (!room) return;
-            let s = room.seats[data.fromSeat];
-            if (s) {
-                io.to(room.roomId).emit('hospitality_broadcast', { fromSeat: data.fromSeat, toSeat: data.toSeat, senderName: s.username, item: data.item });
-            }
-        });
-    });
-};
+                    if (room.trick
