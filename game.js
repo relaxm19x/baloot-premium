@@ -104,13 +104,28 @@ module.exports = function(io) {
             }
         }
 
+        // 🎯 إصلاح دالة الشراء: المشتري يأخذ ورقة الأرض رسمياً وكرته يصير باليد!
         function executeBuy(room, roomId, buyType, buyerIndex) {
             room.gameStage = 'playing';
             for(let i=0; i<4; i++) { if(room.playerActionsText[i] === "بس 🛡️") room.playerActionsText[i] = ""; }
+            
+            let savedFlipCard = room.flipCard; 
+            room.flipCard = null;
+
             for (let i = 0; i < 4; i++) {
-                room.playersCards[i].push(room.deck.pop()); room.playersCards[i].push(room.deck.pop()); room.playersCards[i].push(room.deck.pop());
+                if (i === buyerIndex) {
+                    // المشتري ياخذ كرت الأرض + كرتين من السطحة
+                    room.playersCards[i].push(savedFlipCard);
+                    room.playersCards[i].push(room.deck.pop());
+                    room.playersCards[i].push(room.deck.pop());
+                } else {
+                    // الباقي ياخذون 3 كروت من السطحة دغري
+                    room.playersCards[i].push(room.deck.pop());
+                    room.playersCards[i].push(room.deck.pop());
+                    room.playersCards[i].push(room.deck.pop());
+                }
             }
-            room.flipCard = null; room.currentTurn = 0;
+            room.currentTurn = 0;
             io.to(roomId).emit('game_state_changed', room);
             if (room.seats[room.currentTurn].socketId.startsWith('bot_')) makeAdvancedBotPlay(room, roomId);
         }
