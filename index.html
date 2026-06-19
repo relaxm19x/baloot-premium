@@ -7,16 +7,16 @@
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <style>
         :root {
-            --bg-color: #d8c7a9;
+            --bg-color: #14161d;
             --luxury-gold: #cca43b;
-            --panel-gray: linear-gradient(180deg, #aeaeae 0%, #8e8e8e 100%);
+            --panel-gray: linear-gradient(180deg, #f3f3f3 0%, #d2d2d2 100%);
             --btn-border: 2px solid #5a5a5a;
-            --table-green: radial-gradient(circle, #2b6f39 40%, #174621 80%, #0c2b14 100%);
-            --card-shadow: 0 8px 18px rgba(0,0,0,0.55);
+            --table-green: radial-gradient(circle, #1b5329 30%, #0f381a 75%, #071e0e 100%);
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.6), 0 3px 6px rgba(0,0,0,0.4);
         }
 
         body {
-            margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: var(--bg-color); color: #ffffff;
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; overflow: hidden; -webkit-user-select: none; user-select: none;
@@ -25,122 +25,128 @@
         *, *::before, *::after { box-sizing: border-box; }
 
         .top-score-bar {
-            width: 100%; max-width: 420px; background: linear-gradient(180deg, #44464a 0%, #1e1f22 100%);
-            padding: 8px 14px; border-bottom-left-radius: 18px; border-bottom-right-radius: 18px;
-            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            width: 100%; max-width: 480px; background: linear-gradient(180deg, #2c2e35 0%, #151619 100%);
+            padding: 10px 16px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
+            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
             z-index: 1000; border-bottom: 2px solid var(--luxury-gold);
         }
         .score-display-box {
-            display: flex; background: #000000; border-radius: 12px; border: 1.5px solid #555;
-            padding: 3px 16px; gap: 16px; font-weight: 900; font-size: 16px; color: #ffffff;
+            display: flex; background: #000000; border-radius: 12px; border: 1.5px solid #444;
+            padding: 4px 18px; gap: 16px; font-weight: 900; font-size: 15px; color: #ffffff;
         }
-        .top-action-btn { background: #333; border: 1px solid #ffe066; color: #ffe066; font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 8px; cursor: pointer; }
+        .top-action-btn { background: #222; border: 1px solid var(--luxury-gold); color: #ffe066; font-size: 12px; font-weight: bold; padding: 6px 14px; border-radius: 10px; cursor: pointer; }
 
         .lobby-container {
             background: #181b22; padding: 35px 25px; border-radius: 24px;
-            border: 2px solid var(--luxury-gold); text-align: center; margin-top: 70px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8); width: 88%; max-width: 370px;
+            border: 2px solid var(--luxury-gold); text-align: center; margin-top: 80px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8); width: 90%; max-width: 380px;
         }
 
         .luxury-input {
-            width: 100%; padding: 12px; margin: 12px 0; border-radius: 12px;
-            border: 1px solid var(--luxury-gold); background: #0c0f16; color: white; text-align: center; font-size: 15px;
+            width: 100%; padding: 14px; margin: 15px 0; border-radius: 12px;
+            border: 1px solid var(--luxury-gold); background: #0c0f16; color: white; text-align: center; font-size: 16px;
         }
 
+        /* 📱 تحسين قياس الطاولة لتناسب الهواتف 100% بدون خروج عن الشاشة */
         .baloot-table {
-            width: 94%; max-width: 410px; height: 340px; background: var(--table-green);
-            border: 14px solid #33200f; border-radius: 45px; position: relative; margin: 5px auto;
-            box-shadow: inset 0 0 60px rgba(0,0,0,0.85), 0 16px 32px rgba(0,0,0,0.6); z-index: 10;
+            width: 94vw; max-width: 440px; height: 52vw; max-height: 270px; background: var(--table-green);
+            border: 10px solid #2b1a0c; border-radius: 40px; position: relative; margin: 15px auto;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.9), 0 12px 28px rgba(0,0,0,0.6); z-index: 10;
         }
 
-        .player-seat-avatar { position: absolute; display: flex; flex-direction: column; align-items: center; width: 85px; z-index: 20; }
-        .seat-0 { bottom: -18px; left: calc(50% - 42.5px); }
-        .seat-1 { left: -18px; top: calc(50% - 45px); }
-        .seat-2 { top: -18px; left: calc(50% - 42.5px); }
-        .seat-3 { right: -18px; top: calc(50% - 45px); }
+        .player-seat-avatar { position: absolute; display: flex; flex-direction: column; align-items: center; width: 75px; z-index: 20; }
+        .seat-0 { bottom: -22px; left: calc(50% - 37.5px); }
+        .seat-1 { left: -15px; top: calc(50% - 40px); }
+        .seat-2 { top: -22px; left: calc(50% - 37.5px); }
+        .seat-3 { right: -15px; top: calc(50% - 40px); }
 
         .avatar-circle {
-            width: 50px; height: 50px; border-radius: 50%; border: 2.5px solid #bba374;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            width: 46px; height: 46px; border-radius: 50%; border: 2px solid #cca43b;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;
+            background: #fff;
         }
         .avatar-circle img { width: 100%; height: 100%; border-radius: 50%; }
         
         .name-plate {
-            background: linear-gradient(180deg, #eeddb2 0%, #b39659 100%); color: #000;
-            font-size: 10px; font-weight: 900; padding: 2px 6px; border-radius: 8px;
-            margin-top: -8px; z-index: 25; width: 72px; text-shadow: 0 0 1px #fff; text-align: center;
+            background: linear-gradient(180deg, #f7e7c4 0%, #b39659 100%); color: #000;
+            font-size: 9px; font-weight: 900; padding: 2px 5px; border-radius: 6px;
+            margin-top: -6px; z-index: 25; width: 68px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
         .live-action-bubble {
-            background: linear-gradient(180deg, #ffe066 0%, #cca43b 100%); color: #000000;
-            font-size: 11px; font-weight: 900; padding: 5px 12px; border-radius: 10px;
-            border: 1.5px solid #ffffff; margin-top: 4px; display: none; z-index: 99; box-shadow: 0 5px 10px rgba(0,0,0,0.35);
+            background: linear-gradient(180deg, #ffe066 0%, #cca43b 100%); color: #000;
+            font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 8px;
+            border: 1px solid #fff; margin-top: 3px; display: none; z-index: 99; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
 
-        /* 👑 كروت عريضة، داكنة وواضحة جداً للرموز والقيم بالمركز 👑 */
+        /* 🃏 تصميم كرت احترافي، مصقول، تباين عالي ورموز فخمة للمجلس 🃏 */
         .card {
-            width: 66px; height: 94px; background: #ffffff; color: #111111; border-radius: 10px; display: flex;
-            flex-direction: column; justify-content: space-between; padding: 6px; font-weight: 900; font-size: 21px;
-            box-shadow: var(--card-shadow); border: 2px solid #95a5a6; position: absolute;
+            width: 58px; height: 84px; background: linear-gradient(145deg, #ffffff 0%, #f0f0f0 100%);
+            color: #1a1a1a; border-radius: 8px; display: flex; flex-direction: column;
+            justify-content: space-between; padding: 5px; font-weight: 800;
+            box-shadow: var(--card-shadow); border: 1.5px solid #dcdde1; position: absolute;
         }
-        .card.red { color: #e74c3c; }
-        .black { color: #2c3e50; }
-        .card-corner-top { display: flex; justify-content: flex-start; line-height: 0.9; font-size: 15px; }
-        .card-corner-bottom { display: flex; justify-content: flex-end; line-height: 0.9; transform: rotate(180deg); font-size: 15px; }
-        .card-center-icon { text-align: center; font-size: 30px; font-weight: 900; margin-top: -4px; }
+        .card.red { color: #c0392b; }
+        .card.black { color: #2c3e50; }
+        
+        .card-corner-top { display: flex; justify-content: flex-start; line-height: 0.85; font-size: 14px; font-family: monospace; }
+        .card-corner-bottom { display: flex; justify-content: flex-end; line-height: 0.85; transform: rotate(180deg); font-size: 14px; font-family: monospace; }
+        .card-center-icon { text-align: center; font-size: 24px; margin-top: -2px; font-weight: bold; }
 
-        .card-pos-0 { bottom: 75px; left: calc(50% - 33px); }
-        .card-pos-1 { top: calc(50% - 47px); left: 60px; }
-        .card-pos-2 { top: 75px; left: calc(50% - 33px); }
-        .card-pos-3 { top: calc(50% - 47px); right: 60px; }
+        /* مواضع الكروت الملعوبة في ساحة الطاولة الوسطى */
+        .card-pos-0 { bottom: 50px; left: calc(50% - 29px); }
+        .card-pos-1 { top: calc(50% - 42px); left: 45px; }
+        .card-pos-2 { top: 50px; left: calc(50% - 29px); }
+        .card-pos-3 { top: calc(50% - 42px); right: 45px; }
 
-        .action-panel-bar { display: none; justify-content: center; gap: 6px; margin: 4px auto; width: 96%; max-width: 410px; z-index: 90; }
-        .btn-action-kamalna { flex: 1; background: var(--panel-gray); border: var(--btn-border); color: #111111; font-weight: 900; font-size: 13px; padding: 10px 8px; border-radius: 10px; cursor: pointer; }
+        .action-panel-bar { display: none; justify-content: center; gap: 8px; margin: 10px auto 4px auto; width: 90%; max-width: 440px; z-index: 90; }
+        .btn-action-kamalna { flex: 1; background: var(--panel-gray); border: var(--btn-border); color: #111; font-weight: 900; font-size: 14px; padding: 12px 8px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        .project-counters-row { display: none; gap: 4px; justify-content: center; width: 96%; max-width: 410px; margin-top: 4px; z-index: 80; }
-        .counter-badge-item { flex: 1; background: linear-gradient(180deg, #fff 0%, #bfbfbf 100%); border: 1.5px solid #cca43b; border-radius: 8px; color: #111; font-weight: 900; font-size: 11px; padding: 6px; text-align: center; cursor: pointer; }
+        .project-counters-row { display: none; gap: 5px; justify-content: center; width: 90%; max-width: 440px; margin-top: 5px; z-index: 80; }
+        .counter-badge-item { flex: 1; background: linear-gradient(180deg, #fff 0%, #e0e0e0 100%); border: 1.5px solid var(--luxury-gold); border-radius: 8px; color: #111; font-weight: 900; font-size: 11px; padding: 8px; text-align: center; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.2); }
 
-        /* 👑 تباعد مروحي عريض ممتاز ومفتوح (38px) لتظهر الكروت مصفوفة كلياً دون أي تلاصق 👑 */
-        .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 450px; position: relative; height: 125px; margin-top: 10px; z-index: 9999 !important; }
-        .player-hand-container .card { position: absolute; bottom: 12px; cursor: pointer; transform-origin: bottom center; transition: all 0.18s ease-out; pointer-events: auto; }
-        .player-hand-container .card:hover { bottom: 35px; z-index: 999999 !important; transform: scale(1.24) !important; border-color: var(--luxury-gold) !important; box-shadow: 0 16px 32px rgba(0,0,0,0.7); }
+        /* 📱 تثبيت مصفوفة يد اللاعب أسفل الشاشة ومنعها من الحركة بتوزيع مروحي واسع وممتاز للهاتف */
+        .player-hand-container {
+            position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
+            display: flex; justify-content: center; width: 100vw; max-width: 460px; height: 110px; z-index: 9999;
+        }
+        .player-hand-container .card { position: absolute; bottom: 5px; cursor: pointer; transform-origin: bottom center; transition: all 0.15s ease-out; }
+        .player-hand-container .card:hover { bottom: 28px; z-index: 999999 !important; transform: scale(1.22) !important; border-color: var(--luxury-gold) !important; }
 
-        /* بوب أب المشاريع المكشوفة المعزول والآمن */
         .project-reveal-overlay {
-            display: none; position: absolute; top: 22%; left: 50%; transform: translateX(-50%);
-            width: 84%; background: rgba(0,0,0,0.9); border: 2px solid var(--luxury-gold);
+            display: none; position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+            width: 85%; background: rgba(0,0,0,0.95); border: 2px solid var(--luxury-gold);
             border-radius: 14px; padding: 12px; text-align: center; z-index: 8500; box-shadow: 0 12px 30px rgba(0,0,0,0.8);
         }
 
         .nashra-overlay-card {
-            display: none; position: fixed; top: 18%; left: 50%; transform: translateX(-50%);
-            width: 88%; max-width: 360px; background: linear-gradient(180deg, #2b2e35 0%, #181a1f 100%);
+            display: none; position: fixed; top: 15%; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 360px; background: linear-gradient(180deg, #2b2e35 0%, #141519 100%);
             border: 3px solid var(--luxury-gold); border-radius: 20px; padding: 16px; z-index: 999999;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8); color: #fff; text-align: center;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.9); color: #fff; text-align: center;
         }
         .nashra-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
         .nashra-table th { background: #000; color: var(--luxury-gold); padding: 8px; font-weight: 900; }
-        .nashra-table td { border-bottom: 1px solid #444; padding: 8px; font-weight: bold; }
+        .nashra-table td { border-bottom: 1px solid #3a3d46; padding: 8px; font-weight: bold; }
 
         .chat-input-footer-bar {
-            width: 100%; max-width: 410px; background: #22252a; border-top: 1.5px solid var(--luxury-gold);
-            padding: 8px; display: flex; gap: 6px; align-items: center; position: fixed; bottom: 0; z-index: 300;
+            width: 100%; max-width: 480px; background: #1c1e22; border-top: 1.5px solid var(--luxury-gold);
+            padding: 8px 12px; display: flex; gap: 8px; align-items: center; position: fixed; bottom: 0; z-index: 10000;
         }
-        .chat-text-field { flex: 1; background: #111; border: 1px solid #555; border-radius: 20px; padding: 6px 14px; color: white; font-size: 13px; outline: none; }
-        .chat-send-btn { background: #cca43b; color: #000; border: none; padding: 6px 14px; font-weight: bold; border-radius: 20px; cursor: pointer; font-size: 12px; }
+        .chat-text-field { flex: 1; background: #0b0c0e; border: 1px solid #444; border-radius: 20px; padding: 8px 14px; color: white; font-size: 14px; outline: none; }
+        .chat-send-btn { background: var(--luxury-gold); color: #000; border: none; padding: 8px 16px; font-weight: bold; border-radius: 20px; cursor: pointer; font-size: 13px; }
 
         .cafeteria-tray-slide {
             position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
-            width: 100%; max-width: 410px; background: #22252a; border-top-left-radius: 20px;
-            border-top-right-radius: 20px; border-top: 3px solid var(--luxury-gold); z-index: 99999;
-            padding: 14px; transition: transform 0.25s ease-out; box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
+            width: 100%; max-width: 480px; background: #1c1e22; border-top-left-radius: 22px;
+            border-top-right-radius: 22px; border-top: 3px solid var(--luxury-gold); z-index: 100001;
+            padding: 16px; transition: transform 0.22s ease-out; box-shadow: 0 -12px 35px rgba(0,0,0,0.85);
         }
         .cafeteria-tray-slide.open { transform: translateX(-50%) translateY(0); }
-        .grid-gift-items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
-        .gift-card-btn { background: #1a1c20; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; font-size: 12px; color: #fff; }
+        .grid-gift-items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+        .gift-card-btn { background: #111317; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; font-size: 13px; color: #fff; font-weight: bold; }
 
-        .royal-toast { position: fixed; top: 15px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #222; border: 1.5px solid var(--luxury-gold); padding: 10px 20px; border-radius: 12px; color: #ffe066; font-weight: bold; text-align: center; z-index: 99999; opacity: 0; transition: all 0.3s ease; }
+        .royal-toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #1f2126; border: 1.5px solid var(--luxury-gold); padding: 12px 24px; border-radius: 14px; color: #ffe066; font-weight: bold; text-align: center; z-index: 999999; opacity: 0; transition: all 0.25s ease; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
         .royal-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
@@ -162,11 +168,11 @@
                 <tr><td>الأكلات</td><td id="n-tricks-t1">0</td><td id="n-tricks-t2">0</td></tr>
                 <tr><td>الأرض</td><td id="n-ground-t1">0</td><td id="n-ground-t2">0</td></tr>
                 <tr><td>المشاريع</td><td id="n-proj-t1">0</td><td id="n-proj-t2">0</td></tr>
-                <tr style="background:#111; color:var(--luxury-gold);"><td>الأبناط</td><td id="n-abnat-t1">0</td><td id="n-abnat-t2">0</td></tr>
+                <tr style="background:#000; color:var(--luxury-gold);"><td>الأبناط</td><td id="n-abnat-t1">0</td><td id="n-abnat-t2">0</td></tr>
                 <tr style="font-size:16px; font-weight:900; background:#000; color:#4caf50;"><td>النتيجة القيد</td><td id="n-gain-t1">0</td><td id="n-gain-t2">0</td></tr>
             </tbody>
         </table>
-        <div style="font-size:11px; color:#aaa;">جاري الانتقال للتوزيع الجديد تلقائياً...</div>
+        <div style="font-size:12px; color:#aaa;">جاري الانتقال للتوزيع الجديد تلقائياً...</div>
     </div>
 
     <div class="top-score-bar" id="top-nav-bar" style="display:none;">
@@ -182,16 +188,16 @@
     <div class="lobby-container" id="lobby-screen">
         <h1 style="color: var(--luxury-gold); font-size: 24px; font-weight: 900; margin:0 0 15px 0;">🃏 صكة الملوك الاحترافية</h1>
         <input type="text" id="usernameInput" class="luxury-input" placeholder="ادخل اسم اللاعب الفخم">
-        <button class="btn-action-kamalna" style="width:100%; padding:12px;" onclick="connectToTable()">دخول مجلس الصكة</button>
+        <button class="btn-action-kamalna" style="width:100%; padding:14px; background:var(--luxury-gold); color:#000;" onclick="connectToTable()">دخول مجلس الصكة</button>
     </div>
 
     <div class="game-layout" id="game-layout" style="display:none; flex-direction:column; align-items:center; width:100%;">
-        <div id="game-status" style="font-size:11px; color:#111; font-weight:bold; margin-top:2px;">جاري التوزيع...</div>
+        <div id="game-status" style="font-size:13px; color:#ffffff; font-weight:bold; margin-top:6px; background: rgba(0,0,0,0.4); padding: 4px 14px; border-radius: 20px;">جاري التوزيع...</div>
 
         <div class="baloot-table" id="main-baloot-table">
             <div class="project-reveal-overlay" id="project-popup">
                 <div id="project-popup-title" style="color:#ffe066; font-size:13px; font-weight:bold; margin-bottom:6px;"></div>
-                <div style="display:flex; justify-content:center; gap:8px; height:94px; position:relative;">
+                <div style="display:flex; justify-content:center; gap:8px; height:84px; position:relative;">
                     <div class="card black" style="position:static;"><div class="card-corner-top"><span>A♣</span></div><div class="card-center-icon">♣</div></div>
                     <div class="card black" style="position:static;"><div class="card-corner-top"><span>K♣</span></div><div class="card-center-icon">♣</div></div>
                     <div class="card black" style="position:static;"><div class="card-corner-top"><span>Q♣</span></div><div class="card-center-icon">♣</div></div>
@@ -239,9 +245,9 @@
     </div>
 
     <div class="cafeteria-tray-slide" id="tray-overlay">
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:6px;">
-            <b id="tray-title" style="color:var(--luxury-gold); font-size:14px;">قائمة كملنا</b>
-            <button style="background:none; border:none; color:#ff4d4d; font-weight:bold; cursor:pointer;" onclick="closeTray()">❌</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">
+            <b id="tray-title" style="color:var(--luxury-gold); font-size:15px;">قائمة كملنا</b>
+            <button style="background:none; border:none; color:#ff4d4d; font-weight:bold; font-size:16px; cursor:pointer;" onclick="closeTray()">❌</button>
         </div>
         <div class="grid-gift-items" id="tray-grid-content"></div>
     </div>
@@ -285,7 +291,6 @@
     }
     function declareProject(type) { socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type }); showToast(`📢 سجلت مشروع: ${type}`); }
 
-    // 📡 معالج كشف السرا والمشاريع المستقل والآمن كلياً لثانيتين فقط ثم يختفي تلقائياً
     socket.on('project_reveal_broadcast', (data) => {
         const projectPopup = document.getElementById('project-popup');
         document.getElementById('project-popup-title').innerText = `🔎 مشروع الـ ${data.text} للأرض!`;
@@ -350,7 +355,7 @@
 
         if(data.gameStage === 'buying') {
             document.getElementById('game-status').innerText = `دور الشراء - لفة ${data.buyRound}`;
-            if(data.flipCard) { centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 47px); left:calc(50% - 33px); border: 2.5px dashed #cca43b; border-radius:10px; padding:2px;">` + createCardMarkup(data.flipCard) + `</div>`; }
+            if(data.flipCard) { centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 42px); left:calc(50% - 29px); border: 2px dashed #cca43b; border-radius:8px; padding:1px;">` + createCardMarkup(data.flipCard) + `</div>`; }
             
             if (data.currentTurn === mySeatIndex) {
                 buyingPanel.style.display = 'flex';
@@ -404,10 +409,10 @@
         localCards.forEach((card, index) => {
             const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
             const mid = (totalCards - 1) / 2; 
-            const angle = (index - mid) * 5.5; 
-            const xOffset = (index - mid) * 36; 
-            const yOffset = Math.abs(index - mid) * 1.8;
-            handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index + 2000}; left:calc(50% + ${xOffset}px - 33px); transform: rotate(${angle}deg); bottom:${16 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
+            const angle = (index - mid) * 5.2; 
+            const xOffset = (index - mid) * 34; 
+            const yOffset = Math.abs(index - mid) * 1.5;
+            handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index + 2000}; left:calc(50% + ${xOffset}px - 29px); transform: rotate(${angle}deg); bottom:${12 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
         });
     }
     const suitOrder = { '♠': 1, '♥': 2, '♦': 3, '♣': 4 }; const cardRankOrder = { 'A': 1, '10': 2, 'K': 3, 'Q': 4, 'J': 5, '9': 6, '8': 7, '7': 8 };
