@@ -211,10 +211,9 @@
             phrases.forEach(p => { grid.innerHTML += `<div class="gift-card-btn" onclick="sendEmojiText('${p}')">${p}</div>`; });
         } else {
             title.innerText = "☕ إكرام رفقاء المجلس بالضيافة الفاخرة";
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(1, 'استكانة شاي مخدر بـ 0.100 فلس')">☕ شاي للرفيق (0.100 فلس)</div>`;
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(2, 'فنجان قهوة بالهيل بـ 0.150 فلس')">☕ قهوة للمقابل (0.150 فلس)</div>`;
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(3, 'حبة تمر إخلاص بـ 0.050 فلس')">🌴 تمر لليمين (0.050 فلس)</div>`;
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(1, 'بيالة لوز محمص بـ 0.250 فلس')">🥜 لوز كويتي (0.250 فلس)</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(1, '☕ استكانة شاي')">☕ شاي لـ Abomidal (0.100 فلس)</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(2, '☕ فنجان قهوة')">☕ قهوة لـ Thamer (0.150 فلس)</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(3, '🌴 حبة تمر')">🌴 تمر لـ Seemo (0.050 فلس)</div>`;
         }
         tray.classList.add('open');
     }
@@ -238,7 +237,18 @@
     }
     function declareProject(type) { socket.emit('declare_project_attempt', { seatIndex: mySeatIndex, projectType: type }); showToast(`📢 أعلنت: ${type}`); }
 
-    socket.on('hospitality_broadcast', (data) => { showToast(`💬 ${data.senderName}: [ ${data.item} ]`); });
+    // 🎯 تحديث دالة الاستقبال لعرض الهدايا لايف فوق رأس المستلم دغري وتختفي بعد 4 ثواني
+    socket.on('hospitality_broadcast', (data) => {
+        let relPos = seatMapping[data.toSeat];
+        const actionTag = document.getElementById(`action_tag_${relPos}`);
+        if(actionTag) {
+            actionTag.innerText = data.item;
+            actionTag.style.display = 'inline-block';
+            setTimeout(() => { actionTag.style.display = 'none'; }, 4000);
+        }
+        showToast(`💬 ${data.senderName}: [ ${data.item} ]`);
+    });
+
     socket.on('round_ended_announcement', (data) => { showToast(data.summary); });
 
     socket.on('room_updated', (data) => {
@@ -264,7 +274,7 @@
             let relPos = seatMapping[i]; const actionTag = document.getElementById(`action_tag_${relPos}`);
             if(data.playerActionsText && data.playerActionsText[i] && data.playerActionsText[i] !== "") {
                 actionTag.innerText = data.playerActionsText[i]; actionTag.style.display = 'inline-block';
-            } else { actionTag.style.display = 'none'; }
+            }
         }
 
         const centerTable = document.getElementById('center-table'); const buyingPanel = document.getElementById('buying-panel');
@@ -275,10 +285,7 @@
             
             if (data.currentTurn === mySeatIndex) {
                 buyingPanel.style.display = 'flex';
-                
-                // شروط إظهار زر "الأشكل" قانونياً: فقط باللفة الثانية (passCount >= 4) وللموزع أو يساره
                 let showAshkal = (data.buyRound === 2); 
-                
                 buyingPanel.innerHTML = `
                     <button class="btn-action-kamalna" onclick="makeDecision('buy', 'صن')">صن</button>
                     <button class="btn-action-kamalna" onclick="makeDecision('buy', 'حكم')">حكم</button>
