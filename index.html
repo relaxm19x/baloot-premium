@@ -12,7 +12,7 @@
             --panel-gray: linear-gradient(180deg, #aeaeae 0%, #8e8e8e 100%);
             --btn-border: 2px solid #5a5a5a;
             --table-green: radial-gradient(circle, #2b6f39 40%, #174621 80%, #0c2b14 100%);
-            --card-shadow: 0 8px 18px rgba(0,0,0,0.5);
+            --card-shadow: 0 10px 22px rgba(0,0,0,0.55);
         }
 
         body {
@@ -74,25 +74,26 @@
 
         .live-action-bubble {
             background: linear-gradient(180deg, #ffe066 0%, #cca43b 100%); color: #000000;
-            font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 8px;
-            border: 1px solid #ffffff; margin-top: 4px; display: none; z-index: 99; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            font-size: 11px; font-weight: 900; padding: 5px 12px; border-radius: 10px;
+            border: 1.5px solid #ffffff; margin-top: 4px; display: none; z-index: 99; box-shadow: 0 5px 10px rgba(0,0,0,0.35);
         }
 
+        /* 👑 تصميم كروت عالي التباين وواضح جداً للرموز والأرقام الكبرى 👑 */
         .card {
-            width: 65px; height: 92px; background: #ffffff; color: #111111; border-radius: 10px; display: flex;
-            flex-direction: column; justify-content: space-between; padding: 6px; font-weight: 900; font-size: 20px;
-            box-shadow: var(--card-shadow); border: 2px solid #a1b0bd; position: absolute;
+            width: 66px; height: 94px; background: #ffffff; color: #111111; border-radius: 10px; display: flex;
+            flex-direction: column; justify-content: space-between; padding: 6px; font-weight: 900; font-size: 21px;
+            box-shadow: var(--card-shadow); border: 2px solid #95a5a6; position: absolute;
         }
-        .card.red { color: #d63031; }
-        .black { color: #1e272e; }
+        .card.red { color: #e74c3c; }
+        .black { color: #2c3e50; }
         .card-corner-top { display: flex; justify-content: flex-start; line-height: 0.9; font-size: 15px; }
         .card-corner-bottom { display: flex; justify-content: flex-end; line-height: 0.9; transform: rotate(180deg); font-size: 15px; }
-        .card-center-icon { text-align: center; font-size: 28px; font-weight: 900; margin-top: -2px; }
+        .card-center-icon { text-align: center; font-size: 30px; font-weight: 900; margin-top: -4px; }
 
-        .card-pos-0 { bottom: 75px; left: calc(50% - 32.5px); }
-        .card-pos-1 { top: calc(50% - 46px); left: 60px; }
-        .card-pos-2 { top: 75px; left: calc(50% - 32.5px); }
-        .card-pos-3 { top: calc(50% - 46px); right: 60px; }
+        .card-pos-0 { bottom: 75px; left: calc(50% - 33px); }
+        .card-pos-1 { top: calc(50% - 47px); left: 60px; }
+        .card-pos-2 { top: 75px; left: calc(50% - 33px); }
+        .card-pos-3 { top: calc(50% - 47px); right: 60px; }
 
         .action-panel-bar { display: none; justify-content: center; gap: 6px; margin: 4px auto; width: 96%; max-width: 410px; z-index: 90; }
         .btn-action-kamalna { flex: 1; background: var(--panel-gray); border: var(--btn-border); color: #111111; font-weight: 900; font-size: 13px; padding: 10px 8px; border-radius: 10px; cursor: pointer; }
@@ -100,15 +101,15 @@
         .project-counters-row { display: none; gap: 4px; justify-content: center; width: 96%; max-width: 410px; margin-top: 4px; z-index: 80; }
         .counter-badge-item { flex: 1; background: linear-gradient(180deg, #fff 0%, #bfbfbf 100%); border: 1.5px solid #cca43b; border-radius: 8px; color: #111; font-weight: 900; font-size: 11px; padding: 6px; text-align: center; cursor: pointer; }
 
-        /* 👑 تحسين حاوية كروت اليد لمنع التداخل والبعثرة كلياً واختفاء التلاصق 👑 */
-        .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 440px; position: relative; height: 125px; margin-top: 10px; z-index: 9999 !important; }
-        .player-hand-container .card { position: absolute; bottom: 12px; cursor: pointer; transform-origin: bottom center; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: auto; }
-        .player-hand-container .card:hover { bottom: 32px; z-index: 999999 !important; transform: scale(1.22) rotate(0deg) !important; border-color: var(--luxury-gold) !important; box-shadow: 0 16px 32px rgba(0,0,0,0.7); }
+        /* 👑 تباعد عريض وممتاز لليد (xOffset = 36px) لتظهر مصفوفة بالكامل ومكشوفة بدون تداخل 👑 */
+        .player-hand-container { display: flex; justify-content: center; width: 100%; max-width: 450px; position: relative; height: 125px; margin-top: 10px; z-index: 9999 !important; }
+        .player-hand-container .card { position: absolute; bottom: 12px; cursor: pointer; transform-origin: bottom center; transition: all 0.18s ease-out; pointer-events: auto; }
+        .player-hand-container .card:hover { bottom: 35px; z-index: 99999 !important; transform: scale(1.24) !important; border-color: var(--luxury-gold) !important; box-shadow: 0 16px 32px rgba(0,0,0,0.7); }
 
         .project-reveal-overlay {
             display: none; position: absolute; top: 22%; left: 50%; transform: translateX(-50%);
-            width: 84%; background: rgba(0,0,0,0.85); border: 2px solid var(--luxury-gold);
-            border-radius: 14px; padding: 10px; text-align: center; z-index: 5000; box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+            width: 84%; background: rgba(0,0,0,0.88); border: 2px solid var(--luxury-gold);
+            border-radius: 14px; padding: 12px; text-align: center; z-index: 8500; box-shadow: 0 12px 30px rgba(0,0,0,0.8);
         }
 
         .nashra-overlay-card {
@@ -257,9 +258,9 @@
             phrases.forEach(p => { grid.innerHTML += `<div class="gift-card-btn" onclick="sendEmojiText('${p}')">${p}</div>`; });
         } else {
             title.innerText = "☕ إكرام رفقاء المجلس بالضيافة الفاخرة";
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(1, '☕ استكانة شاي')">☕ شاي لـ Abomidal</div>`;
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(2, '☕ فنجان قهوة')">☕ قهوة لـ Thamer</div>`;
-            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(3, '🌴 حبة تمر')">🌴 تمر لـ Seemo</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(1, '☕ استكانة شاي')">☕ شاي لـ Abomidal (0.100 فلس)</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(2, '☕ فنجان قهوة')">☕ قهوة لـ Thamer (0.150 فلس)</div>`;
+            grid.innerHTML += `<div class="gift-card-btn" onclick="sendHospitalityDirect(3, '🌴 حبة تمر')">🌴 تمر لـ Seemo (0.050 فلس)</div>`;
         }
         tray.classList.add('open');
     }
@@ -348,7 +349,7 @@
 
         if(data.gameStage === 'buying') {
             document.getElementById('game-status').innerText = `دور الشراء - لفة ${data.buyRound}`;
-            if(data.flipCard) { centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 46px); left:calc(50% - 32.5px); border: 2.5px dashed #cca43b; border-radius:10px; padding:2px;">` + createCardMarkup(data.flipCard) + `</div>`; }
+            if(data.flipCard) { centerTable.innerHTML = `<div style="position:absolute; top:calc(50% - 47px); left:calc(50% - 33px); border: 2.5px dashed #cca43b; border-radius:10px; padding:2px;">` + createCardMarkup(data.flipCard) + `</div>`; }
             
             if (data.currentTurn === mySeatIndex) {
                 buyingPanel.style.display = 'flex';
@@ -397,16 +398,15 @@
     function createCardMarkup(card) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
     function createCardHTMLWithPosition(card, relPos) { const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black'; return `<div class="card ${colorClass} card-pos-${relPos}"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`; }
     
-    // 🃏 دالة عرض وفرش اليد المعدلة بزيادة المسافة الأفقية لمنع التداخل والبعثرة نهائياً 🃏
     function renderHand() {
         const handDiv = document.getElementById('my-hand'); handDiv.innerHTML = ""; const totalCards = localCards.length;
         localCards.forEach((card, index) => {
             const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
             const mid = (totalCards - 1) / 2; 
-            const angle = (index - mid) * 6; 
-            const xOffset = (index - mid) * 38; // تم رفعها لـ 38px لضمان تباعد ممتاز ورؤية قيمة كل كرت فوراً
-            const yOffset = Math.abs(index - mid) * 2;
-            handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index + 2000}; left:calc(50% + ${xOffset}px - 32.5px); transform: rotate(${angle}deg); bottom:${16 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
+            const angle = (index - mid) * 5.5; 
+            const xOffset = (index - mid) * 36; // مسافة 36 بكسل متباعدة وثابتة لترى الأوراق مكشوفة تماماً بدون تلاصق
+            const yOffset = Math.abs(index - mid) * 1.8;
+            handDiv.innerHTML += `<div class="card ${colorClass}" style="z-index:${index + 2000}; left:calc(50% + ${xOffset}px - 33px); transform: rotate(${angle}deg); bottom:${16 - yOffset}px;" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div><div class="card-corner-bottom"><span>${card.value}<br>${card.suit}</span></div></div>`;
         });
     }
     const suitOrder = { '♠': 1, '♥': 2, '♦': 3, '♣': 4 }; const cardRankOrder = { 'A': 1, '10': 2, 'K': 3, 'Q': 4, 'J': 5, '9': 6, '8': 7, '7': 8 };
