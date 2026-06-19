@@ -89,9 +89,9 @@ module.exports = function(io) {
             if (!activePlayer) return;
 
             if (activePlayer.socketId.startsWith('bot_')) {
-                room.turnTimeout = setTimeout(() => { handleBotAction(room, roomId); }, 800);
+                room.turnTimeout = setTimeout(() => { handleBotAction(room, roomId); }, 900);
             } else {
-                room.turnTimeout = setTimeout(() => { handleBotAction(room, roomId); }, 10000);
+                room.turnTimeout = setTimeout(() => { handleBotAction(room, roomId); }, 15000);
             }
         }
 
@@ -114,7 +114,7 @@ module.exports = function(io) {
 
             if (room.gameStage === 'double_round') {
                 if (data.decision === 'double') {
-                    room.isDouble = true; room.playerActionsText[data.seatIndex] = "⚔️ دبل الحظر!";
+                    room.isDouble = true; room.playerActionsText[data.seatIndex] = "⚔️ دبل!";
                 } else { room.playerActionsText[data.seatIndex] = "بس 🛡️"; }
                 executeBuyTransition(room, roomId, room.buyType, room.buyerSeat);
                 return;
@@ -123,23 +123,23 @@ module.exports = function(io) {
             if (data.decision === 'buy') {
                 room.buyerSeat = data.seatIndex; room.buyType = data.buyType;
                 if (data.buyType === 'أشكل') {
-                    room.buyType = 'صن (أشكل)'; room.trumpSuit = null; room.playerActionsText[data.seatIndex] = "👑 طلب: أشكل";
+                    room.buyType = 'صن (أشكل)'; room.trumpSuit = null; room.playerActionsText[data.seatIndex] = "👑 أشكل";
                     executeBuyTransition(room, roomId, 'أشكل', data.seatIndex);
                 } else if (data.buyType === 'حكم ثاني') {
-                    room.trumpSuit = room.flipCard.suit === '♠' ? '♥' : '♠'; room.playerActionsText[data.seatIndex] = "طلب: حكم ثاني";
+                    room.trumpSuit = room.flipCard.suit === '♠' ? '♥' : '♠'; room.playerActionsText[data.seatIndex] = "حكم ثاني";
                     triggerDoubleStage(room, roomId, data.seatIndex);
                 } else if (data.buyType === 'حكم') {
-                    room.trumpSuit = room.flipCard.suit; room.playerActionsText[data.seatIndex] = "طلب: حكم 🃏";
+                    room.trumpSuit = room.flipCard.suit; room.playerActionsText[data.seatIndex] = "حكم 🃏";
                     triggerDoubleStage(room, roomId, data.seatIndex);
                 } else {
-                    room.trumpSuit = null; room.playerActionsText[data.seatIndex] = "طلب: صن 🚀";
+                    room.trumpSuit = null; room.playerActionsText[data.seatIndex] = "صن 🚀";
                     executeBuyTransition(room, roomId, 'صن', data.seatIndex);
                 }
             } else {
                 room.playerActionsText[room.currentTurn] = room.buyRound === 2 ? "ولا 🚫" : "بس 🛡️"; room.passCount++;
                 if (room.passCount >= 8) {
-                    io.to(roomId).emit('round_ended_announcement', { summary: "🔄 الكل قال (ولا)! إعادة التوزيع...", scores: room.scores });
-                    setTimeout(() => { setupNewRound(roomId); }, 2000); return;
+                    io.to(roomId).emit('round_ended_announcement', { summary: "🔄 الكل قال ولا - إعادة التوزيع", scores: room.scores });
+                    setTimeout(() => { setupNewRound(roomId); }, 1500); return;
                 }
                 room.currentTurn = (room.currentTurn + 1) % 4;
                 if (room.passCount === 4) room.buyRound = 2;
@@ -155,17 +155,18 @@ module.exports = function(io) {
         }
 
         function autoExecuteBotBuying(room, roomId) {
-            if (room.buyRound === 2 && (room.currentTurn === room.dealerSeat || room.currentTurn === (room.dealerSeat + 1) % 4)) {
-                if (Math.random() > 0.7) {
+            // منطق شراء واقعي للبوت يعطيك فرصة كاملة لتختار الصن أو الخيارات الأخرى باللفة الثانية
+            if (room.buyRound === 2) {
+                if (Math.random() > 0.85) {
                     room.buyerSeat = room.currentTurn; room.buyType = 'أشكل'; room.trumpSuit = null;
-                    room.playerActionsText[room.currentTurn] = "👑 طلب: أشكل";
+                    room.playerActionsText[room.currentTurn] = "👑 أشكل";
                     executeBuyTransition(room, roomId, 'أشكل', room.currentTurn); return;
                 }
             }
-            if (room.flipCard && (room.flipCard.value === 'A' || room.flipCard.value === 'J')) {
+            if (room.flipCard && (room.flipCard.value === 'A' || room.flipCard.value === 'J') && Math.random() > 0.4) {
                 room.buyerSeat = room.currentTurn; room.buyType = (room.flipCard.value === 'J') ? 'حكم' : 'صن';
                 room.trumpSuit = (room.buyType === 'حكم') ? room.flipCard.suit : null;
-                room.playerActionsText[room.currentTurn] = `طلب: ${room.buyType}`;
+                room.playerActionsText[room.currentTurn] = `${room.buyType}`;
                 if (room.buyType === 'حكم') triggerDoubleStage(room, roomId, room.currentTurn);
                 else executeBuyTransition(room, roomId, room.buyType, room.currentTurn);
             } else {
@@ -180,7 +181,6 @@ module.exports = function(io) {
 
         function executeBuyTransition(room, roomId, buyType, buyerIndex) {
             room.gameStage = 'playing';
-            for(let i=0; i<4; i++) { if (!room.playerActionsText[i].includes("طلب") && !room.playerActionsText[i].includes("دبل")) room.playerActionsText[i] = ""; }
             let savedFlipCard = room.flipCard; room.flipCard = null;
 
             let cardReceiver = buyerIndex;
@@ -197,7 +197,7 @@ module.exports = function(io) {
             }
 
             for (let i = 1; i < 4; i++) {
-                if (Math.random() > 0.65) { 
+                if (Math.random() > 0.7) { 
                     let botProj = Math.random() > 0.7 ? "خمسين" : "سرا"; room.activeProjects[i] = botProj;
                     let pts = botProj === "سرا" ? 20 : 50;
                     if (i === 2) room.nashra.projects.t1 += pts; else room.nashra.projects.t2 += pts;
@@ -235,7 +235,7 @@ module.exports = function(io) {
         });
 
         function executePlayCardLogic(room, roomId, seatIndex, chosenCard) {
-            // كشف كروت المشروع الفائز في اللمة الثانية لثانيتين دون إيقاف دالة المعالجة الرئيسية
+            // تم إصلاح التجميد: وضع الـ timeout فقط لمسح حالة المشاريع دون التأثير على تدفق الغرفة أو إيقاف الدور الملعوب
             if (room.trickCount === 1 && room.tableCards.length === 0) {
                 let bestSeat = -1; let maxPts = 0;
                 const projWeights = { "أربعمئة": 400, "100": 100, "خمسين": 50, "سرا": 20 };
@@ -245,12 +245,14 @@ module.exports = function(io) {
                 }
                 if (bestSeat !== -1) {
                     room.revealedProjectCards = { seatIndex: bestSeat, text: room.activeProjects[bestSeat] };
-                    io.to(roomId).emit('game_state_changed', room);
                     
                     setTimeout(() => {
-                        room.revealedProjectCards = null;
-                        for(let i=0; i<4; i++) room.playerActionsText[i] = "";
-                        io.to(roomId).emit('game_state_changed', room);
+                        let currentRoom = rooms[roomId];
+                        if (currentRoom) {
+                            currentRoom.revealedProjectCards = null;
+                            for(let i=0; i<4; i++) currentRoom.playerActionsText[i] = "";
+                            io.to(roomId).emit('game_state_changed', currentRoom);
+                        }
                     }, 2000);
                 }
             }
@@ -258,13 +260,12 @@ module.exports = function(io) {
             if (room.tableCards.length === 0) { 
                 for(let i=0; i<4; i++) {
                     if (room.trickCount === 0 && room.activeProjects[i] && room.activeProjects[i] !== "") room.playerActionsText[i] = `📢 مشروع: ${room.activeProjects[i]}`;
-                    else if (room.trickCount > 0) room.playerActionsText[i] = "";
+                    else if (room.trickCount > 0 && !room.revealedProjectCards) room.playerActionsText[i] = "";
                 }
                 room.leadSuit = chosenCard.suit; 
             }
 
             room.tableCards.push({ seatIndex: seatIndex, card: chosenCard });
-            io.to(roomId).emit('game_state_changed', room);
             
             if (room.tableCards.length === 4) {
                 handleTrickCompletion(room, roomId);
@@ -351,12 +352,12 @@ module.exports = function(io) {
                     room.scores.team1 += room.nashra.gain.t1; room.scores.team2 += room.nashra.gain.t2;
                     
                     io.to(roomId).emit('game_state_changed', room);
-                    setTimeout(() => { setupNewRound(roomId); }, 6000); 
+                    setTimeout(() => { setupNewRound(roomId); }, 5000); 
                 } else {
                     io.to(roomId).emit('game_state_changed', room);
                     startTurnTimer(room, roomId);
                 }
-            }, 1200);
+            }, 1000);
         }
 
         function determineActualWinner(room) {
