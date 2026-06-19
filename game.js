@@ -18,7 +18,7 @@ module.exports = function(io) {
                     buyerSeat: null, trumpSuit: null, tableCards: [], playersCards: [[], [], [], []],
                     deck: [], leadSuit: null, roundPoints: { team1: 0, team2: 0 }, trickCount: 0,
                     activeProjects: ["", "", "", ""], playerActionsText: ["", "", "", ""], passCount: 0,
-                    dealerSeat: 3
+                    dealerSeat: 3, isRoundEnding: false // قفل أمان لمنع تجمد نهاية الجولة
                 };
             }
             let room = rooms[roomId];
@@ -48,7 +48,8 @@ module.exports = function(io) {
             room.gameStage = 'buying'; room.buyRound = 1; room.buyerSeat = null;
             room.buyType = null; room.trumpSuit = null; room.tableCards = []; room.trickCount = 0; room.passCount = 0;
             room.roundPoints = { team1: 0, team2: 0 }; room.activeProjects = ["", "", "", ""]; room.playerActionsText = ["", "", "", ""];
-            
+            room.isRoundEnding = false; // فتح قفل اللعب للجولة الجديدة
+
             room.dealerSeat = (room.dealerSeat + 1) % 4;
             room.currentTurn = (room.dealerSeat + 1) % 4;
 
@@ -65,14 +66,11 @@ module.exports = function(io) {
             io.to(roomId).emit('room_updated', room);
             io.to(roomId).emit('game_state_changed', room);
 
-            // 🎯 الحل السحري: إعطاء تأخير زمني تأميني بنصف ثانية قبل بدء فحص البوتات للشراء لمنع تعليق الـ 5 كروت!
-            setTimeout(() => {
-                checkAndRunBotBuying(room, roomId);
-            }, 500);
+            setTimeout(() => { checkAndRunBotBuying(room, roomId); }, 500);
         }
 
         socket.on('player_buy_decision', (data) => {
-            let roomId = socket.roomId || "1000"; let room = rooms[roomId]; if (!room || room.currentTurn !== data.seatIndex) return;
+            let roomId = socket.roomId || "1000"; let room = rooms[roomId]; if (!room || room.currentTurn !== data.seatIndex || room.gameStage !== 'buying') return;
 
             if (data.decision === 'buy') {
                 room.buyerSeat = data.seatIndex;
@@ -156,7 +154,7 @@ module.exports = function(io) {
 
         socket.on('play_card', (data) => {
             let roomId = socket.roomId || "1000"; let room = rooms[roomId]; 
-            if (!room || room.currentTurn !== data.seatIndex) return;
+            if (!room || room.currentTurn !== data.seatIndex || room.gameStage !== 'playing' || room.isRoundEnding) return;
 
             let hand = room.playersCards[data.seatIndex];
             let cardIndex = data.cardIndex;
@@ -192,29 +190,48 @@ module.exports = function(io) {
             }
         });
 
+        // 🛠️ إصلاح دالة احتساب الحلة والمنع الصارم لأي حركة وهمية بعد الأكلة الثامنة
         function handleTrickCompletion(room, roomId) {
+            if (room.isRoundEnding) return; // حماية إضافية
+            
             setTimeout(() => {
                 let winnerSeat = determineActualWinner(room);
                 let trickPoints = calculateActualTrickPoints(room);
                 room.trickCount++;
-                if (room.trickCount === 8) trickPoints += 10;
+                
+                if (room.trickCount === 8) trickPoints += 10; // الأرض (اللوست)
 
                 if (winnerSeat === 0 || winnerSeat === 2) room.roundPoints.team1 += trickPoints;
                 else room.roundPoints.team2 += trickPoints;
 
-                room.tableCards = []; room.leadSuit = null; room.currentTurn = winnerSeat;
+                room.tableCards = []; 
+                room.leadSuit = null; 
+                room.currentTurn = winnerSeat; 
 
                 if (room.trickCount === 8) {
+                    room.isRoundEnding = true; // 🔒 تفعيل قفل الأمان! اللعب يتوقف رسمياً هنا ولا كروت تفرش
+                    
                     let t1Gain = Math.round(room.roundPoints.team1 / 10);
                     let t2Gain = Math.round(room.roundPoints.team2 / 10);
-                    room.scores.team1 += t1Gain; room.scores.team2 += t2Gain;
-                    io.to(roomId).emit('round_ended_announcement', { summary: `🏁 القيد النهائي: لنا +${t1Gain} | لهم +${t2Gain}.`, scores: room.scores });
-                    setTimeout(() => { setupNewRound(roomId); }, 3500);
+                    room.scores.team1 += t1Gain; 
+                    room.scores.team2 += t2Gain;
+                    
+                    // إرسال النتيجة فوراً لتظهر في لوحة التنبيهات (القيد)
+                    io.to(roomId).emit('game_state_changed', room);
+                    io.to(roomId).emit('round_ended_announcement', { 
+                        summary: `🏁 الجولة انتهت! القيد الحالي: لنا +${t1Gain} | لهم +${t2Gain}. جاري تجهيز الصكة التالية...`, 
+                        scores: room.scores 
+                    });
+                    
+                    // انتظار 4.5 ثانية كاملة ليرى اللاعب القيد ثم يتم توزيع جولة جديدة ونظيف ورق
+                    setTimeout(() => { 
+                        setupNewRound(roomId); 
+                    }, 4500);
                 } else {
                     io.to(roomId).emit('game_state_changed', room);
-                    if (room.gameStage === 'playing') checkAndRunBotGameplay(roomId);
+                    checkAndRunBotGameplay(roomId);
                 }
-            }, 1500);
+            }, 1200);
         }
 
         function determineActualWinner(room) {
@@ -241,12 +258,17 @@ module.exports = function(io) {
         }
 
         function checkAndRunBotGameplay(roomId) {
-            let room = rooms[roomId]; if (!room || room.gameStage !== 'playing' || room.tableCards.length >= 4) return;
+            let room = rooms[roomId]; 
+            if (!room || room.gameStage !== 'playing' || room.tableCards.length >= 4 || room.isRoundEnding) return;
             if (room.seats[room.currentTurn].socketId.startsWith('bot_')) setTimeout(() => { makeAdvancedBotPlay(room, roomId); }, 600);
         }
 
         function makeAdvancedBotPlay(room, roomId) {
-            let hand = room.playersCards[room.currentTurn]; if (!hand || hand.length === 0) return;
+            if (room.isRoundEnding) return; // منع البوت من اللعب إذا الجولة منتهية
+            
+            let hand = room.playersCards[room.currentTurn]; 
+            if (!hand || hand.length === 0) return;
+            
             let chosenCard = null;
             let chosenIndex = 0;
 
