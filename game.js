@@ -76,22 +76,18 @@ module.exports = function(io) {
             let roomId = socket.roomId || "1000"; let room = rooms[roomId]; 
             if (!room || room.currentTurn !== data.seatIndex || (room.gameStage !== 'buying' && room.gameStage !== 'double_round')) return;
 
-            // نظام الاستجابة لطلب الدبل المطور
             if (room.gameStage === 'double_round') {
                 if (data.decision === 'double') {
-                    room.isDouble = true;
-                    room.playerActionsText[data.seatIndex] = "⚔️ دبل الحظر!";
+                    room.isDouble = true; room.playerActionsText[data.seatIndex] = "⚔️ دبل الحظر!";
                 } else {
                     room.playerActionsText[data.seatIndex] = "بس 🛡️";
                 }
-                // الانتقال الفوري لبدء اللعب الفعلي بعد حسم الدبل
                 executeBuyTransition(room, roomId, room.buyType, room.buyerSeat);
                 return;
             }
 
             if (data.decision === 'buy') {
-                room.buyerSeat = data.seatIndex;
-                room.buyType = data.buyType;
+                room.buyerSeat = data.seatIndex; room.buyType = data.buyType;
                 
                 if (data.buyType === 'أشكل') {
                     room.buyType = 'صن (أشكل)'; room.trumpSuit = null;
@@ -100,7 +96,6 @@ module.exports = function(io) {
                 } else if (data.buyType === 'حكم ثاني') {
                     room.trumpSuit = room.flipCard.suit === '♠' ? '♥' : '♠'; 
                     room.playerActionsText[data.seatIndex] = "طلب: حكم ثاني";
-                    // فتح مرحلة الدبل للفريق الخصم تلقائياً بعد طلب الحكم
                     triggerDoubleStage(room, roomId, data.seatIndex);
                 } else if (data.buyType === 'حكم') {
                     room.trumpSuit = room.flipCard.suit;
@@ -117,8 +112,7 @@ module.exports = function(io) {
                 
                 if (room.passCount >= 8) {
                     io.to(roomId).emit('round_ended_announcement', { summary: "🔄 الكل قال (ولا)! إعادة التوزيع من جديد...", scores: room.scores });
-                    setTimeout(() => { setupNewRound(roomId); }, 2000); 
-                    return;
+                    setTimeout(() => { setupNewRound(roomId); }, 2000); return;
                 }
                 
                 room.currentTurn = (room.currentTurn + 1) % 4;
@@ -131,11 +125,9 @@ module.exports = function(io) {
 
         function triggerDoubleStage(room, roomId, buyerSeat) {
             room.gameStage = 'double_round';
-            // تحويل الدور للاعب التالي من الفريق الخصم ليعطى خيار الدبل قانونياً
             room.currentTurn = (buyerSeat + 1) % 4; 
             io.to(roomId).emit('game_state_changed', room);
             
-            // إذا كان الخصم بوت، نخليه يتخذ قرار الدبل تلقائياً وبسرعة
             let activePlayer = room.seats[room.currentTurn];
             if (activePlayer && activePlayer.socketId.startsWith('bot_')) {
                 setTimeout(() => {
@@ -187,7 +179,6 @@ module.exports = function(io) {
 
         function executeBuyTransition(room, roomId, buyType, buyerIndex) {
             room.gameStage = 'playing';
-            // الاحتفاظ بعبارات طلب الدبل أو الشراء وتنظيف الباقي
             for(let i=0; i<4; i++) { 
                 if (!room.playerActionsText[i].includes("طلب") && !room.playerActionsText[i].includes("دبل")) {
                     room.playerActionsText[i] = ""; 
@@ -198,6 +189,7 @@ module.exports = function(io) {
             let cardReceiver = buyerIndex;
             if (buyType === 'أشكل' || buyType.includes('أشكل')) cardReceiver = (buyerIndex + 2) % 4;
 
+            // 🎯 تطوير حاسم: دفع الكروت الإضافية لليد مباشرة مع الحفاظ التام على الكروت الـ 5 الأولى للاعب دون فقدان الأكة
             for (let i = 0; i < 4; i++) {
                 if (i === cardReceiver) {
                     room.playersCards[i].push(savedFlipCard);
@@ -208,6 +200,17 @@ module.exports = function(io) {
                     room.playersCards[i].push(room.deck.pop()); room.playersCards[i].push(room.deck.pop()); room.playersCards[i].push(room.deck.pop());
                 }
             }
+
+            // 🤖 تفعيل مشاريع البوتات الذكية تلقائياً بعد استلام الكروت كاملة
+            for (let i = 1; i < 4; i++) {
+                if (Math.random() > 0.65) { 
+                    let botProj = Math.random() > 0.5 ? "سرا" : "خمسين";
+                    room.activeProjects[i] = botProj;
+                    let pts = botProj === "سرا" ? 20 : 50;
+                    if (i === 2) room.nashra.projects.t1 += pts; else room.nashra.projects.t2 += pts;
+                }
+            }
+
             room.currentTurn = (room.dealerSeat + 1) % 4;
             io.to(roomId).emit('game_state_changed', room);
             if (room.seats[room.currentTurn].socketId.startsWith('bot_')) setTimeout(() => { makeAdvancedBotPlay(room, roomId); }, 500);
@@ -235,18 +238,16 @@ module.exports = function(io) {
 
             let chosenCard = hand[idx]; hand.splice(idx, 1); 
 
-            // 🎯 تحديث اللفة الثانية للمشاريع: كشف وإظهار العبارة لايف للجميع عند فرش الكروت الأولى
             if (room.tableCards.length === 0) { 
                 for(let i=0; i<4; i++) {
                     if (room.activeProjects[i] && room.activeProjects[i] !== "") {
-                        room.playerActionsText[i] = `📢 كشف مشروع: ${room.activeProjects[i]}`;
+                        room.playerActionsText[i] = `📢 مشروع: ${room.activeProjects[i]}`;
                     } else {
                         room.playerActionsText[i] = ""; 
                     }
                 }
                 room.leadSuit = chosenCard.suit; 
             } else {
-                // مسح النص تدريجياً لتبدأ الطاولة نظيفة بعد تتابع اللعب
                 for(let i=0; i<4; i++) { if(!room.activeProjects[i]) room.playerActionsText[i] = ""; }
             }
 
@@ -263,7 +264,7 @@ module.exports = function(io) {
         });
 
         function handleTrickCompletion(room, roomId) {
-            if (room.isRoundEnding) return;
+            if (room.isRoundEnding || room.gameStage === 'nashra') return; // حماية صارمة لمنع التجميد في آخر لمة
             
             setTimeout(() => {
                 let winnerSeat = determineActualWinner(room);
@@ -279,6 +280,7 @@ module.exports = function(io) {
 
                 if (room.trickCount === 8) {
                     room.isRoundEnding = true; 
+                    room.gameStage = 'nashra'; // قفل المرحلة فوراً لمنع البوتات من التفكير
                     
                     room.nashra.abnat.t1 = room.nashra.trickPoints.t1 + room.nashra.ground.t1 + room.nashra.projects.t1;
                     room.nashra.abnat.t2 = room.nashra.trickPoints.t2 + room.nashra.ground.t2 + room.nashra.projects.t2;
@@ -301,18 +303,13 @@ module.exports = function(io) {
                         }
                     }
                     
-                    // إذا الجولة مـدبّـلـة (Double)، يتم مضاعفة سكور القيد النهائي للفريق الفائز فوراً!
-                    if (room.isDouble) {
-                        room.nashra.gain.t1 *= 2; room.nashra.gain.t2 *= 2;
-                    }
+                    if (room.isDouble) { room.nashra.gain.t1 *= 2; room.nashra.gain.t2 *= 2; }
 
                     room.scores.team1 += room.nashra.gain.t1;
                     room.scores.team2 += room.nashra.gain.t2;
                     
-                    room.gameStage = 'nashra'; 
                     io.to(roomId).emit('game_state_changed', room);
-                    
-                    setTimeout(() => { setupNewRound(roomId); }, 5500); 
+                    setTimeout(() => { setupNewRound(roomId); }, 6000); 
                 } else {
                     io.to(roomId).emit('game_state_changed', room);
                     checkAndRunBotGameplay(roomId);
@@ -345,20 +342,18 @@ module.exports = function(io) {
 
         function checkAndRunBotGameplay(roomId) {
             let room = rooms[roomId]; 
-            if (!room || room.gameStage !== 'playing' || room.tableCards.length >= 4 || room.isRoundEnding) return;
+            if (!room || room.gameStage !== 'playing' || room.tableCards.length >= 4 || room.isRoundEnding || room.gameStage === 'nashra') return;
             if (room.seats[room.currentTurn].socketId.startsWith('bot_')) setTimeout(() => { makeAdvancedBotPlay(room, roomId); }, 600);
         }
 
-        // 🤖 محرك ذكاء البوت القناص الاحترافي (سد جميع الهفوات ومنع تضييع الأكولات):
         function makeAdvancedBotPlay(room, roomId) {
-            if (room.isRoundEnding) return; 
+            if (room.isRoundEnding || room.gameStage === 'nashra') return; 
             let hand = room.playersCards[room.currentTurn]; if (!hand || hand.length === 0) return;
             let chosenCard = null; let chosenIndex = 0;
 
             let currentOrder = room.trumpSuit ? rankOrderTrump : rankOrderSun;
 
             if (room.tableCards.length === 0) {
-                // إذا كان أول من يفرش؛ يفرش الكرت الأقوى دائماً للسيطرة على الساحة
                 hand.sort((a,b) => (currentOrder[b.value] || 0) - (currentOrder[a.value] || 0));
                 chosenCard = hand[0];
             } else {
@@ -368,7 +363,6 @@ module.exports = function(io) {
                 hand.forEach((c, idx) => { if(c.suit === room.leadSuit) matchIndices.push(idx); });
                 
                 if (matchIndices.length > 0) {
-                    // إذا يملك نفس النوع الملعوب، يفرش كرت يفوز به أو يمشي لخويه إذا كان خويّه هو الفائز بالأكلة
                     if (isPartnerWinner) {
                         matchIndices.sort((a,b) => (currentOrder[hand[a].value] || 0) - (currentOrder[hand[b].value] || 0));
                     } else {
@@ -376,13 +370,10 @@ module.exports = function(io) {
                     }
                     chosenIndex = matchIndices[0]; chosenCard = hand[chosenIndex];
                 } else {
-                    // 🛡️ هُنا الاحترافية: إذا ما عنده من نفس النوع واللعب حكم والخصم فائز بالأكلة، يـقـطـع بالحـكـم فوراً لخطف الأكلة!
                     if (room.trumpSuit) {
                         let trumpIndices = [];
                         hand.forEach((c, idx) => { if(c.suit === room.trumpSuit) trumpIndices.push(idx); });
-                        
                         if (trumpIndices.length > 0 && !isPartnerWinner) {
-                            // القطع بأقوى كرت حكم يضمن له الانتصار على الكروت السابقة بالأرض
                             trumpIndices.sort((a,b) => (rankOrderTrump[hand[b].value] || 0) - (rankOrderTrump[hand[a].value] || 0));
                             chosenIndex = trumpIndices[0]; chosenCard = hand[chosenIndex];
                         }
