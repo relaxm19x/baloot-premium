@@ -3,182 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ADD MORE Q8 - إمبراطورية الشات والـ VIP</title>
+    <title>ديوانية البلوت الرسمية - ADD MORE Q8</title>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <style>
         :root {
-            --bg-dark: #090a0f;
+            --felt-green: #1b4d3e; /* لون الطاولة الأخضر التراثي المريح للعين */
             --luxury-gold: #cca43b;
-            --vip-pink: linear-gradient(90deg, #ff758c 0%, #ff7eb3 100%);
-            --vip-orange: linear-gradient(90deg, #f9d423 0%, #ff4e50 100%);
-            --whale-purple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --reg-blue: #1f232d;
+            --wood-border: #3d2314;
         }
 
         body {
             margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-dark); color: #fff; overflow: hidden;
-            display: flex; flex-direction: column; align-items: center; height: 100vh;
+            background-color: #0b1310; color: #fff;
+            height: 100vh; display: flex; flex-direction: column; align-items: center; overflow: hidden;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
 
-        /* الشاشة الرئيسية للمربعات ورومات الدول */
-        .hub-screen { padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 100vh; width: 100vw; overflow-y: auto; }
-        .hub-title { font-size: 30px; font-weight: 900; color: var(--luxury-gold); margin: 10px 0; }
-        
-        .section-label { font-size: 14px; color: #ffe066; font-weight: bold; text-align: right; width: 100%; max-width: 380px; margin-top: 15px; }
-        .games-grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; max-width: 380px; margin-top: 8px; }
-        .square-game-card { background: #12151b; border: 1.5px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 12px; cursor: pointer; text-align: center; transition: 0.2s; }
-        .square-game-card:hover { border-color: var(--luxury-gold); }
-        .square-icon { font-size: 28px; margin-bottom: 4px; }
-        .square-title { font-size: 13px; font-weight: bold; }
+        .top-nav-bar {
+            width: 100%; max-width: 500px; background: #111815; padding: 10px 16px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--luxury-gold); z-index: 10;
+        }
+        .logo-title { font-size: 16px; font-weight: 900; color: var(--luxury-gold); }
 
-        /* واجهة الشات */
-        .game-layout { display: none; flex-direction: column; width: 100vw; height: 100vh; background: var(--bg-dark); position: fixed; top: 0; left: 0; z-index: 1000; align-items: center; overflow: hidden; }
-        .top-score-bar { width: 100%; max-width: 440px; background: #15171c; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--luxury-gold); }
-        .top-action-btn { background: #222; border: 1px solid var(--luxury-gold); color: #ffe066; font-size: 11px; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+        /* 🟢 تصميم طاولة البلوت الخضراء الدائرية المريحة 🟢 */
+        .baloot-table-area {
+            flex: 1; width: 100%; max-width: 500px; background: radial-gradient(circle, #225c4a 0%, #153b2f 100%);
+            border: 8px solid var(--wood-border); border-radius: 24px; margin: 10px 0;
+            position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 15px;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 8px 20px rgba(0,0,0,0.4);
+        }
 
-        .users-list-wrapper { width: 100%; max-width: 440px; padding: 0 12px; overflow-y: auto; max-height: 110px; }
-        .user-row-premium { width: 100%; padding: 10px 14px; margin: 4px 0; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; font-weight: bold; font-size: 13px; cursor: pointer; }
-        .user-style-vip-pink { background: var(--vip-pink); color: #fff; }
-        .user-style-vip-orange { background: var(--vip-orange); color: #fff; }
-        .user-style-whale { background: var(--whale-purple); color: #fff; border: 1px solid #764ba2; }
-        .user-style-regular { background: var(--reg-blue); color: #54a0ff; }
+        /* مواقع اللاعبين الأربعة على الطاولة */
+        .player-seat { position: absolute; background: rgba(0,0,0,0.6); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid rgba(255,255,255,0.15); }
+        .seat-north { top: 10px; left: 50%; transform: translateX(-50%); color: #ff7675; }
+        .seat-south { bottom: 105px; left: 50%; transform: translateX(-50%); color: #ffe066; border-color: var(--luxury-gold); }
+        .seat-east { right: 10px; top: 40%; transform: translateY(-50%); }
+        .seat-west { left: 10px; top: 40%; transform: translateY(-50%); }
 
-        .chat-room-container { flex: 1; display: flex; flex-direction: column; padding: 12px; background: #0c0d12; width: 100%; max-width: 440px; overflow: hidden; }
-        .chat-messages-box { flex: 1; overflow-y: auto; background: #111317; border-radius: 12px; border: 1px solid #222; padding: 12px; margin-bottom: 6px; font-size: 13px; text-align: right; display: flex; flex-direction: column; gap: 6px; }
-        
-        /* 📱 شريط الفيسات المدمج لايف */
-        .emoji-bar-wrapper { display: flex; gap: 8px; overflow-x: auto; padding: 4px; background: #151821; border-radius: 8px; margin-bottom: 6px; }
-        .emoji-item-btn { font-size: 18px; cursor: pointer; background: none; border: none; }
+        /* لوحة القيد الحقيقية (لنا / لهم) */
+        .score-board-baloot {
+            position: absolute; top: 50px; right: 15px; background: rgba(0, 0, 0, 0.75);
+            border: 1px solid var(--luxury-gold); border-radius: 8px; padding: 6px 10px; font-size: 11px; text-align: center;
+        }
+        .score-table { display: flex; gap: 10px; font-weight: bold; }
+        .score-title-grid { color: var(--luxury-gold); border-bottom: 1px solid #444; padding-bottom: 2px; margin-bottom: 2px; }
 
-        .chat-input-footer-bar { width: 100%; display: flex; gap: 6px; background: #16171c; padding: 10px; border: 1px solid #2d3038; border-radius: 16px; margin-bottom: 10px; }
-        .chat-text-field { flex: 1; background: #000; border: 1px solid #444; border-radius: 20px; padding: 10px 14px; color: #fff; outline: none; font-size: 13px; text-align: right; }
-        .chat-send-btn { background: var(--luxury-gold); color: #000; border: none; padding: 0 16px; font-weight: bold; border-radius: 20px; cursor: pointer; }
+        /* ساحة اللعب ورمي الكروت في المنتصف */
+        .floor-cards-center {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            width: 160px; height: 100px; display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
 
-        /* موديول الخيارات المطور */
-        .user-options-modal { display: none; position: fixed; bottom: 0; left: 0; width: 100vw; background: #161922; border-top: 2px solid var(--luxury-gold); border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 16px; z-index: 99999; text-align: center; }
-        .modal-user-title { font-size: 16px; font-weight: 900; color: #ffe066; margin-bottom: 12px; }
-        .modal-btn-action { width: 100%; max-width: 320px; padding: 11px; margin: 5px auto; border-radius: 10px; border: none; font-weight: bold; font-size: 13px; cursor: pointer; display: block; }
+        /* 🎴 تصميم كروت اللعب الفاخرة والانسيابية */
+        .baloot-card-item {
+            width: 52px; height: 76px; background: #fff; color: #000; border-radius: 6px;
+            display: flex; flex-direction: column; justify-content: space-between; padding: 5px;
+            font-weight: 900; font-size: 15px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: transform 0.15s, box-shadow 0.15s; position: relative;
+        }
+        .baloot-card-item:hover { transform: translateY(-10px); box-shadow: 0 8px 16px rgba(0,0,0,0.5); }
+        .card-red { color: #d63031; }
+
+        /* منطقة كروت اللاعب في الأسفل الموزونة بالملي */
+        .my-hand-cards-container {
+            width: 100%; display: flex; justify-content: center; gap: 5px;
+            position: absolute; bottom: 12px; left: 0; padding: 0 10px; z-index: 5;
+        }
+
+        /* أزرار خيارات الشراء (صن / حكم) */
+        .bidding-options-bar {
+            position: absolute; top: 60%; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 8px; background: rgba(0,0,0,0.8); padding: 8px; border-radius: 12px; border: 1px solid var(--luxury-gold);
+        }
+        .bid-btn { padding: 6px 14px; border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; }
+        .btn-son { background: #e67e22; color: #fff; }
+        .btn-hkm { background: #2980b9; color: #fff; }
+        .btn-pass { background: #7f8c8d; color: #fff; }
     </style>
 </head>
 <body>
 
-    <div class="hub-screen" id="hub-landing-page">
-        <div class="hub-title">ADD MORE Q8</div>
+    <!-- البار العلوي للمنصة الرسمية -->
+    <div class="top-nav-bar">
+        <div class="logo-title">♠️ ديوانية البلوت الرسمية</div>
+        <div style="font-size:12px; color:#aaa;" id="game-status-text">نوع اللعب: صن 🃏</div>
+    </div>
+
+    <!-- 🟢 طاولة البلوت الاحترافية المصلحة القياسات 🟢 -->
+    <div class="baloot-table-area">
         
-        <div class="section-label">🏆 الرومات العامة والنقاشات:</div>
-        <div class="games-grid-layout">
-            <div class="square-game-card" style="border-color: #54a0ff;" onclick="launchGame('chat_666')">
-                <div class="square-icon">💬</div>
-                <div class="square-title">شات كويت 666</div>
-            </div>
-            <div class="square-game-card" style="border-color: #ff9f43;" onclick="launchGame('chat_worldcup')">
-                <div class="square-icon">🏆</div>
-                <div class="square-title">كأس العالم للمناقشة</div>
+        <!-- لوحة النشر والقيد (لنا ولهم) الثابتة تلقائياً بطلبك -->
+        <div class="score-board-baloot">
+            <div class="score-title-grid">قيد الصكة</div>
+            <div class="score-table">
+                <div>لنا: <span id="score-us" style="color:#2ecc71;">0</span></div>
+                <div>لهم: <span id="score-them" style="color:#e74c3c;">0</span></div>
             </div>
         </div>
 
-        <div class="section-label">🗺️ ديوانيات ورومات الدول الخليجية والعربية:</div>
-        <div class="games-grid-layout">
-            <div class="square-game-card" onclick="launchGame('room_kuwait')"><div class="square-icon">🇰🇼</div><div class="square-title">روم الكويت</div></div>
-            <div class="square-game-card" onclick="launchGame('room_saudi')"><div class="square-icon">🇸🇦</div><div class="square-title">روم السعودية</div></div>
-            <div class="square-game-card" onclick="launchGame('room_uae')"><div class="square-icon">🇦🇪</div><div class="square-title">روم الإمارات</div></div>
-            <div class="square-game-card" onclick="launchGame('room_qatar')"><div class="square-icon">🇶🇦</div><div class="square-title">روم قطر</div></div>
+        <!-- المقاعد الأربعة للربع والبوتات -->
+        <div class="player-seat seat-north" id="p-north">🤖 مساعد (شمال)</div>
+        <div class="player-seat seat-west" id="p-west">🤖 nasser (غرب)</div>
+        <div class="player-seat seat-east" id="p-east">🤖 khaled (شرق)</div>
+        <div class="player-seat seat-south" id="p-south">👑 بو محمد (جنوب)</div>
+
+        <!-- وسط الطاولة (الملعوبة لايف) -->
+        <div class="floor-cards-center" id="table-floor-cards">
+            <div style="color:rgba(255,255,255,0.2); font-size:11px; text-align:center;">ارمِ الكرت في الساحة الحين</div>
         </div>
 
-        <div class="section-label">👑 حزم وميزات كسب المال الفوري:</div>
-        <div style="width:100%; max-width:380px; text-align:right; margin-top:8px;">
-            <button style="width:100%; padding:12px; background:var(--vip-pink); border:none; border-radius:12px; color:#fff; font-weight:900; margin-bottom:6px; cursor:pointer;" onclick="alert('💰 سعر الميزة: 1 د.ك لساعة VIP مشعة! يمكنك إهدائها لأي شخص بالضغط على اسمه داخل الروم.')">🎁 تفعيل ساعة VIP الفورية [1 KD]</button>
-            <button style="width:100%; padding:12px; background:var(--vip-orange); border:none; border-radius:12px; color:#fff; font-weight:900; margin-bottom:6px; cursor:pointer;" onclick="alert('🎤 سعر الميزة: 5 د.ك شهرياً لفتح المايك الصوتي والتحدث لايف! ملاحظة: إذا حصلت على 3 بلاغات إساءة من الزوار سيقفل المايك عنك تلقائياً.')">🎤 شراء حزمة المايك الصوتي [5 KD / شهر]</button>
-            <button style="width:100%; padding:12px; background:var(--whale-purple); border:none; border-radius:12px; color:#fff; font-weight:900; cursor:pointer;" onclick="alert('👑 حزمة الحوت الملكي الأعلى دفعاً: 25 د.ك شهرياً تتيح لك إنشاء غرفتك الخاصة وتسميتها والتحكم بقفلها عام أو برايفت برقم سري!')">🐳 حزمة الحوت لإنشاء روم خاص [25 KD / شهر]</button>
-        </div>
-    </div>
-
-    <div class="game-layout" id="main-chat-only-view">
-        <div class="top-score-bar">
-            <div class="top-action-btn" onclick="history.go(0)">◀ القائمة</div>
-            <div style="font-weight:900; color: var(--luxury-gold);" id="chat-title">💬 شات كويت 666</div>
-            <div class="top-action-btn" style="background:#e74c3c; color:#fff;" onclick="reportVoiceMic()">🚨 بلاغ مايك (0/3)</div>
+        <!-- لوحة خيارات الشراء والمشترى (صن / حكم) للمحترفين -->
+        <div class="bidding-options-bar" id="bid-panel">
+            <button class="bid-btn btn-son" onclick="selectGameType('صن')">صن 💥</button>
+            <button class="bid-btn btn-hkm" onclick="selectGameType('حكم')">حكم 🛡️</button>
+            <button class="bid-btn btn-pass" onclick="selectGameType('بس')">ولاء (بس)</button>
         </div>
 
-        <div class="users-list-wrapper">
-            <div class="user-row-premium user-style-whale" onclick="openUserOptions('🐋 هتلر الخليج #الحوت')"><div>🐋 هتلر الخليج [👑 صاحب روم خاص]</div><div>🇰🇼</div></div>
-            <div class="user-row-premium user-style-vip-pink" onclick="openUserOptions('👑 الملكة سيلدا')"><div>👑 الملكة سيلدا [💎 SVIP]</div><div>🇰🇼</div></div>
-            <div class="user-row-premium user-style-vip-orange" onclick="openUserOptions('👑 بو فهد الكبار')"><div>👑 بو فهد [💎 VIP]</div><div>🇰🇼</div></div>
-            <div class="user-row-premium user-style-regular" onclick="openUserOptions('زائر عادي')"><div>زائر عادي (كتابي مجاني)</div><div>🇸🇦</div></div>
-        </div>
+        <!-- 🎴 كروت اللاعب (يدك) في أسفل شاشة الآيباد والهاتف بشكل كامل ومرئي -->
+        <div class="my-hand-cards-container" id="my-cards-wrapper"></div>
 
-        <div class="chat-room-container">
-            <div class="chat-messages-box" id="global-chat-box"></div>
-
-            <div class="emoji-bar-wrapper">
-                <button class="emoji-item-btn" onclick="insertEmoji('😂')">😂</button>
-                <button class="emoji-item-btn" onclick="insertEmoji('👑')">👑</button>
-                <button class="emoji-item-btn" onclick="insertEmoji('🔥')">🔥</button>
-                <button class="emoji-item-btn" onclick="insertEmoji('💎')">💎</button>
-                <button class="emoji-item-btn" onclick="insertEmoji('👍')">👍</button>
-                <button class="emoji-item-btn" onclick="insertEmoji('❤️')">❤️</button>
-                <button class="emoji-item-btn" onclick="insertEmoji('🐋')">🐋</button>
-            </div>
-
-            <div class="chat-input-footer-bar">
-                <input type="text" id="chatMessageInput" class="chat-text-field" placeholder="اكتب رسالتك العامة مجاناً...">
-                <button class="chat-send-btn" onclick="sendLiveChatMessage()">إرسال</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="user-options-modal" id="user-modal-panel">
-        <div class="modal-user-title" id="modal-target-username">اسم المستخدم</div>
-        <button class="modal-btn-action" style="background:#2ecc71; color:#fff;" onclick="alert('💬 تم فتح شات خاص مقفل.')">💬 رسالة خاصة</button>
-        <button class="modal-btn-action" style="background:#f1c40f; color:#000;" onclick="alert('🎁 تم خصم 1 KD وإهداء رتبة ساعة VIP لايف للمستخدم بنجاح!')">🎁 إهداء ساعة VIP [1 KD]</button>
-        <button class="modal-btn-action" style="background:#e74c3c; color:#fff;" onclick="closeUserOptions()">إغلاق ❌</button>
     </div>
 
 <script>
     const socket = io();
-    let currentSelectedUser = ""; let activeChatRoom = "chat_666"; let micReportsCount = 0;
 
-    function launchGame(game) {
-        activeChatRoom = game;
-        document.getElementById('hub-landing-page').style.display = 'none';
-        document.getElementById('main-chat-only-view').style.display = 'flex';
+    // الاتصال الفوري وحجز المقعد في الطاولة
+    socket.emit('join_baloot_table', { username: "بو محمد" });
+
+    // استقبال الأوراق وحالة اللعبة من السيرفر وعرضها فوراً
+    socket.on('baloot_state_update', (data) => {
+        document.getElementById('score-us').innerText = data.scores.us;
+        document.getElementById('score-them').innerText = data.scores.them;
+        document.getElementById('game-status-text').innerText = `نوع اللعب: ${data.gameType} 🃏`;
+
+        // رص الكروت في يد اللاعب بقمة الأناقة
+        const wrapper = document.getElementById('my-cards-wrapper');
+        wrapper.innerHTML = "";
         
-        let titles = { chat_666: "💬 شات كويت 666", chat_worldcup: "🏆 كأس العالم للمناقشة", room_kuwait: "🇰🇼 ديوانية الكويت الحية", room_saudi: "🇸🇦 ديوانية السعودية لايف", room_uae: "🇦🇪 روم الإمارات الفخم", room_qatar: "🇶🇦 مجلس قطر لايف" };
-        document.getElementById('chat-title').innerText = titles[game] || "💬 ديوانية ADD MORE Q8";
-        
-        socket.emit('user_login_attempt', { username: "بو محمد", isVip: true });
-    }
-
-    function openUserOptions(username) { currentSelectedUser = username; document.getElementById('modal-target-username').innerText = username; document.getElementById('user-modal-panel').style.display = 'block'; }
-    function closeUserOptions() { document.getElementById('user-modal-panel').style.display = 'none'; }
-    function insertEmoji(emoji) { const input = document.getElementById('chatMessageInput'); input.value += emoji; input.focus(); }
-    
-    function sendLiveChatMessage() {
-        const input = document.getElementById('chatMessageInput'); const text = input.value.trim(); if(!text) return;
-        socket.emit('send_global_chat_msg', { room: activeChatRoom, text: text }); input.value = "";
-    }
-
-    socket.on('receive_global_chat_msg', (data) => {
-        if (data.room !== activeChatRoom) return;
-        const box = document.getElementById('global-chat-box');
-        if (box) {
-            box.innerHTML += `<div><strong style="color: var(--luxury-gold);">${data.username}:</strong> <span style="color: #fff;">${data.text}</span></div>`;
-            box.scrollTop = box.scrollHeight;
-        }
+        data.playerCards.forEach(card => {
+            const isRed = (card.suit === '♥' || card.suit === '♦') ? 'card-red' : '';
+            const cardHtml = `
+                <div class="baloot-card-item ${isRed}" onclick="playCard('${card.suit}', '${card.val}')">
+                    <div>${card.val}</div>
+                    <div style="text-align:center; font-size:22px;">${card.suit}</div>
+                    <div style="text-align:left; transform: rotate(180deg);">${card.val}</div>
+                </div>
+            `;
+            wrapper.innerHTML += cardHtml;
+        });
     });
 
-    // 🚨 نظام الإبلاغ التلقائي عن المايك الصوتي لحماية الاستثمار
-    function reportVoiceMic() {
-        micReportsCount++;
-        if(micReportsCount >= 3) {
-            alert("🚨 نظام الأمان التلقائي: تم تسجيل 3 بلاغات إساءة ضد صاحب المايك الصوتي في هذا الروم! تم سحب الصلاحية وقفل المايك الصوتي عنه فوراً لضمان احترام قوانين الديوانية.");
-            micReportsCount = 0;
+    // رمي الكرت في الساحة لايف
+    function playCard(suit, val) {
+        socket.emit('baloot_play_card', { suit, val });
+    }
+
+    // عرض الكروت الملعوبة في ساحة منتصف الطاولة فوراً
+    socket.on('baloot_card_played_on_floor', (floorCards) => {
+        const floor = document.getElementById('table-floor-cards');
+        floor.innerHTML = "";
+        floorCards.forEach(item => {
+            const isRed = (item.card.suit === '♥' || item.card.suit === '♦') ? 'card-red' : '';
+            floor.innerHTML += `
+                <div class="baloot-card-item ${isRed}" style="cursor:default; width:46px; height:66px; font-size:12px;">
+                    <div>${item.card.val}</div>
+                    <div style="text-align:center; font-size:16px;">${item.card.suit}</div>
+                </div>
+            `;
+        });
+    });
+
+    function selectGameType(type) {
+        if(type === 'بس') {
+            alert("🔒 مررت السرا.. بانتظار خيار المشتري من باقي اللاعبين على الطاولة.");
         } else {
-            alert(`✔ تم تسجيل بلاغك بنجاح. إجمالي البلاغات الحالية ضد صاحب المايك: (${micReportsCount}/3). عند وصولها لـ 3 بلاغات سيتم قفله كلياً.`);
+            alert(`🃏 كفوو! اخترت اللعب الحين: [ ${type} ] - ارمِ ورقتك الأولى واقشّ الأرض!`);
+            document.getElementById('game-status-text').innerText = `نوع اللعب: ${type} 🃏`;
         }
+        document.getElementById('bid-panel').style.display = 'none';
     }
 </script>
 </body>
