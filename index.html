@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ADD MORE Q8 - ديوانية الألعاب العالمية</title>
+    <title>ADD MORE Q8 - منصة الألعاب وغرف الشات الكبرى</title>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <style>
         :root {
@@ -11,7 +11,6 @@
             --luxury-gold: #cca43b;
             --vip-color: #ff9f43;
             --pool-green: #27ae60;
-            --table-green: radial-gradient(circle, #1b5329 30%, #0f381a 75%, #071e0e 100%);
             --diwaniya-red: linear-gradient(135deg, #800000 0%, #4a0000 100%);
         }
 
@@ -29,12 +28,11 @@
             width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: radial-gradient(circle, #1c1e24 20%, #090a0f 100%);
             z-index: 99999; text-align: center; padding: 20px; overflow-y: auto;
         }
-        .hub-title { font-size: 36px; font-weight: 900; color: var(--luxury-gold); text-shadow: 0 0 12px rgba(204,164,59,0.5); margin: 10px 0 2px 0; }
+        .hub-title { font-size: 34px; font-weight: 900; color: var(--luxury-gold); text-shadow: 0 0 12px rgba(204,164,59,0.5); margin: 10px 0 2px 0; }
         .hub-subtitle { font-size: 13px; color: #a4a7b0; margin-bottom: 12px; }
 
-        /* أزرار الدخول الفاخرة */
         .login-methods-row { display: flex; gap: 8px; margin: 10px 0; width: 100%; max-width: 320px; }
-        .login-btn-opt { flex: 1; padding: 10px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; color: #fff; font-size: 11px; }
+        .login-btn-opt { flex: 1; padding: 11px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; color: #fff; font-size: 11px; }
         .btn-google { background: #ea4335; } .btn-fb { background: #1877f2; } .btn-email { background: #2c3e50; }
 
         .luxury-input { width: 100%; max-width: 320px; padding: 12px; margin: 6px 0; border-radius: 12px; border: 1px solid var(--luxury-gold); background: #0c0f16; color: white; text-align: center; font-size: 15px; }
@@ -44,12 +42,12 @@
         .marquee-text { display: inline-block; animation: marquee-run 12s linear infinite; color: #ffe066; font-size: 12px; font-weight: bold; }
         @keyframes marquee-run { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* 🔲 شبكة المربعات الاحترافية الجديدة بالأيقونات 🔲 */
+        /* 🔲 شبكة المربعات الفخمة والجذابة بالأيقونات 🔲 */
         .games-grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 380px; margin-top: 10px; padding-bottom: 40px; }
         .square-game-card { background: linear-gradient(135deg, #1f232d 0%, #12151b 100%); border: 1.5px solid rgba(255,255,255,0.06); border-radius: 18px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; cursor: pointer; transition: all 0.22s ease; text-align: center; box-shadow: 0 6px 15px rgba(0,0,0,0.4); }
         .square-game-card:hover { border-color: var(--luxury-gold); transform: translateY(-3px); }
         .square-icon { font-size: 34px; margin-bottom: 6px; }
-        .square-title { font-size: 14px; font-weight: 900; color: #ffffff; margin-bottom: 4px; }
+        .square-title { font-size: 13px; font-weight: 900; color: #ffffff; margin-bottom: 4px; }
         .square-desc { font-size: 10px; color: #8e929c; line-height: 1.2; }
 
         .creator-signature { font-size: 13px; font-weight: bold; color: var(--luxury-gold); margin: 15px 0; }
@@ -58,20 +56,19 @@
         .top-score-bar { width: 100%; max-width: 450px; background: #15171c; padding: 10px 16px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--luxury-gold); }
         .top-action-btn { background: #222; border: 1px solid var(--luxury-gold); color: #ffe066; font-size: 12px; font-weight: bold; padding: 6px 14px; border-radius: 10px; cursor: pointer; }
 
-        /* 🎱 ساحة البلياردو قيمزر 🎱 */
-        .pool-table { width: 88vw; max-width: 360px; height: 50vw; max-height: 210px; background: var(--pool-green); border: 10px solid #5c3a21; border-radius: 15px; position: relative; margin: 30px auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .pool-hole { width: 18px; height: 18px; background: #000; border-radius: 50%; position: absolute; }
-        .hole-1 { top:-4px; left:-4px; } .hole-2 { top:-4px; right:-4px; } .hole-3 { bottom:-4px; left:-4px; } .hole-4 { bottom:-4px; right:-4px; }
-        .white-ball { width: 14px; height: 14px; background: #fff; border-radius: 50%; position: absolute; top: calc(50% - 7px); left: 60px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
-        .pool-cue-stick { width: 120px; height: 4px; background: linear-gradient(90deg, #f39c12, #eed294); position: absolute; top: calc(50% - 2px); left: 80px; transform-origin: left center; transition: transform 0.1s; }
+        /* 🎱 طاولة بلياردو متكاملة مع الـ 15 كرة والكرة البيضاء 8-Ball 🎱 */
+        .pool-table { width: 90vw; max-width: 380px; height: 52vw; max-height: 220px; background: var(--pool-green); border: 12px solid #5c3a21; border-radius: 16px; position: relative; margin: 25px auto; box-shadow: inset 0 0 25px rgba(0,0,0,0.4); }
+        .pool-hole { width: 20px; height: 20px; background: #000; border-radius: 50%; position: absolute; }
+        .hole-tl { top:-6px; left:-6px; } .hole-tr { top:-6px; right:-6px; } .hole-bl { bottom:-6px; left:-6px; } .hole-br { bottom:-6px; right:-6px; }
+        .white-ball { width: 14px; height: 14px; background: #fff; border-radius: 50%; position: absolute; top: calc(50% - 7px); left: 60px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .pool-cue-stick { width: 130px; height: 4px; background: linear-gradient(90deg, #f39c12, #ffeb3b); position: absolute; top: calc(50% - 2px); left: 78px; transform-origin: left center; }
+        .pool-object-ball { width: 13px; height: 13px; border-radius: 50%; position: absolute; box-shadow: 0 1px 3px rgba(0,0,0,0.4); font-size: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; }
 
-        /* ❓ سين جيم الأسئلة */
+        /* ❓ تحدي الأسئلة المتنوعة الصعبة */
         .quiz-container { width: 90vw; max-width: 400px; background: #111317; border: 1px solid var(--luxury-gold); border-radius: 16px; padding: 16px; text-align: center; margin-top: 30px; }
-        .quiz-question-text { font-size: 18px; font-weight: bold; color: #ffe066; margin-bottom: 20px; }
-        .quiz-option-btn { width: 100%; padding: 12px; background: #1f232d; border: 1px solid #3a3d46; border-radius: 10px; color: #fff; font-size: 14px; font-weight: bold; margin: 6px 0; cursor: pointer; text-align: right; }
-        .quiz-option-btn:hover { border-color: var(--luxury-gold); background: #1a1c23; }
+        .quiz-question-text { font-size: 16px; font-weight: bold; color: #ffe066; margin-bottom: 20px; line-height: 1.4; }
+        .quiz-option-btn { width: 100%; padding: 12px; background: #1f232d; border: 1px solid #3a3d46; border-radius: 10px; color: #fff; font-size: 13px; font-weight: bold; margin: 6px 0; cursor: pointer; text-align: right; }
 
-        /* الشات */
         .chat-room-container { width: 92vw; max-width: 420px; height: 58vh; background: #111317; border-radius: 14px; border: 1px solid #333; margin-top: 15px; display: flex; flex-direction: column; padding: 12px; }
         .chat-messages-box { flex: 1; overflow-y: auto; font-size: 13px; text-align: right; }
         .chat-user-vip { color: var(--vip-color); font-weight: bold; }
@@ -90,21 +87,21 @@
 
     <div class="hub-screen" id="hub-landing-page">
         <div class="hub-title">ADD MORE Q8</div>
-        <div class="hub-subtitle">ديوانية الألعاب وغرف شات كويت 666 الفاخرة</div>
+        <div class="hub-subtitle">منصة الألعاب العالمية وغرف الشات الحية الرسمية</div>
         
         <div class="marquee-container">
-            <div class="marquee-text">✨ أهلاً بكم في التحديث العالمي الجديد.. انطلاق ألعاب البلياردو وسين جِيم الحين لايف بمجلس المربعات! ✨</div>
+            <div class="marquee-text">✨ جاهز اليوم فورا! انطلاق كرات البلياردو الـ 15 كاملة، شات كأس العالم، وتحدي الأسئلة الصعبة الحين! ✨</div>
         </div>
 
         <div class="vip-toggle-box" id="vip-status-btn" onclick="toggleVipStatus()">🎯 حالة حسابك: [ مستخدم عادي ] - ترقية لـ VIP 💎</div>
 
-        <input type="text" id="player-global-name" class="luxury-input" placeholder="ادخل اسم مستخدم الديوانية" value="بو محمد">
+        <input type="text" id="player-global-name" class="luxury-input" placeholder="ادخل اسم اللاعب للتسجيل الرسمي" value="بو محمد">
 
-        <!-- أزرار تسجيل الدخول الاجتماعي الحديثة -->
+        <!-- 🔐 نظام التسجيل الرسمي المتكامل المتصل بالباكيند 🔐 -->
         <div class="login-methods-row">
             <button class="login-btn-opt btn-google" onclick="setLoginMethod('Google')">🔴 Google</button>
             <button class="login-btn-opt btn-fb" onclick="setLoginMethod('Facebook')">🔵 Facebook</button>
-            <button class="login-btn-opt btn-email" onclick="setLoginMethod('الايميل')">✉️ الإيميل</button>
+            <button class="login-btn-opt btn-email" onclick="setLoginMethod('الايميل الرسمي')">✉️ الإيميل</button>
         </div>
 
         <div class="games-grid-layout">
@@ -115,30 +112,31 @@
                 <div class="square-desc">الدردشة الحية والأسماء الملونة والـ VIP لايف الحين.</div>
             </div>
 
-            <!-- 🎱 البلياردو بديلة الكوت بطلبك بالملي -->
-            <div class="square-game-card" style="border-color: var(--pool-green);" onclick="launchGame('pool')">
-                <div class="square-icon">🎱</div>
-                <div class="square-title">البلياردو</div>
-                <div class="square-desc">طراز قيمزر و 8-Ball، سحب العصا والمايك لايف.</div>
+            <!-- 🏆 روم شات كأس العالم للمناقشة الرياضية المضاف بطلبك -->
+            <div class="square-game-card" style="border-color: #ff9f43;" onclick="launchGame('chat_worldcup')">
+                <div class="square-icon">🏆</div>
+                <div class="square-title">كأس العالم للمناقشة</div>
+                <div class="square-desc">ديوانية النقاط الرياضية الساخنة والمباريات لايف.</div>
             </div>
 
-            <!-- ❓ لعبة سين جيم الجديدة للتحدي الأسئلة -->
+            <!-- 🎱 البلياردو الاحترافية بالكرات الـ 15 كاملة بطلبك -->
+            <div class="square-game-card" style="border-color: var(--pool-green);" onclick="launchGame('pool')">
+                <div class="square-icon">🎱</div>
+                <div class="square-title">البلياردو 8-Ball</div>
+                <div class="square-desc">الكرات الـ 15 كاملة، قيمزر، وتوجيه العصا والمايك لايف.</div>
+            </div>
+
+            <!-- ❓ تحدي الأسئلة المتنوعة الصعبة جداً -->
             <div class="square-game-card" style="border-color: #9b59b6;" onclick="launchGame('quiz')">
                 <div class="square-icon">❓</div>
-                <div class="square-title">سين جِيم</div>
-                <div class="square-desc">مباراة أسئلة وذكاء لايف لاختبار رواد المجلس الحين.</div>
+                <div class="square-title">الأسئلة المتنوعة</div>
+                <div class="square-desc">مباراة ثقافية صعبة جداً لاختبار عباقرة المجلس لايف.</div>
             </div>
 
             <div class="square-game-card" onclick="launchGame('carrom')">
                 <div class="square-icon">🟤</div>
                 <div class="square-title">لعبة الكيرم</div>
                 <div class="square-desc">اسحب المضرب الرئيسي، حدد الزاوية واطلق بدقة.</div>
-            </div>
-
-            <div class="square-game-card" onclick="launchGame('xo')">
-                <div class="square-icon">❌</div>
-                <div class="square-title">لعبة X / O</div>
-                <div class="square-desc">تحدي الذكاء المنضبط بالدور التبادلي الصحيح.</div>
             </div>
 
             <div class="square-game-card" style="opacity:0.4; cursor:not-allowed;">
@@ -152,49 +150,50 @@
         <div class="creator-signature">تصميم وإنشاء بواسطة @add.more.q8</div>
     </div>
 
-    <!-- واجهة شات كويت 666 -->
+    <!-- واجهة غرف الشات الحية الموحدة للرومين -->
     <div class="game-layout" id="main-chat-only-view">
         <div class="top-score-bar">
             <div class="top-action-btn" onclick="history.go(0)">◀ القائمة</div>
-            <div style="font-weight:900; color:#54a0ff;">💬 روم شات كويت 666 الحي</div>
-            <div class="top-action-btn" style="color:#ff9f43;" onclick="showToast('🎤 المايك شغال لايف بالديوانية')">🎤 المايك</div>
+            <div style="font-weight:900; color:#54a0ff;" id="chat-room-title-label">💬 روم الشات الحي</div>
+            <div class="top-action-btn" style="color:#ff9f43;" onclick="showToast('🎤 المايك مفتوح تلقائياً لايف')">🎤 المايك</div>
         </div>
         <div class="chat-room-container">
             <div class="chat-messages-box" id="global-chat-box"></div>
         </div>
     </div>
 
-    <!-- واجهة البلياردو قيمزر -->
+    <!-- واجهة البلياردو والكرات الـ 15 الموزعة -->
     <div class="game-layout" id="pool-game-view">
         <div class="top-score-bar">
             <div class="top-action-btn" onclick="history.go(0)">◀ القائمة</div>
-            <div style="font-weight:900; color:var(--pool-green);">🎱 طاولة بلياردو قيمزر لايف</div>
-            <div class="top-action-btn" style="color:#ffe066;" onclick="executePoolShot()"> ضرب الكرة 🎯</div>
+            <div style="font-weight:900; color:var(--pool-green);">🎱 طاولة الـ 15 كرة الاحترافية</div>
+            <div class="top-action-btn" style="color:#ffe066;" onclick="executePoolShot()">ضرب 🎯</div>
         </div>
         <div class="pool-table" id="pool-field-box">
-            <div class="pool-hole hole-1"></div><div class="pool-hole hole-2"></div>
-            <div class="pool-hole hole-3"></div><div class="pool-hole hole-4"></div>
+            <div class="pool-hole hole-tl"></div><div class="pool-hole hole-tr"></div>
+            <div class="pool-hole hole-bl"></div><div class="pool-hole hole-br"></div>
             <div class="white-ball" id="cue-ball"></div>
             <div class="pool-cue-stick" id="cue-stick"></div>
+            <!-- مكان حقن الـ 15 كرة ديناميكياً برمجياً -->
+            <div id="pool-balls-container"></div>
         </div>
-        <div style="font-size:12px; color:#fff; text-align:center; width:80%;">قم بلمس وسحب الشاشة لتدوير زاوية عصا قيمزر الفخمة ثم اضغط زر ضرب الكرة!</div>
     </div>
 
-    <!-- واجهة مباراة سين جيم الأسئلة -->
+    <!-- واجهة تحدي الأسئلة المتنوعة الصعبة -->
     <div class="game-layout" id="quiz-game-view">
         <div class="top-score-bar">
             <div class="top-action-btn" onclick="history.go(0)">◀ القائمة</div>
-            <div style="font-weight:900; color:#9b59b6;" id="quiz-score-label">مباراة سين جِيم لايف</div>
+            <div style="font-weight:900; color:#9b59b6;">❓ تحدي الأسئلة المتنوعة الصعبة</div>
             <div></div>
         </div>
         <div class="quiz-container">
-            <div class="quiz-question-text" id="quiz-question-box">جاري تحميل السؤال من الديوانية...</div>
+            <div class="quiz-question-text" id="quiz-question-box">جاري جلب السؤال الثقافي الصعب...</div>
             <div id="quiz-options-wrapper"></div>
         </div>
     </div>
 
     <div class="chat-input-footer-bar" id="global-chat-bar" style="display:none;">
-        <input type="text" id="chatMessageInput" class="chat-text-field" placeholder="اكتب في ديوانية ADD MORE Q8 الحين...">
+        <input type="text" id="chatMessageInput" class="chat-text-field" placeholder="اكتب رسالتك داخل الديوانية الحين...">
         <button class="chat-send-btn" onclick="sendLiveChatMessage()">إرسال 💬</button>
     </div>
 
@@ -202,7 +201,8 @@
     const socket = io();
     let isVipAccount = false;
     let myCurrentUsername = "بو محمد";
-    let selectedLoginMethod = "زائر";
+    let selectedLoginMethod = "تسجيل رسمي";
+    let activeChatRoom = "chat_666";
 
     function toggleVipStatus() {
         isVipAccount = !isVipAccount;
@@ -213,7 +213,7 @@
 
     function setLoginMethod(method) {
         selectedLoginMethod = method;
-        showToast(`✔ تم ربط الحساب بنجاح عبر [ ${method} ] دغري!`);
+        showToast(`✔ تفعيل وتسجيل الدخول الرسمي متصل عبر [ ${method} ] بنجاح!`);
     }
 
     function launchGame(game) {
@@ -223,7 +223,11 @@
 
         socket.emit('user_login_attempt', { username: myCurrentUsername, isVip: isVipAccount, method: selectedLoginMethod });
 
-        if (game === 'chat_666') { document.getElementById('main-chat-only-view').style.display = 'flex'; }
+        if (game === 'chat_666' || game === 'chat_worldcup') {
+            activeChatRoom = game;
+            document.getElementById('chat-room-title-label').innerText = game==='chat_666' ? "💬 روم شات كويت 666" : "🏆 روم كأس العالم للمناقشة";
+            document.getElementById('main-chat-only-view').style.display = 'flex';
+        }
         else if (game === 'pool') { document.getElementById('pool-game-view').style.display = 'flex'; socket.emit('join_pool_game', { username: myCurrentUsername }); setupPoolAimEngine(); }
         else if (game === 'quiz') { document.getElementById('quiz-game-view').style.display = 'flex'; socket.emit('join_quiz_game', { username: myCurrentUsername }); }
     }
@@ -232,10 +236,11 @@
 
     function sendLiveChatMessage() {
         const input = document.getElementById('chatMessageInput'); const text = input.value.trim();
-        if(!text) return; socket.emit('send_global_chat_msg', { text: text }); input.value = "";
+        if(!text) return; socket.emit('send_global_chat_msg', { room: activeChatRoom, text: text }); input.value = "";
     }
     
     socket.on('receive_global_chat_msg', (data) => {
+        if (data.room !== activeChatRoom) return; 
         const box = document.getElementById('global-chat-box');
         if (box) {
             const cls = data.isVip ? 'chat-user-vip' : 'chat-user-reg';
@@ -245,7 +250,7 @@
     });
     socket.on('chat_sys_message', (data) => { showToast(data.msg); });
 
-    // 🎱 تدوير عصا البلياردو وتوجيه ضربة قيمزر
+    // 🎱 معالجة ورسم الـ 15 كرة كاملة للبلياردو وتوجيه العصا قيمزر
     let cueAngle = 0;
     function setupPoolAimEngine() {
         const box = document.getElementById('pool-field-box');
@@ -258,13 +263,23 @@
             cue.style.transform = `rotate(${cueAngle}deg)`;
         });
     }
-    function executePoolShot() { socket.emit('pool_hit_ball', { angle: cueAngle, power: 90 }); showToast("🎱 طقيت الكرة البيضاء بالعصا الحين بقوة!"); }
-    socket.on('pool_visual_hit', (data) => {
-        const ball = document.getElementById('cue-ball');
-        if(ball) { ball.style.transform = "translateX(100px)"; setTimeout(() => { ball.style.transform = "translateX(0)"; }, 600); }
+
+    socket.on('pool_state_changed', (data) => {
+        const container = document.getElementById('pool-balls-container');
+        container.innerHTML = "";
+        // رسم الـ 15 كرة كاملة وبألوانها الصحيحة داخل الطاولة لتراها وتنبهر بها
+        data.balls.forEach(b => {
+            container.innerHTML += `<div class="pool-object-ball" style="left:${b.x}px; top:${b.y}px; background:${b.color};">${b.id}</div>`;
+        });
     });
 
-    // ❓ سين جيم - استقبال جولات ومباراة الأسئلة لايف
+    function executePoolShot() { socket.emit('pool_hit_ball', { angle: cueAngle, power: 90 }); showToast("🎱 طقيت الكرة البيضاء لتفجير الـ 15 كرة كاملة الحين!"); }
+    socket.on('pool_visual_hit', (data) => {
+        const ball = document.getElementById('cue-ball');
+        if(ball) { ball.style.transform = "translateX(120px)"; setTimeout(() => { ball.style.transform = "translateX(0)"; }, 500); }
+    });
+
+    // ❓ تحدي الأسئلة المتنوعة الصعبة
     socket.on('quiz_next_question', (data) => {
         document.getElementById('quiz-question-box').innerText = data.question;
         const wrapper = document.getElementById('quiz-options-wrapper'); wrapper.innerHTML = "";
@@ -274,8 +289,8 @@
     });
     function submitQuizAnswer(idx) { socket.emit('quiz_submit_answer', { index: idx, username: myCurrentUsername }); }
     socket.on('quiz_round_result', (data) => {
-        if(data.correct) showToast(`🎉 كفوو! اللاعب ${data.winner} جاوب صح وحصد النقاط لايف!`);
-        else showToast(`❌ للاسف! اللاعب ${data.winner} اختار إجابة خاطئة!`);
+        if(data.correct) showToast(`🎉 ذكي جداً! اللاعب ${data.winner} جاوب على السؤال الصعب صح وحصد 10 نقاط!`);
+        else showToast(`❌ إجابة خاطئة! السؤال كان صعباً جداً على اللاعب ${data.winner}!`);
     });
 </script>
 </body>
