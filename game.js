@@ -1,24 +1,25 @@
 module.exports = function(io) {
-    let rooms = {};
-    let mheibesRooms = {};
+    let activeUsers = {}; 
     let koutRooms = {};
     let carromRooms = {};
     let xoRooms = {};
-    let activeUsers = {}; 
+    let mheibesRooms = {};
 
     io.on('connection', (socket) => {
-        
+        console.log(`[Socket Connected] ID: ${socket.id}`);
+
         // 💎 نظام الدخول الفوري وشات كويت 666 الحي
         socket.on('user_login_attempt', (data) => {
             let username = data.username || "زائر فخم";
             let isVip = data.isVip || false;
             activeUsers[socket.id] = { username: username, isVip: isVip, color: isVip ? '#ff9f43' : '#54a0ff' };
+            
             socket.emit('login_success', activeUsers[socket.id]);
             io.emit('chat_sys_message', { msg: `📢 دخل ديوانية كويت 666 الحين: ${username} ${isVip?'[💎 VIP]':''}` });
         });
 
         socket.on('send_global_chat_msg', (data) => {
-            let u = activeUsers[socket.id] || { username: "زائر", isVip: false, color: '#54a0ff' };
+            let u = activeUsers[socket.id] || { username: "لاعب فخم", isVip: false, color: '#54a0ff' };
             io.emit('receive_global_chat_msg', { username: u.username, isVip: u.isVip, color: u.color, text: data.text });
         });
 
@@ -26,11 +27,11 @@ module.exports = function(io) {
         socket.on('join_kout_game', (data) => {
             let kId = "kout_1000";
             if (!koutRooms[kId]) {
-                koutRooms[kId] = { roomId: kId, players: [], currentTurn: 0, stage: 'playing' };
+                koutRooms[kId] = { roomId: kId, players: [], currentTurn: 0 };
             }
             let kRoom = koutRooms[kId];
             if (kRoom.players.length < 4) {
-                kRoom.players.push({ socketId: socket.id, username: data.username });
+                kRoom.players.push({ socketId: socket.id, username: data.username || "لاعب كوت" });
                 socket.join(kId); socket.kId = kId;
             }
             while (kRoom.players.length < 4) {
@@ -50,11 +51,11 @@ module.exports = function(io) {
         socket.on('join_carrom_game', (data) => {
             let cId = "carrom_1000";
             if (!carromRooms[cId]) {
-                carromRooms[cId] = { roomId: cId, players: [], turn: 0, strikerPos: 0 };
+                carromRooms[cId] = { roomId: cId, players: [], turn: 0 };
             }
             let cRoom = carromRooms[cId];
             if (cRoom.players.length < 2) {
-                cRoom.players.push({ socketId: socket.id, username: data.username });
+                cRoom.players.push({ socketId: socket.id, username: data.username || "لاعب كيرم" });
                 socket.join(cId); socket.cId = cId;
             }
             if (cRoom.players.length === 1) {
@@ -78,7 +79,7 @@ module.exports = function(io) {
             }
             let xRoom = xoRooms[xId];
             if (xRoom.players.length < 2) {
-                xRoom.players.push({ socketId: socket.id, username: data.username, symbol: xRoom.players.length === 0 ? 'X' : 'O' });
+                xRoom.players.push({ socketId: socket.id, username: data.username || "لاعب XO", symbol: xRoom.players.length === 0 ? 'X' : 'O' });
                 socket.join(xId); socket.xId = xId;
             }
             if (xRoom.players.length === 1) {
@@ -101,7 +102,7 @@ module.exports = function(io) {
             let mId = "mheibes_1000";
             if (!mheibesRooms[mId]) { mheibesRooms[mId] = { roomId: mId, players: [], stage: 'playing', seekerIdx: 0, hiderIdx: 1, winningHand: 'right' }; }
             let mRoom = mheibesRooms[mId];
-            if (mRoom.players.length < 2) { mRoom.players.push({ socketId: socket.id, username: data.username, score: 0 }); socket.join(mId); socket.mRoomId = mId; }
+            if (mRoom.players.length < 2) { mRoom.players.push({ socketId: socket.id, username: data.username || "لاعب محيبس", score: 0 }); socket.join(mId); socket.mRoomId = mId; }
             if (mRoom.players.length === 1) { mRoom.players.push({ socketId: 'bot_mheibes', username: "🤖 بو فهد (البوت)", score: 0 }); }
             io.to(mId).emit('mheibes_state_changed', mRoom);
         });
@@ -114,6 +115,8 @@ module.exports = function(io) {
             setTimeout(() => { let temp = mRoom.seekerIdx; mRoom.seekerIdx = mRoom.hiderIdx; mRoom.hiderIdx = temp; mRoom.winningHand = Math.random() > 0.5 ? 'right' : 'left'; io.to(mRoom.roomId).emit('mheibes_state_changed', mRoom); }, 2000);
         });
 
-        socket.on('voice_signaling_stream', (payload) => { socket.broadcast.emit('voice_signaling_receive', payload); });
+        socket.on('disconnect', () => {
+            delete activeUsers[socket.id];
+        });
     });
 };
