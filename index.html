@@ -17,15 +17,17 @@
         body {
             margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg-dark); color: #fff;
-            overflow-x: hidden;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
+            height: 100vh;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
 
-        .hub-screen { padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 100vh; width: 100vw; }
+        /* 🔲 الشاشة الرئيسية للمربعات */
+        .hub-screen { padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 100vh; width: 100vw; overflow-y: auto; }
         .hub-title { font-size: 32px; font-weight: 900; color: var(--luxury-gold); margin: 15px 0 5px 0; }
         .hub-subtitle { font-size: 13px; color: #a4a7b0; margin-bottom: 20px; }
         
@@ -34,9 +36,10 @@
         .square-icon { font-size: 32px; margin-bottom: 5px; }
         .square-title { font-size: 14px; font-weight: bold; }
 
-        .users-list-wrapper { width: 100%; padding: 0 10px; margin-bottom: 10px; }
+        /* 👑 تصميم قائمة المتصلين الفاخرة */
+        .users-list-wrapper { width: 100%; padding: 0 10px; margin-bottom: 5px; }
         .user-row-premium {
-            width: 100%; padding: 12px 16px; margin: 6px 0; border-radius: 14px;
+            width: 100%; padding: 10px 16px; margin: 4px 0; border-radius: 14px;
             display: flex; align-items: center; justify-content: space-between; font-weight: bold;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer; font-size: 14px;
         }
@@ -44,22 +47,25 @@
         .user-style-vip-orange { background: var(--vip-orange); color: #fff; border: 1px solid #ff4e50; }
         .user-style-regular { background: var(--reg-blue); color: #54a0ff; border: 1px solid #2c323f; }
 
-        .game-layout { display: none; flex-direction: column; width: 100vw; height: 100vh; background: var(--bg-dark); position: fixed; top: 0; left: 0; z-index: 1000; align-items: center; }
+        /* 💬 واجهة الشات الكلي المصلحة للأيباد بارتفاع مرن وثابت */
+        .game-layout { display: none; flex-direction: column; width: 100vw; height: 100vh; background: var(--bg-dark); position: fixed; top: 0; left: 0; z-index: 1000; align-items: center; overflow: hidden; }
         
         .top-score-bar { width: 100%; max-width: 440px; background: #15171c; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--luxury-gold); }
         .top-action-btn { background: #222; border: 1px solid var(--luxury-gold); color: #ffe066; font-size: 12px; font-weight: bold; padding: 6px 14px; border-radius: 10px; cursor: pointer; }
 
-        .chat-room-container { flex: 1; display: flex; flex-direction: column; padding: 12px; overflow: hidden; background: #0c0d12; width: 100%; max-width: 440px; }
-        .chat-messages-box { flex: 1; overflow-y: auto; background: #111317; border-radius: 14px; border: 1px solid #222; padding: 12px; margin-bottom: 10px; font-size: 14px; text-align: right; display: flex; flex-direction: column; gap: 6px; }
+        /* حاوية الشات الرئيسية */
+        .chat-room-container { flex: 1; display: flex; flex-direction: column; padding: 12px; background: #0c0d12; width: 100%; max-width: 440px; overflow: hidden; }
+        .chat-messages-box { flex: 1; overflow-y: auto; background: #111317; border-radius: 14px; border: 1px solid #222; padding: 12px; margin-bottom: 8px; font-size: 14px; text-align: right; display: flex; flex-direction: column; gap: 6px; }
         
+        /* تثبيت حقل الإدخال ليكون مرئياً وظاهراً رغماً عن مقاس الشاشة */
         .chat-input-footer-bar { 
             width: 100%; 
             display: flex; 
             gap: 8px; 
             background: #16171c; 
-            padding: 12px; 
-            border-top: 1px solid #2d3038; 
-            border-radius: 14px;
+            padding: 10px; 
+            border: 1px solid #2d3038; 
+            border-radius: 20px;
             margin-top: auto;
         }
         .chat-text-field { flex: 1; background: #000; border: 1px solid #444; border-radius: 20px; padding: 10px 16px; color: #fff; outline: none; font-size: 14px; text-align: right; }
@@ -109,7 +115,7 @@
         </div>
 
         <div class="users-list-wrapper" style="max-width: 440px;">
-            <div style="font-size: 12px; color: #aaa; text-align: right; margin: 8px 0 4px 0;">🟢 المتصلون حالياً (اضغط على الاسم للخيارات):</div>
+            <div style="font-size: 11px; color: #aaa; text-align: right; margin: 6px 0 2px 0;">🟢 المتصلون حالياً (اضغط على الاسم للخيارات):</div>
             <div class="user-row-premium user-style-vip-pink" onclick="openUserOptions('👑 الملكة سيلدا #VIP')">
                 <div>👑 الملكة سيلدا [💎 SVIP]</div>
                 <div>🇰🇼</div>
@@ -121,11 +127,12 @@
         </div>
 
         <div class="chat-room-container">
-            <div style="font-size: 12px; color: var(--luxury-gold); text-align: right; margin-bottom: 4px;">💬 المحادثة الجماعية للروم:</div>
+            <div style="font-size: 11px; color: var(--luxury-gold); text-align: right; margin-bottom: 2px;">💬 المحادثة الجماعية للروم:</div>
             <div class="chat-messages-box" id="global-chat-box">
                 <div style="color: #888; text-align: center; font-size: 12px; margin-top: 10px;">✨ أهلاً بك في المحادثة الجماعية الحية.. اكتب رسالتك بالأسفل ودردش مع الجميع!</div>
             </div>
 
+            <!-- حقل الكتابة المصلح هندسياً ومثبت كلياً فوق حافة الشاشة -->
             <div class="chat-input-footer-bar">
                 <input type="text" id="chatMessageInput" class="chat-text-field" placeholder="اكتب رسالتك داخل المحادثة الجماعية لايف...">
                 <button class="chat-send-btn" onclick="sendLiveChatMessage()">إرسال</button>
