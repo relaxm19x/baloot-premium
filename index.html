@@ -17,24 +17,48 @@
         body {
             margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg-dark); color: #fff;
+            overflow-x: hidden;
         }
 
-        /* 🔲 تصميم المربعات الرئيسية للشبكة 🔲 */
-        .hub-screen { padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* 🔲 الشاشة الرئيسية للمربعات */
+        .hub-screen { padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .hub-title { font-size: 32px; font-weight: 900; color: var(--luxury-gold); margin: 15px 0 5px 0; }
+        .hub-subtitle { font-size: 13px; color: #a4a7b0; margin-bottom: 20px; }
+        
         .games-grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 380px; margin-top: 15px; }
         .square-game-card { background: #12151b; border: 1.5px solid rgba(255,255,255,0.06); border-radius: 20px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; cursor: pointer; text-align: center; }
+        .square-icon { font-size: 32px; margin-bottom: 5px; }
+        .square-title { font-size: 14px; font-weight: bold; }
 
-        /* 👑 تصميم قائمة المتصلين الفاخرة المستوحاة من صورك بالملي 👑 */
+        /* 👑 تصميم قائمة المتصلين الفاخرة */
+        .users-list-wrapper { width: 100%; padding: 0 10px; margin-bottom: 15px; }
         .user-row-premium {
-            width: 100%; max-width: 400px; padding: 12px 16px; margin: 6px 0; border-radius: 14px;
+            width: 100%; padding: 12px 16px; margin: 6px 0; border-radius: 14px;
             display: flex; align-items: center; justify-content: space-between; font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer; font-size: 14px;
         }
         .user-style-vip-pink { background: var(--vip-pink); color: #fff; border: 1px solid #ff7eb3; }
         .user-style-vip-orange { background: var(--vip-orange); color: #fff; border: 1px solid #ff4e50; }
         .user-style-regular { background: var(--reg-blue); color: #54a0ff; border: 1px solid #2c323f; }
 
-        /* 🎴 النافذة المنبثقة لخيارات المستخدم (User Modal) 🎴 */
+        /* 💬 تصميم واجهة الشات الكلي والمصلح */
+        .game-layout { display: none; flex-direction: column; width: 100vw; height: 100vh; background: var(--bg-dark); position: fixed; top: 0; left: 0; z-index: 1000; }
+        
+        .top-score-bar { width: 100%; background: #15171c; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--luxury-gold); }
+        .top-action-btn { background: #222; border: 1px solid var(--luxury-gold); color: #ffe066; font-size: 12px; font-weight: bold; padding: 6px 14px; border-radius: 10px; cursor: pointer; }
+
+        /* صندوق المحادثة الجماعية الثابت والمرئي */
+        .chat-room-container { flex: 1; display: flex; flex-direction: column; padding: 12px; overflow: hidden; background: #0c0d12; }
+        .chat-messages-box { flex: 1; overflow-y: auto; background: #111317; border-radius: 14px; border: 1px solid #222; padding: 12px; margin-bottom: 10px; font-size: 14px; text-align: right; display: flex; flex-direction: column; gap: 6px; }
+        
+        /* حقل إدخال الرسائل المدمج في الأسفل بشكل صحيح */
+        .chat-input-footer-bar { width: 100%; display: flex; gap: 8px; background: #16171c; padding: 10px; border-top: 1px solid #2d3038; border-radius: 12px; }
+        .chat-text-field { flex: 1; background: #000; border: 1px solid #444; border-radius: 20px; padding: 10px 16px; color: #fff; outline: none; font-size: 14px; text-align: right; }
+        .chat-send-btn { background: var(--luxury-gold); color: #000; border: none; padding: 0 20px; font-weight: bold; border-radius: 20px; cursor: pointer; font-size: 14px; }
+
+        /* 🎴 النافذة المنبثقة لخيارات المستخدم */
         .user-options-modal {
             display: none; position: fixed; bottom: 0; left: 0; width: 100vw; 
             background: #161922; border-top: 2px solid var(--luxury-gold);
@@ -43,17 +67,13 @@
             box-shadow: 0 -10px 30px rgba(0,0,0,0.7);
         }
         .modal-user-title { font-size: 18px; font-weight: 900; color: #ffe066; margin-bottom: 15px; }
-        .modal-btn-action { width: 100%; max-width: 320px; padding: 12px; margin: 5px auto; border-radius: 12px; border: none; font-weight: bold; font-size: 14px; cursor: pointer; display: block; }
+        .modal-btn-action { width: 100%; max-width: 320px; padding: 12px; margin: 6px auto; border-radius: 12px; border: none; font-weight: bold; font-size: 14px; cursor: pointer; display: block; }
         .btn-pm { background: #2ecc71; color: white; }
         .btn-follow { background: #3498db; color: white; }
         .btn-gift-vip { background: linear-gradient(45deg, #f1c40f, #e67e22); color: black; }
         .btn-close-modal { background: #e74c3c; color: white; }
-
-        .chat-room-container { width: 92vw; max-width: 420px; height: 50vh; background: #111317; border-radius: 16px; border: 1px solid #2d3038; margin-top: 15px; display: flex; flex-direction: column; padding: 14px; }
-        .chat-messages-box { flex: 1; overflow-y: auto; font-size: 13px; text-align: right; }
-        .game-layout { display: none; flex-direction: column; align-items: center; width: 100vw; height: 100vh; padding-top: 10px; position: fixed; top: 0; left: 0; background: var(--bg-dark); z-index: 100; }
-        .top-score-bar { width: 100%; max-width: 450px; background: #15171c; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--luxury-gold); }
-        .top-action-btn { background: #222; border: 1px solid var(--luxury-gold); color: #ffe066; font-size: 12px; font-weight: bold; padding: 6px 14px; border-radius: 10px; cursor: pointer; }
+        
+        .creator-signature { font-size: 13px; font-weight: bold; color: var(--luxury-gold); margin: 25px 0; }
     </style>
 </head>
 <body>
@@ -66,29 +86,24 @@
             <div class="square-game-card" style="border-color: #54a0ff;" onclick="launchGame('chat_666')">
                 <div class="square-icon">💬</div>
                 <div class="square-title">شات كويت 666</div>
-                <div class="square-desc">الدردشة والأسماء الملونة والـ VIP لايف.</div>
             </div>
             <div class="square-game-card" style="border-color: #ff9f43;" onclick="launchGame('chat_worldcup')">
                 <div class="square-icon">🏆</div>
                 <div class="square-title">كأس العالم للمناقشة</div>
-                <div class="square-desc">ديوانية ومساحة الحوار والجدل الرياضي للمباريات.</div>
             </div>
         </div>
         <div class="creator-signature">تصميم وإنشاء بواسطة @add.more.q8</div>
     </div>
 
-    <!-- واجهة شات كويت 666 وقائمة المتصلين الاستعراضية -->
     <div class="game-layout" id="main-chat-only-view">
         <div class="top-score-bar">
             <div class="top-action-btn" onclick="history.go(0)">◀ القائمة</div>
-            <div style="font-weight:900; color:#54a0ff;" id="chat-title">💬 شات كويت 666</div>
+            <div style="font-weight:900; color: var(--luxury-gold);" id="chat-title">💬 شات كويت 666</div>
             <div></div>
         </div>
 
-        <!-- قائمة متصلين استعراضية تحاكي الفخامة الموجودة في صورتك بالملي -->
-        <div style="width: 92vw; max-width: 420px; margin-top: 10px;">
-            <div style="font-size: 12px; color: #aaa; text-align: right; margin-bottom: 4px;">🟢 المتصلون في الروم الحين (اضغط على الاسم للخيارات):</div>
-            
+        <div class="users-list-wrapper">
+            <div style="font-size: 12px; color: #aaa; text-align: right; margin: 8px 0 4px 0;">🟢 المتصلون حالياً (اضغط على الاسم للخيارات):</div>
             <div class="user-row-premium user-style-vip-pink" onclick="openUserOptions('👑 الملكة سيلدا #VIP')">
                 <div>👑 الملكة سيلدا [💎 SVIP]</div>
                 <div>🇰🇼</div>
@@ -97,39 +112,45 @@
                 <div>👑 بو فهد [💎 VIP]</div>
                 <div>🇰🇼</div>
             </div>
-            <div class="user-row-premium user-style-regular" onclick="openUserOptions('لاعب عادي 1')">
-                <div>لاعب عادي 1</div>
-                <div>🇸🇦</div>
-            </div>
         </div>
 
         <div class="chat-room-container">
-            <div class="chat-messages-box" id="global-chat-box"></div>
+            <div style="font-size: 12px; color: var(--luxury-gold); text-align: right; margin-bottom: 4px;">💬 المحادثة الجماعية للروم:</div>
+            <div class="chat-messages-box" id="global-chat-box">
+                <div style="color: #888; text-align: center; font-size: 12px; margin-top: 10px;">✨ أهلاً بك في المحادثة الجماعية الحية.. اكتب رسالتك بالأسفل ودردش مع الجميع!</div>
+            </div>
+
+            <div class="chat-input-footer-bar">
+                <input type="text" id="chatMessageInput" class="chat-text-field" placeholder="اكتب رسالتك داخل المحادثة الجماعية لايف...">
+                <button class="chat-send-btn" onclick="sendLiveChatMessage()">إرسال</button>
+            </div>
         </div>
     </div>
 
-    <!-- 🎴 لوحة الخيارات المنبثقة المدعومة بـ قفل الخاص والهدية والخصوصية للمتابعين 🎴 -->
     <div class="user-options-modal" id="user-modal-panel">
         <div class="modal-user-title" id="modal-target-username">اسم المستخدم</div>
-        
         <button class="modal-btn-action btn-pm" onclick="triggerPrivateChatGate()">💬 رسالة خاصة (حصري للـ VIP)</button>
-        <button class="modal-btn-action btn-follow" onclick="triggerPrivateFollow()">👤 متابعة سرية (مخفية عن الآخرين)</button>
+        <button class="modal-btn-action btn-follow" onclick="triggerPrivateFollow()">👤 متابعة سرية (مخفية)</button>
         <button class="modal-btn-action btn-gift-vip" onclick="giftVipOneHour()">🎁 إهداء ساعة VIP لايف الحين</button>
         <button class="modal-btn-action btn-close-modal" onclick="closeUserOptions()">إغلاق ❌</button>
     </div>
 
 <script>
     const socket = io();
-    let isMyAccountVip = false; // افتراضياً الحساب غير مشترك
+    let isMyAccountVip = false; 
     let currentSelectedUser = "";
+    let activeChatRoom = "chat_666";
 
     function launchGame(game) {
+        activeChatRoom = game;
         document.getElementById('hub-landing-page').style.display = 'none';
         document.getElementById('main-chat-only-view').style.display = 'flex';
-        document.getElementById('chat-title').innerText = game === 'chat_666' ? "💬 روم شات كويت 666" : "🏆 روم كأس العالم للمناقشة";
+        document.getElementById('chat-title').innerText = game === 'chat_666' ? "💬 شات كويت 666" : "🏆 كأس العالم للمناقشة";
+        
+        // إرسال تنبيه الدخول للسيرفر
+        socket.emit('user_login_attempt', { username: "بو محمد", isVip: true, method: "تسجيل فوري" });
     }
 
-    // فتح قائمة خيارات المستخدم
     function openUserOptions(username) {
         currentSelectedUser = username;
         document.getElementById('modal-target-username').innerText = username;
@@ -140,7 +161,26 @@
         document.getElementById('user-modal-panel').style.display = 'none';
     }
 
-    // 🔒 بوابة قفل الخاص: لا يدخل الخاص إلا المشترك والـ VIP
+    function sendLiveChatMessage() {
+        const input = document.getElementById('chatMessageInput');
+        const text = input.value.trim();
+        if(!text) return;
+        
+        // إرسال الرسالة إلى الباكيند
+        socket.emit('send_global_chat_msg', { room: activeChatRoom, text: text });
+        input.value = "";
+    }
+
+    // استقبال الرسائل وعرضها داخل الصندوق الجماعي فوراً
+    socket.on('receive_global_chat_msg', (data) => {
+        if (data.room !== activeChatRoom) return;
+        const box = document.getElementById('global-chat-box');
+        if (box) {
+            box.innerHTML += `<div><strong style="color: var(--luxury-gold);">${data.username}:</strong> <span style="color: #fff;">${data.text}</span></div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+    });
+
     function triggerPrivateChatGate() {
         if (!isMyAccountVip) {
             alert("🚨 عذراً! خاصية المحادثات الخاصة حصرية للمشتركين والـ VIP لمنع الإزعاج. يرجى ترقية حسابك وتفعيل الدفع الفوري أولاً! 💎");
@@ -150,15 +190,13 @@
         closeUserOptions();
     }
 
-    // 👤 متابعة سرية مخفية تماماً عن الآخرين بطلبك بالملي
     function triggerPrivateFollow() {
-        alert(`✔ تم متابعة [ ${currentSelectedUser} ] بنجاح! تم تشفير وإخفاء قائمة متابعينك بالكامل، ولا يمكن لأي مستخدم آخر في الديوانية الاطلاع عليها كلياً للخصوصية المطلقة.`);
+        alert(`✔ تم متابعة [ ${currentSelectedUser} ] بنجاح! تم تشفير وإخفاء قائمة متابعينك بالكامل عن الآخرين.`);
         closeUserOptions();
     }
 
-    // 🎁 خاصية دعم وإهداء مستخدم آخر VIP لمدة ساعة واحدة لايف
     function giftVipOneHour() {
-        alert(`🎁 تم خصم القيمة وإهداء [ ${currentSelectedUser} ] رتبة VIP الملكية المشعة لمدة ساعة واحدة لايف الحين! بدأ العداد التنازلي بالسيرفر وبانتظار تفعيل الاسم اللامع.`);
+        alert(`🎁 تم خصم القيمة وإهداء [ ${currentSelectedUser} ] رتبة VIP الملكية المشعة لمدة ساعة واحدة لايف الحين!`);
         closeUserOptions();
     }
 </script>
