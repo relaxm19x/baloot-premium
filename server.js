@@ -9,52 +9,68 @@ app.use(express.static(path.join(__dirname)));
 
 app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'index.html')); });
 
-// 🤖 بنك عبارات وجمل البوتات التلقائية لجذب الزوار وملء الروم كاش
-const botPhrases = [
-    "يا هلا بالجميع نورتوا الديوانية الحين الحين! 🔥",
-    "منو يتحداني في مباراة تيك توك اليوم؟ 👑",
-    "ارحبوا يا ربع، الروم منور بوجودكم 💎",
-    "مساء الخير يا أهل الخليج والديوانية الفخمة ✨",
-    "شات ADD MORE Q8 صراحة قمة الفخامة والترتيب 👍"
-];
+// إنشاء الطاولة الافتراضية للبلوت
+let balootTable = {
+    players: [],
+    deck: [],
+    currentTurn: 0,
+    scores: { us: 0, them: 0 },
+    gameType: 'صن', // أو حكم
+    floorCards: []
+};
 
-const botNames = ["🤖 سعود_الخالدي", "🤖 نورة_الكويتية", "🤖 بو_فهد_الملكي"];
+// إنشاء ورق البلوت (32 ورقة)
+function createBalootDeck() {
+    const suits = ['♠', '♥', '♦', '♣'];
+    const values = ['7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    let deck = [];
+    for (let suit of suits) {
+        for (let val of values) {
+            deck.push({ suit, val });
+        }
+    }
+    return deck.sort(() => Math.random() - 0.5);
+}
 
 io.on('connection', (socket) => {
-    
-    // 🤖 تشغيل ضخ رسائل البوتات التلقائية كل 45 ثانية في رومات الدول
-    setInterval(() => {
-        let randomBot = botNames[Math.floor(Math.random() * botNames.length)];
-        let randomPhrase = botPhrases[Math.floor(Math.random() * botPhrases.length)];
-        let rooms = ['chat_666', 'chat_worldcup', 'room_kuwait', 'room_saudi'];
-        let randomRoom = rooms[Math.floor(Math.random() * rooms.length)];
+    console.log('🟢 لاعب دخل طاولة البلوت');
+
+    socket.on('join_baloot_table', (data) => {
+        // إذا كانت الطاولة فارغة، نوزع الورق ونملأ المقاعد ببوتات محترفة فوراً حتى لا ينتظر الزائر
+        if (balootTable.players.length === 0) {
+            balootTable.deck = createBalootDeck();
+            balootTable.players = [
+                { id: socket.id, name: data.username || "بو محمد", position: "جنوب", cards: balootTable.deck.slice(0, 5) },
+                { id: 'bot_1', name: "🤖 مساعد (بوت)", position: "شمال", cards: balootTable.deck.slice(5, 10) },
+                { id: 'bot_2', name: "🤖 خالد (بوت)", position: "شرق", cards: balootTable.deck.slice(10, 15) },
+                { id: 'bot_3', name: "🤖 ناصر (بوت)", position: "غرب", cards: balootTable.deck.slice(15, 20) }
+            ];
+        }
         
-        io.emit('receive_global_chat_msg', {
-            room: randomRoom,
-            username: randomBot,
-            text: randomPhrase
+        // إرسال حالة الطاولة والورق الخاص باللاعب دغري
+        socket.emit('baloot_state_update', {
+            playerCards: balootTable.players[0].cards,
+            allPlayers: balootTable.players.map(p => ({ name: p.name, position: p.position })),
+            scores: balootTable.scores,
+            gameType: balootTable.gameType
         });
-    }, 45000);
+    });
 
-    socket.on('send_global_chat_msg', (data) => {
-        // إرسال رسالة المستخدم الحقيقي دغري
-        io.emit('receive_global_chat_msg', {
-            room: data.room,
-            username: "بو محمد (المشرف) 👑",
-            text: data.text
-        });
-
-        // 🤖 ذكاء اصطناعي تفاعلي: لو كتب المستخدم كلمة ترحيب، يرد عليه البوت فوراً لايف!
-        if (data.text.includes("سلام") || data.text.includes("مرحبا") || data.text.includes("نورت")) {
+    // كرت الملعوبة
+    socket.on('baloot_play_card', (card) => {
+        if (balootTable.floorCards.length < 4) {
+            balootTable.floorCards.push({ card: card, player: "بو محمد" });
+            io.emit('baloot_card_played_on_floor', balootTable.floorCards);
+            
+            // محاكاة سريعة ومحترفة للبوتات لترمى ورقها تلقائياً بالترتيب
             setTimeout(() => {
-                io.emit('receive_global_chat_msg', {
-                    room: data.room,
-                    username: "🤖 نورة_الكويتية",
-                    text: "وعليكم السلام والرحمة يا هلا بومحمد نورت الديوانية والمايك الحين! 🌹✨"
-                });
-            }, 1500);
+                balootTable.floorCards.push({ card: { suit: '♠', val: 'A' }, player: "🤖 مساعد" });
+                io.emit('baloot_card_played_on_floor', balootTable.floorCards);
+            }, 800);
         }
     });
+
+    socket.on('disconnect', () => { balootTable.players = []; balootTable.floorCards = []; });
 });
 
-http.listen(PORT, () => { console.log(`🚀 Server working on port ${PORT}`); });
+http.listen(PORT, () => { console.log(`🚀 Baloot Engine Working on Port ${PORT}`); });
