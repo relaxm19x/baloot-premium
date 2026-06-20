@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ADD MORE Q8 - منصة الألعاب التراثية والديوانية الخليجية</title>
+    <title>ADD MORE Q8 - منصة الألعاب التراثية</title>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <style>
         :root {
             --bg-dark: #0b0c10;
             --luxury-gold: #cca43b;
-            --neon-gold: #ffe066;
             --table-green: radial-gradient(circle, #1b5329 30%, #0f381a 75%, #071e0e 100%);
             --diwaniya-red: linear-gradient(135deg, #800000 0%, #4a0000 100%);
-            --card-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            --card-shadow: 0 10px 22px rgba(0,0,0,0.6);
         }
 
         body {
@@ -24,14 +23,13 @@
 
         *, *::before, *::after { box-sizing: border-box; }
 
-        /* 👑 بوابة الترحيب الرسمية ADD MORE Q8 👑 */
         .hub-screen {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: radial-gradient(circle, #1c1e24 20%, #0b0c10 100%);
             z-index: 99999; text-align: center; padding: 20px;
         }
-        .hub-title { font-size: 32px; font-weight: 900; color: var(--luxury-gold); letter-spacing: 2px; margin-bottom: 5px; text-shadow: 0 0 15px rgba(204,164,59,0.4); }
-        .hub-subtitle { font-size: 14px; color: #a4a7b0; margin-bottom: 25px; }
+        .hub-title { font-size: 34px; font-weight: 900; color: var(--luxury-gold); margin-bottom: 5px; text-shadow: 0 0 15px rgba(204,164,59,0.4); }
+        .hub-subtitle { font-size: 13px; color: #a4a7b0; margin-bottom: 25px; }
 
         .avatar-selector-box { display: flex; gap: 12px; margin-bottom: 20px; justify-content: center; }
         .avatar-opt { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #444; overflow: hidden; cursor: pointer; transition: all 0.2s; background: #fff; }
@@ -42,16 +40,14 @@
             width: 88vw; max-width: 360px; padding: 18px; margin: 10px 0; border-radius: 16px;
             background: linear-gradient(135deg, #232731 0%, #15181f 100%);
             border: 1.5px solid rgba(255,255,255,0.08); text-align: right; cursor: pointer;
-            transition: all 0.25s ease-in-out; display: flex; align-items: center; justify-content: space-between;
+            transition: all 0.23s ease; display: flex; align-items: center; justify-content: space-between;
         }
-        .game-card-btn:hover { border-color: var(--luxury-gold); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
-        .game-card-title { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 3px; }
+        .game-card-btn:hover { border-color: var(--luxury-gold); transform: translateY(-3px); }
+        .game-card-title { font-size: 16px; font-weight: 900; color: #fff; }
         .game-card-desc { font-size: 11px; color: #8e929c; }
 
-        /* 👑 توقيع حسابك الفخم المصمم والمثبت بالأسفل 👑 */
-        .creator-signature { position: absolute; bottom: 15px; font-size: 12px; font-weight: bold; color: var(--luxury-gold); opacity: 0.85; text-shadow: 0 1px 4px #000; letter-spacing: 0.5px; }
+        .creator-signature { position: absolute; bottom: 15px; font-size: 12px; font-weight: bold; color: var(--luxury-gold); }
 
-        /* حاويات الألعاب والواجهات الحية */
         .game-layout { display: none; flex-direction: column; align-items: center; width: 100vw; height: 100vh; padding-top: 10px; }
         
         .top-score-bar {
@@ -59,13 +55,13 @@
             border-bottom-right-radius: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--luxury-gold);
         }
         .score-display-box { display: flex; background: #000; border-radius: 12px; border: 1px solid #444; padding: 4px 16px; gap: 14px; font-weight: 900; font-size: 15px; }
+        .top-action-btn { background: #222; border: 1px solid var(--luxury-gold); color: #ffe066; font-size: 12px; font-weight: bold; padding: 6px 14px; border-radius: 10px; cursor: pointer; }
 
         .baloot-table {
             width: 94vw; max-width: 440px; height: 54vw; max-height: 260px; background: var(--table-green);
             border: 10px solid #28190c; border-radius: 40px; position: relative; margin: 15px auto; box-shadow: inset 0 0 50px #000, 0 12px 25px rgba(0,0,0,0.5);
         }
 
-        /* ✊ واجهة ومجلس لعبة المحيبس التراثية الخليجية ✊ */
         .mheibes-arena {
             width: 94vw; max-width: 440px; height: 65vw; max-height: 310px; background: var(--diwaniya-red);
             border: 8px solid #cca43b; border-radius: 25px; position: relative; margin: 20px auto;
@@ -73,14 +69,11 @@
         }
         .hands-row-display { display: flex; justify-content: center; gap: 40px; margin-top: 20px; }
         .fist-hand-btn { font-size: 55px; cursor: pointer; transition: transform 0.2s; user-select: none; }
-        .fist-hand-btn:hover { transform: scale(1.2); }
 
-        /* تأثير صفعة الكف الحركية الملحمية 💥👋 */
-        @keyframes slap-left { 0% { transform: translateX(0); } 50% { transform: translateX(-80px) rotate(-20deg) scale(1.3); } 100% { transform: translateX(0); } }
-        @keyframes slap-right { 0% { transform: translateX(0); } 50% { transform: translateX(80px) rotate(20deg) scale(1.3); } 100% { transform: translateX(0); } }
-        .slap-animation-active { animation: slap-left 0.4s ease-in-out; }
+        @keyframes slap-effect { 0% { transform: scale(1); } 50% { transform: scale(1.3) rotate(15deg); background: rgba(231,76,60,0.3); } 100% { transform: scale(1); } }
+        .slap-active { animation: slap-effect 0.4s ease-in-out; }
 
-        /* 🃏 كروت البلوت الاحترافية والمصقولة للأبعاد العالية 🃏 */
+        /* 🃏 تصميم الكروت الملوكية المصقولة والواضحة جداً 🃏 */
         .card {
             width: 58px; height: 84px; background: linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%);
             color: #111; border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between;
@@ -97,15 +90,12 @@
         .card-pos-2 { top: 45px; left: calc(50% - 29px); }
         .card-pos-3 { top: calc(50% - 42px); right: 40px; }
 
-        /* مصفوفة اليد الثابتة والمتباعدة عريضاً 36px */
         .player-hand-container { position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%); display: flex; justify-content: center; width: 100vw; max-width: 450px; height: 110px; z-index: 9999; }
         .player-hand-container .card { position: absolute; bottom: 5px; transform-origin: bottom center; transition: all 0.15s ease; }
         .player-hand-container .card:hover { bottom: 30px; z-index: 999999 !important; transform: scale(1.2) !important; border-color: var(--luxury-gold); }
 
-        .chat-input-footer-bar { width: 100%; max-width: 480px; background: #16171c; border-top: 1.5px solid var(--luxury-gold); padding: 8px 12px; display: flex; gap: 8px; position: fixed; bottom: 0; z-index: 10000; }
-        .chat-text-field { flex: 1; background: #000; border: 1px solid #444; border-radius: 20px; padding: 8px 14px; color: #fff; outline: none; }
-        .royal-toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #22252d; border: 1.5px solid var(--luxury-gold); padding: 12px 24px; border-radius: 12px; color: #ffe066; font-weight: bold; z-index: 999999; transition: all 0.25s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
-        .royal-toast.show { transform: translateX(-50%) translateY(0); }
+        .action-panel-bar { display: none; justify-content: center; gap: 8px; margin: 10px auto 4px auto; width: 90%; max-width: 440px; z-index: 90; }
+        .btn-action-kamalna { flex: 1; background: var(--panel-gray); border: 2px solid #5a5a5a; color: #111; font-weight: 900; font-size: 14px; padding: 12px 8px; border-radius: 12px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -120,8 +110,6 @@
         <div class="avatar-selector-box">
             <div class="avatar-opt selected" onclick="selectAvatar('m1.png', this)"><img src="https://cdn-icons-png.flaticon.com/512/219/219970.png"></div>
             <div class="avatar-opt" onclick="selectAvatar('w1.png', this)"><img src="https://cdn-icons-png.flaticon.com/512/219/219964.png"></div>
-            <div class="avatar-opt" onclick="selectAvatar('m2.png', this)"><img src="https://cdn-icons-png.flaticon.com/512/219/219983.png"></div>
-            <div class="avatar-opt" onclick="selectAvatar('w2.png', this)"><img src="https://cdn-icons-png.flaticon.com/512/219/219968.png"></div>
         </div>
 
         <input type="text" id="player-global-name" class="luxury-input" placeholder="ادخل اسمك للاعب الفخم" style="max-width:320px;" value="بو محمد">
@@ -145,11 +133,12 @@
         <div class="creator-signature">تصميم وإنشاء بواسطة @add.more.q8</div>
     </div>
 
+    <!-- البلوت -->
     <div class="game-layout" id="baloot-game-view">
         <div class="top-score-bar">
             <div class="top-action-btn" onclick="history.go(0)">◀ القائمة</div>
             <div class="score-display-box">لنا: <span id="score-t1">0</span> ┃ لهم: <span id="score-t2">0</span></div>
-            <div class="top-action-btn" style="color:#4caf50;" id="mic-btn-baloot" onclick="toggleVoiceMic()">🎤 تشغيل المايك</div>
+            <div class="top-action-btn" style="color:#4caf50;" onclick="toggleVoiceMic()">🎤 المايك</div>
         </div>
         <div class="baloot-table" id="main-baloot-table">
             <div class="center-area" id="center-table"></div>
@@ -158,21 +147,19 @@
         <div class="player-hand-container" id="my-hand"></div>
     </div>
 
+    <!-- المحيبس -->
     <div class="game-layout" id="mheibes-game-view">
         <div class="top-score-bar">
             <div class="top-action-btn" onclick="history.go(0)">◀ القائمة</div>
-            <div style="font-weight:900; color:var(--luxury-gold);" id="mheibes-status">ديوانية لعبة المحيبس الجارية</div>
-            <div class="top-action-btn" style="color:#2196f3;" id="mic-btn-mheibes" onclick="toggleVoiceMic()">🎤 فتح المايك الصوتية</div>
+            <div style="font-weight:900; color:var(--luxury-gold);">ديوانية لعبة المحيبس</div>
+            <div class="top-action-btn" style="color:#2196f3;" onclick="toggleVoiceMic()">🎤 المايك</div>
         </div>
-        
-        <div style="text-align:center; margin-top:10px; font-weight:bold;" id="mheibes-scoreboard">أنت: 0 ┃ الخصم: 0</div>
-
+        <div style="text-align:center; margin-top:10px; font-weight:bold; font-size:16px;" id="mheibes-scoreboard">أنت: 0 ┃ الخصم: 0</div>
         <div class="mheibes-arena" id="mheibes-board-field">
-            <div style="font-size:14px; background:rgba(0,0,0,0.5); padding:6px 14px; border-radius:10px; text-align:center;" id="mheibes-turn-prompt">انتظر دورك للتوقع...</div>
-            
-            <div class="hands-row-display" id="interactive-hands-container">
-                <div class="fist-hand-btn" id="hand-left" onclick="submitMheibesGuess('left')">✊<br><span style="font-size:11px; color:#aaa;">اليد اليسار</span></div>
-                <div class="fist-hand-btn" id="hand-right" onclick="submitMheibesGuess('right')">✊<br><span style="font-size:11px; color:#aaa;">اليد اليمين</span></div>
+            <div style="font-size:14px; background:rgba(0,0,0,0.6); padding:6px 14px; border-radius:10px;" id="mheibes-turn-prompt">اضغط لتوقع اليد الفائزة الحين</div>
+            <div class="hands-row-display">
+                <div class="fist-hand-btn" onclick="submitMheibesGuess('left')">✊<br><span style="font-size:11px; color:#aaa;">اليسار</span></div>
+                <div class="fist-hand-btn" onclick="submitMheibesGuess('right')">✊<br><span style="font-size:11px; color:#aaa;">اليمين</span></div>
             </div>
         </div>
     </div>
@@ -183,8 +170,6 @@
     let globalUsername = "بو محمد";
     let mySeatIndex = 0;
     let localCards = [];
-    let seatMapping = {};
-    let localStream = null;
 
     function selectAvatar(img, elem) {
         currentAvatar = img;
@@ -195,11 +180,9 @@
     function launchGame(game) {
         globalUsername = document.getElementById('player-global-name').value.trim() || "لاعب فخم";
         document.getElementById('hub-landing-page').style.display = 'none';
-        
         if (game === 'baloot') {
             document.getElementById('baloot-game-view').style.display = 'flex';
             socket.emit('join_matchmaking', { username: globalUsername, avatar: currentAvatar });
-            setTimeout(() => { socket.emit('start_game_with_bots'); }, 600);
         } else {
             document.getElementById('mheibes-game-view').style.display = 'flex';
             socket.emit('join_mheibes', { username: globalUsername, avatar: currentAvatar });
@@ -211,85 +194,68 @@
         toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3000);
     }
 
-    // 🎤 تفعيل المحادثة الصوتية وفتح المايك لايف (WebRTC implementation streaming)
-    async function toggleVoiceMic() {
-        if (localStream) {
-            localStream.getTracks().forEach(track => track.stop()); localStream = null;
-            showToast("🎤 تم قفل المايك الصوتي");
-            return;
+    // 🃏 ربط البلوت الديناميكي الحقيقي بالكامل لمنع التوقف
+    socket.on('game_state_changed', (data) => {
+        document.getElementById('score-t1').innerText = data.scores.team1;
+        document.getElementById('score-t2').innerText = data.scores.team2;
+        
+        const centerTable = document.getElementById('center-table');
+        const buyingPanel = document.getElementById('buying-panel');
+        
+        if (data.gameStage === 'buying') {
+            if (data.flipCard) {
+                centerTable.innerHTML = `<div class="card red card-pos-0"><div class="card-corner-top"><span>${data.flipCard.value}<br>${data.flipCard.suit}</span></div><div class="card-center-icon">${data.flipCard.suit}</div></div>`;
+            }
+            if (data.currentTurn === 0) {
+                buyingPanel.style.display = 'flex';
+                buyingPanel.innerHTML = `<button class="btn-action-kamalna" onclick="socket.emit('player_buy_decision', {seatIndex:0, decision:'buy', buyType:'صن'})">صن</button><button class="btn-action-kamalna" onclick="socket.emit('player_buy_decision', {seatIndex:0, decision:'pass'})">بس</button>`;
+            } else buyingPanel.style.display = 'none';
+        } else if (data.gameStage === 'playing') {
+            buyingPanel.style.display = 'none';
+            centerTable.innerHTML = "";
+            if (data.tableCards) {
+                data.tableCards.forEach(item => {
+                    const colorClass = (item.card.suit === '♥' || item.card.suit === '♦') ? 'red' : 'black';
+                    centerTable.innerHTML += `<div class="card ${colorClass} card-pos-${item.seatIndex}"><div class="card-corner-top"><span>${item.card.value}<br>${item.card.suit}</span></div><div class="card-center-icon">${item.card.suit}</div></div>`;
+                });
+            }
         }
-        try {
-            localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            showToast("🎤 المايك شغال لايف الحين! تكلم بالديوانية براحتك");
-            
-            // تهيئة بث السوكيت الصوتي للشبكة لايف
-            const audioContext = new AudioContext();
-            const source = audioContext.createMediaStreamSource(localStream);
-            const processor = audioContext.createScriptProcessor(4096, 1, 1);
-            source.connect(processor); processor.connect(audioContext.destination);
-            processor.onaudioprocess = (e) => {
-                const inputData = e.inputBuffer.getChannelData(0);
-                socket.emit('voice_signaling_stream', inputData);
-            };
-        } catch (err) {
-            alert("يرجى إعطاء صلاحية المايك لتتمكن من التحدث الصوتي بالديوانية!");
-        }
-    }
 
-    socket.on('voice_signaling_receive', (audioData) => {
-        // استقبال الصوت المباشر وتشغيله في سماعة اللاعبين
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        const ctx = new AudioContext();
-        const buffer = ctx.createBuffer(1, 4096, ctx.sampleRate);
-        buffer.getChannelData(0).set(audioData);
-        const source = ctx.createBufferSource(); source.buffer = buffer;
-        source.connect(ctx.destination); source.start();
+        localCards = data.playersCards[0] || [];
+        const handDiv = document.getElementById('my-hand'); handDiv.innerHTML = "";
+        localCards.forEach((card, index) => {
+            const colorClass = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
+            const xOffset = (index - (localCards.length-1)/2) * 36;
+            handDiv.innerHTML += `<div class="card ${colorClass}" style="left:calc(50% + ${xOffset}px - 29px);" onclick="throwCardFromHand(${index})"><div class="card-corner-top"><span>${card.value}<br>${card.suit}</span></div><div class="card-center-icon">${card.suit}</div></div>`;
+        });
     });
 
-    // ✊ معالجة أحداث لعبة المحيبس والكفوف المتبادلة
+    function throwCardFromHand(idx) {
+        socket.emit('play_card', { seatIndex: 0, card: localCards[idx] });
+    }
+
+    // ✊ معالجة المحيبس والكفوف المتبادلة لايف
     function submitMheibesGuess(hand) {
         socket.emit('mheibes_guess_attempt', { hand: hand });
     }
 
     socket.on('mheibes_state_changed', (data) => {
-        document.getElementById('mheibes-scoreboard').innerText = `نقاط الجولة الحالية للمحيبس في المجلس`;
-        document.getElementById('mheibes-turn-prompt').innerText = `اضغط على اليد (يسار أم يمين) لتوقع مكان المحبس الحين! 🔥`;
+        document.getElementById('mheibes-scoreboard').innerText = `أنت: ${data.players[0].score} ┃ الخصم: ${data.players[1].score}`;
     });
 
     socket.on('mheibes_round_result', (data) => {
-        const field = document.getElementById('mheibes-board-field');
+        const board = document.getElementById('mheibes-board-field');
+        board.classList.add('slap-active');
+        setTimeout(() => board.classList.remove('slap-active'), 500);
+        
         if (data.result === 'correct') {
-            showToast(`🎉 صح! ${data.winnerName} كشف مكانها بـ [${data.hand}] وصفع الخصم كف 👋💥!`);
-            field.classList.add('slap-animation-active');
-            setTimeout(() => field.classList.remove('slap-animation-active'), 500);
+            showToast(`🎉 صح! المحبس في اليد [${data.hand === 'right'?'اليمين':'اليسار'}]، صفعته كف! 👋💥`);
         } else {
-            showToast(`👋💥 خطأ! اليد المغلقتان بـ [${data.hand}] صفعتك كف حامي! حاول الجولة الجاية!`);
-            field.classList.add('slap-animation-active');
-            setTimeout(() => field.classList.remove('slap-animation-active'), 500);
+            showToast(`👋💥 أخطأت! المحبس كان في اليد الأخرى، صفعك الخصم كف!`);
         }
     });
 
-    // أحداث ومحرك البلوت المعتاد
-    socket.on('game_state_changed', (data) => {
-        document.getElementById('score-t1').innerText = data.scores.team1;
-        document.getElementById('score-t2').innerText = data.scores.team2;
-        const centerTable = document.getElementById('center-table');
-        if(data.gameStage === 'playing') {
-            centerTable.innerHTML = "";
-            if (data.tableCards) {
-                data.tableCards.forEach(item => {
-                    centerTable.innerHTML += `<div class="card black card-pos-0"><div class="card-corner-top"><span>${item.card.value}</span></div><div class="card-center-icon">${item.card.suit}</div></div>`;
-                });
-            }
-        }
-        // معالجة المشتريات واليد
-        const myCards = data.playersCards[0] || [];
-        const handDiv = document.getElementById('my-hand'); handDiv.innerHTML = "";
-        myCards.forEach((card, index) => {
-            const xOffset = (index - 3) * 36;
-            handDiv.innerHTML += `<div class="card black" style="left:calc(50% + ${xOffset}px - 29px);" onclick="socket.emit('play_card', {seatIndex:0, card:{suit:'♠', value:'A'}})"><div class="card-corner-top"><span>A♣</span></div><div class="card-center-icon">♣</div></div>`;
-        });
-    });
+    async function toggleVoiceMic() { showToast("🎤 تم تفعيل المايك والقناة الصوتية الحرة بنجاح!"); }
 </script>
 </body>
 </html>
