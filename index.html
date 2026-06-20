@@ -3,187 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ديوانية البلوت الرسمية - ADD MORE Q8</title>
+    <title>ديوانية البلوت الفاخرة - ADD MORE Q8</title>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <style>
         :root {
-            --felt-green: #1b4d3e; /* لون الطاولة الأخضر التراثي المريح للعين */
+            --felt-green: #143d30;
             --luxury-gold: #cca43b;
-            --wood-border: #3d2314;
+            --card-white: #ffffff;
         }
 
         body {
-            margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
-            background-color: #0b1310; color: #fff;
-            height: 100vh; display: flex; flex-direction: column; align-items: center; overflow: hidden;
+            margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: #060c0a; color: #fff; height: 100vh;
+            display: flex; flex-direction: column; align-items: center; overflow: hidden;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
 
-        .top-nav-bar {
-            width: 100%; max-width: 500px; background: #111815; padding: 10px 16px;
+        .top-status-bar {
+            width: 100%; max-width: 460px; background: #0c1612; padding: 12px 16px;
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--luxury-gold); z-index: 10;
-        }
-        .logo-title { font-size: 16px; font-weight: 900; color: var(--luxury-gold); }
-
-        /* 🟢 تصميم طاولة البلوت الخضراء الدائرية المريحة 🟢 */
-        .baloot-table-area {
-            flex: 1; width: 100%; max-width: 500px; background: radial-gradient(circle, #225c4a 0%, #153b2f 100%);
-            border: 8px solid var(--wood-border); border-radius: 24px; margin: 10px 0;
-            position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 15px;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 8px 20px rgba(0,0,0,0.4);
+            border-bottom: 2px solid var(--luxury-gold); box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
 
-        /* مواقع اللاعبين الأربعة على الطاولة */
-        .player-seat { position: absolute; background: rgba(0,0,0,0.6); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid rgba(255,255,255,0.15); }
-        .seat-north { top: 10px; left: 50%; transform: translateX(-50%); color: #ff7675; }
-        .seat-south { bottom: 105px; left: 50%; transform: translateX(-50%); color: #ffe066; border-color: var(--luxury-gold); }
-        .seat-east { right: 10px; top: 40%; transform: translateY(-50%); }
-        .seat-west { left: 10px; top: 40%; transform: translateY(-50%); }
-
-        /* لوحة القيد الحقيقية (لنا / لهم) */
-        .score-board-baloot {
-            position: absolute; top: 50px; right: 15px; background: rgba(0, 0, 0, 0.75);
-            border: 1px solid var(--luxury-gold); border-radius: 8px; padding: 6px 10px; font-size: 11px; text-align: center;
-        }
-        .score-table { display: flex; gap: 10px; font-weight: bold; }
-        .score-title-grid { color: var(--luxury-gold); border-bottom: 1px solid #444; padding-bottom: 2px; margin-bottom: 2px; }
-
-        /* ساحة اللعب ورمي الكروت في المنتصف */
-        .floor-cards-center {
-            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
-            width: 160px; height: 100px; display: flex; justify-content: center; align-items: center; gap: 8px;
+        /* 🟢 طاولة البلوت الاحترافية المرنة القياسات 🟢 */
+        .baloot-table-felt {
+            flex: 1; width: 100%; max-width: 460px; background: radial-gradient(circle, #1c4f3f 0%, #0d2820 100%);
+            border: 6px solid #2e1a0f; border-radius: 24px; margin: 8px 0;
+            position: relative; display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
         }
 
-        /* 🎴 تصميم كروت اللعب الفاخرة والانسيابية */
-        .baloot-card-item {
-            width: 52px; height: 76px; background: #fff; color: #000; border-radius: 6px;
-            display: flex; flex-direction: column; justify-content: space-between; padding: 5px;
-            font-weight: 900; font-size: 15px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            transition: transform 0.15s, box-shadow 0.15s; position: relative;
+        /* قيد الصكة الملكي التلقائي */
+        .score-box-real {
+            position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.8);
+            border: 1.5px solid var(--luxury-gold); border-radius: 10px; padding: 8px 12px; font-size: 12px;
         }
-        .baloot-card-item:hover { transform: translateY(-10px); box-shadow: 0 8px 16px rgba(0,0,0,0.5); }
-        .card-red { color: #d63031; }
+        .score-row-grid { display: flex; gap: 14px; font-weight: 900; margin-top: 3px; }
 
-        /* منطقة كروت اللاعب في الأسفل الموزونة بالملي */
-        .my-hand-cards-container {
-            width: 100%; display: flex; justify-content: center; gap: 5px;
-            position: absolute; bottom: 12px; left: 0; padding: 0 10px; z-index: 5;
+        /* مقاعد الموزع واللاعبين */
+        .seat-label { position: absolute; background: rgba(0,0,0,0.7); padding: 5px 12px; border-radius: 14px; font-size: 11px; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
+        .pos-north { top: 12px; left: 50%; transform: translateX(-50%); color: #ff7675; }
+        .pos-south { bottom: 120px; left: 50%; transform: translateX(-50%); color: #ffe066; border-color: var(--luxury-gold); }
+        .pos-east { right: 12px; top: 35%; transform: translateY(-50%); }
+        .pos-west { left: 12px; top: 35%; transform: translateY(-50%); }
+
+        /* كرت المشترى المعروض بالمنتصف للشراء */
+        .kitty-center-box {
+            position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%);
+            display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 10;
         }
 
-        /* أزرار خيارات الشراء (صن / حكم) */
-        .bidding-options-bar {
-            position: absolute; top: 60%; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 8px; background: rgba(0,0,0,0.8); padding: 8px; border-radius: 12px; border: 1px solid var(--luxury-gold);
+        /* ساحة الكروت الملعوبة دغري */
+        .floor-arena { position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); width: 220px; height: 110px; display: flex; justify-content: center; align-items: center; gap: 6px; }
+
+        /* 🎴 ديزاين الكروت المتوهجة والمجسمة لراحة العين */
+        .card-asset {
+            width: 48px; height: 70px; background: var(--card-white); color: #000; border-radius: 6px;
+            display: flex; flex-direction: column; justify-content: space-between; padding: 4px;
+            font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: transform 0.15s; border: 1px solid #ddd;
         }
-        .bid-btn { padding: 6px 14px; border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; }
-        .btn-son { background: #e67e22; color: #fff; }
-        .btn-hkm { background: #2980b9; color: #fff; }
-        .btn-pass { background: #7f8c8d; color: #fff; }
+        .card-asset:hover { transform: translateY(-12px); border-color: var(--luxury-gold); }
+        .red-suit { color: #d63031; }
+
+        /* منطقة اليد الموزونة بالملي لمنع مقص الشاشة الكريه */
+        .hand-cards-dock {
+            position: absolute; bottom: 12px; left: 0; width: 100%;
+            display: flex; justify-content: center; gap: 4px; padding: 0 8px; z-index: 20;
+        }
+
+        /* نافذة الشراء والمشترى التفاعلية الرهيبة */
+        .buy-panel-bar {
+            position: absolute; top: 62%; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 6px; background: rgba(0,0,0,0.85); padding: 8px; border-radius: 14px; border: 1.5px solid var(--luxury-gold); z-index: 100;
+        }
+        .buy-action-btn { padding: 8px 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; color: white; }
+
+        /* سجل أحداث الديوانية */
+        .baloot-log-box { width: 100%; max-width: 460px; background: #0c1612; padding: 8px 12px; border-radius: 12px; font-size: 12px; color: #ffe066; text-align: right; height: 36px; overflow: hidden; margin-bottom: 5px; border: 1px solid #1c4f3f; }
     </style>
 </head>
 <body>
 
-    <!-- البار العلوي للمنصة الرسمية -->
-    <div class="top-nav-bar">
-        <div class="logo-title">♠️ ديوانية البلوت الرسمية</div>
-        <div style="font-size:12px; color:#aaa;" id="game-status-text">نوع اللعب: صن 🃏</div>
+    <div class="top-status-bar">
+        <div class="logo-title">♠️ ديوانية البلوت المحترفة</div>
+        <div style="font-size: 12px; color: #6ab04c; font-weight: bold;" id="active-rule-lbl">المشترى: جاري الفحص..</div>
     </div>
 
-    <!-- 🟢 طاولة البلوت الاحترافية المصلحة القياسات 🟢 -->
-    <div class="baloot-table-area">
+    <!-- 🟢 طاولة البلوت المصقولة والموزونة 🟢 -->
+    <div class="baloot-table-felt">
         
-        <!-- لوحة النشر والقيد (لنا ولهم) الثابتة تلقائياً بطلبك -->
-        <div class="score-board-baloot">
-            <div class="score-title-grid">قيد الصكة</div>
-            <div class="score-table">
+        <!-- قيد الصكة الحقيقي (لنا / لهم) التلقائي -->
+        <div class="score-box-real">
+            <div style="color: var(--luxury-gold); text-align: center; font-size: 11px; font-weight: bold; border-bottom: 1px solid #333;">لوحة القيد</div>
+            <div class="score-row-grid">
                 <div>لنا: <span id="score-us" style="color:#2ecc71;">0</span></div>
                 <div>لهم: <span id="score-them" style="color:#e74c3c;">0</span></div>
             </div>
         </div>
 
-        <!-- المقاعد الأربعة للربع والبوتات -->
-        <div class="player-seat seat-north" id="p-north">🤖 مساعد (شمال)</div>
-        <div class="player-seat seat-west" id="p-west">🤖 nasser (غرب)</div>
-        <div class="player-seat seat-east" id="p-east">🤖 khaled (شرق)</div>
-        <div class="player-seat seat-south" id="p-south">👑 بو محمد (جنوب)</div>
+        <!-- المقاعد الأربعة للاعبي الصكة البلوتية -->
+        <div class="seat-label pos-north">🤖 مساعد (خويك)</div>
+        <div class="seat-label pos-east">🤖 خالد (خصم)</div>
+        <div class="seat-label pos-west">🤖 ناصر (خصم)</div>
+        <div class="seat-label pos-south">👑 بو محمد (أنت)</div>
 
-        <!-- وسط الطاولة (الملعوبة لايف) -->
-        <div class="floor-cards-center" id="table-floor-cards">
-            <div style="color:rgba(255,255,255,0.2); font-size:11px; text-align:center;">ارمِ الكرت في الساحة الحين</div>
+        <!-- 🃏 كرت المشترى المكشوف في منتصف الجولة للشراء 🃏 -->
+        <div class="kitty-center-box" id="kitty-area">
+            <div style="font-size: 10px; color: #aaa;">كرت المشترى:</div>
+            <div id="kitty-card-display"></div>
         </div>
 
-        <!-- لوحة خيارات الشراء والمشترى (صن / حكم) للمحترفين -->
-        <div class="bidding-options-bar" id="bid-panel">
-            <button class="bid-btn btn-son" onclick="selectGameType('صن')">صن 💥</button>
-            <button class="bid-btn btn-hkm" onclick="selectGameType('حكم')">حكم 🛡️</button>
-            <button class="bid-btn btn-pass" onclick="selectGameType('بس')">ولاء (بس)</button>
+        <!-- ساحة رمي الأوراق (الملعوبة لايف الحين) -->
+        <div class="floor-arena" id="floor-cards-wrapper"></div>
+
+        <!-- 🛠️ لوحة قرارات الشراء الاحترافية للعبة (اللفة الأولى) -->
+        <div class="buy-panel-bar" id="buy-decision-panel">
+            <button class="buy-action-btn" style="background: #e67e22;" onclick="submitBuy('صن')">صن 💥</button>
+            <button class="buy-action-btn" style="background: #2980b9;" onclick="submitBuy('حكم')">حكم 🛡️</button>
+            <button class="buy-action-btn" style="background: #7f8c8d;" onclick="submitBuy('بس')">بس 🔒</button>
         </div>
 
-        <!-- 🎴 كروت اللاعب (يدك) في أسفل شاشة الآيباد والهاتف بشكل كامل ومرئي -->
-        <div class="my-hand-cards-container" id="my-cards-wrapper"></div>
+        <!-- 🎴 كروت يد اللاعب (تتكاثر لـ 8 كروت كاملة فور الشراء) الموزونة بالملي -->
+        <div class="hand-cards-dock" id="hand-cards-wrapper"></div>
 
     </div>
+
+    <!-- سجل أحداث اللعبة السفلي لايف -->
+    <div class="baloot-log-box" id="log-box-msg">🎮 أهلاً بك في الصكة الفاخرة.. بانتظار قرار شرائك الحين!</div>
 
 <script>
     const socket = io();
 
-    // الاتصال الفوري وحجز المقعد في الطاولة
+    // الانضمام الفوري للطاولة الفاخرة
     socket.emit('join_baloot_table', { username: "بو محمد" });
 
-    // استقبال الأوراق وحالة اللعبة من السيرفر وعرضها فوراً
+    // استقبال وتحديث حالة الطاولة لايف الحين
     socket.on('baloot_state_update', (data) => {
         document.getElementById('score-us').innerText = data.scores.us;
         document.getElementById('score-them').innerText = data.scores.them;
-        document.getElementById('game-status-text').innerText = `نوع اللعب: ${data.gameType} 🃏`;
-
-        // رص الكروت في يد اللاعب بقمة الأناقة
-        const wrapper = document.getElementById('my-cards-wrapper');
-        wrapper.innerHTML = "";
         
-        data.playerCards.forEach(card => {
-            const isRed = (card.suit === '♥' || card.suit === '♦') ? 'card-red' : '';
-            const cardHtml = `
-                <div class="baloot-card-item ${isRed}" onclick="playCard('${card.suit}', '${card.val}')">
-                    <div>${card.val}</div>
-                    <div style="text-align:center; font-size:22px;">${card.suit}</div>
-                    <div style="text-align:left; transform: rotate(180deg);">${card.val}</div>
+        if(data.buyType) {
+            document.getElementById('active-rule-lbl').innerText = `اللعب الحالي: [ ${data.buyType} ] بواسطة ${data.buyer}`;
+            document.getElementById('kitty-area').style.display = 'none'; // إخفاء المشترى بعد الشراء دغري لتوسيع الساحة
+            document.getElementById('buy-decision-panel').style.display = 'none';
+        }
+
+        // عرض كرت المشترى في المنتصف قبل الشراء
+        if(data.kittyCard && !data.buyType) {
+            const isRed = (data.kittyCard.suit === '♥' || data.kittyCard.suit === '♦') ? 'red-suit' : '';
+            document.getElementById('kitty-card-display').innerHTML = `
+                <div class="card-asset ${isRed}" style="cursor: default;">
+                    <div>${data.kittyCard.val}</div>
+                    <div style="text-align:center; font-size:20px;">${data.kittyCard.suit}</div>
                 </div>
             `;
-            wrapper.innerHTML += cardHtml;
+        }
+
+        // رص كروت يد اللاعب بدقة وتناسق تام
+        const handWrapper = document.getElementById('hand-cards-wrapper');
+        handWrapper.innerHTML = "";
+        data.playerCards.forEach(card => {
+            const isRed = (card.suit === '♥' || card.suit === '♦') ? 'red-suit' : '';
+            handWrapper.innerHTML += `
+                <div class="card-asset ${isRed}" onclick="playCardOnFloor('${card.suit}', '${card.val}')">
+                    <div>${card.val}</div>
+                    <div style="text-align:center; font-size:20px;">${card.suit}</div>
+                </div>
+            `;
         });
     });
 
-    // رمي الكرت في الساحة لايف
-    function playCard(suit, val) {
+    // إرسال قرار الشراء للسيرفر
+    function submitBuy(decision) {
+        socket.emit('baloot_buy_decision', { decision: decision });
+    }
+
+    // تفعيل خيارات اللفة الثانية إذا قال الكل بس بطلبك بالملي
+    socket.on('baloot_trigger_round2', (data) => {
+        const panel = document.getElementById('buy-decision-panel');
+        panel.innerHTML = `
+            <button class="buy-action-btn" style="background: #e67e22;" onclick="submitBuy('صن جولة 2')">صن لفة 2 💥</button>
+            <button class="buy-action-btn" style="background: #27ae60;" onclick="submitBuy('أشكل')">أشكل 🃏</button>
+            <button class="buy-action-btn" style="background: #8e44ad;" onclick="submitBuy('تأشيل')">تأشيل 🛡️</button>
+        `;
+    });
+
+    // رمي الكرت في الملعوبة
+    function playCardOnFloor(suit, val) {
         socket.emit('baloot_play_card', { suit, val });
     }
 
-    // عرض الكروت الملعوبة في ساحة منتصف الطاولة فوراً
+    // عرض اللمة والكروت الملعوبة في ساحة الأرض لايف
     socket.on('baloot_card_played_on_floor', (floorCards) => {
-        const floor = document.getElementById('table-floor-cards');
+        const floor = document.getElementById('floor-cards-wrapper');
         floor.innerHTML = "";
         floorCards.forEach(item => {
-            const isRed = (item.card.suit === '♥' || item.card.suit === '♦') ? 'card-red' : '';
+            const isRed = (item.card.suit === '♥' || item.card.suit === '♦') ? 'red-suit' : '';
             floor.innerHTML += `
-                <div class="baloot-card-item ${isRed}" style="cursor:default; width:46px; height:66px; font-size:12px;">
+                <div class="card-asset ${isRed}" style="width:42px; height:62px; font-size:12px; cursor:default;">
                     <div>${item.card.val}</div>
-                    <div style="text-align:center; font-size:16px;">${item.card.suit}</div>
+                    <div style="text-align:center; font-size:15px;">${item.card.suit}</div>
                 </div>
             `;
         });
     });
 
-    function selectGameType(type) {
-        if(type === 'بس') {
-            alert("🔒 مررت السرا.. بانتظار خيار المشتري من باقي اللاعبين على الطاولة.");
-        } else {
-            alert(`🃏 كفوو! اخترت اللعب الحين: [ ${type} ] - ارمِ ورقتك الأولى واقشّ الأرض!`);
-            document.getElementById('game-status-text').innerText = `نوع اللعب: ${type} 🃏`;
-        }
-        document.getElementById('bid-panel').style.display = 'none';
-    }
+    socket.on('baloot_round_cleared', (data) => {
+        document.getElementById('log-box-msg').innerText = `🎉 كفووو! اللمة قشها [ ${data.winner} ] وحصد الأبناط لايف!`;
+        setTimeout(() => { document.getElementById('floor-cards-wrapper').innerHTML = ""; }, 1500);
+    });
+
+    socket.on('baloot_chat_log', (data) => {
+        document.getElementById('log-box-msg').innerText = data.msg;
+    });
 </script>
 </body>
 </html>
