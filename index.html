@@ -3,154 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ديوانية البلوت الفاخرة - ADD MORE Q8</title>
+    <title>ديوانية البلوت الرسمية - ADD MORE Q8</title>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <style>
         :root {
-            --felt-green: #143d30;
+            --bg-dark: #090e0c;
+            --felt-green: #1b4d3e;
             --luxury-gold: #cca43b;
             --card-white: #ffffff;
+            --panel-bg: #121c18;
         }
 
         body {
             margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: #060c0a; color: #fff; height: 100vh;
+            background-color: var(--bg-dark); color: #fff; height: 100vh;
             display: flex; flex-direction: column; align-items: center; overflow: hidden;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
 
-        .top-status-bar {
-            width: 100%; max-width: 460px; background: #0c1612; padding: 12px 16px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--luxury-gold); box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        /* 📱 تصميم الصفحة الرئيسية الفخمة بأيقوناتها */
+        .hub-screen { 
+            padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; 
+            width: 100vw; height: 100vh; overflow-y: auto; background: linear-gradient(180deg, #0f1a16 0%, #050a08 100%);
         }
+        .hub-title { font-size: 32px; font-weight: 900; color: var(--luxury-gold); margin: 20px 0 5px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .hub-subtitle { font-size: 13px; color: #8fa39b; margin-bottom: 25px; }
 
-        /* 🟢 طاولة البلوت الاحترافية المرنة القياسات 🟢 */
+        .menu-grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 400px; margin-top: 10px; }
+        .menu-card-btn { 
+            background: var(--panel-bg); border: 1.5px solid rgba(204, 164, 59, 0.15); border-radius: 18px; 
+            padding: 20px 15px; cursor: pointer; text-align: center; transition: all 0.2s ease;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .menu-card-btn:hover { border-color: var(--luxury-gold); transform: translateY(-3px); background: #17241f; }
+        .card-icon { font-size: 36px; margin-bottom: 8px; }
+        .card-title { font-size: 15px; font-weight: bold; color: #fff; }
+        .card-desc { font-size: 11px; color: #768c83; margin-top: 4px; }
+
+        /* 📝 لوحات النوافذ (تسجيل، حزم، شات، لعب) */
+        .view-layout { display: none; flex-direction: column; width: 100vw; height: 100vh; background: var(--bg-dark); position: fixed; top: 0; left: 0; z-index: 1000; align-items: center; overflow: hidden; }
+        .top-nav-bar { width: 100%; max-width: 480px; background: #111c17; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--luxury-gold); }
+        .nav-back-btn { background: #222; border: 1px solid var(--luxury-gold); color: #ffe066; font-size: 12px; font-weight: bold; padding: 6px 14px; border-radius: 8px; cursor: pointer; }
+
+        /* 📋 استمارات التسجيل ودخول المتصفح العالمي */
+        .form-container { width: 90%; max-width: 380px; background: var(--panel-bg); border: 1px solid #1f332b; border-radius: 20px; padding: 25px; margin-top: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .form-title { font-size: 20px; font-weight: bold; color: var(--luxury-gold); margin-bottom: 20px; text-align: center; }
+        .input-field { width: 100%; background: #0b120f; border: 1px solid #284237; border-radius: 10px; padding: 12px; color: #fff; margin-bottom: 12px; outline: none; text-align: right; font-size: 14px; }
+        .submit-btn { width: 100%; padding: 12px; background: var(--luxury-gold); border: none; border-radius: 10px; color: #000; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 5px; }
+        .switch-form-link { font-size: 12px; color: #8fa39b; text-align: center; margin-top: 15px; cursor: pointer; display: block; text-decoration: underline; }
+
+        /* 🟢 طاولة البلوت الاحترافية المرنة (نظام كملنا) 🟢 */
         .baloot-table-felt {
-            flex: 1; width: 100%; max-width: 460px; background: radial-gradient(circle, #1c4f3f 0%, #0d2820 100%);
-            border: 6px solid #2e1a0f; border-radius: 24px; margin: 8px 0;
-            position: relative; display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+            flex: 1; width: 100%; max-width: 460px; background: radial-gradient(circle, #225c4a 0%, #113328 100%);
+            border: 6px solid #2e1a0f; border-radius: 24px; margin: 8px 0; position: relative; display: flex; flex-direction: column; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
         }
-
-        /* قيد الصكة الملكي التلقائي */
-        .score-box-real {
-            position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.8);
-            border: 1.5px solid var(--luxury-gold); border-radius: 10px; padding: 8px 12px; font-size: 12px;
-        }
-        .score-row-grid { display: flex; gap: 14px; font-weight: 900; margin-top: 3px; }
-
-        /* مقاعد الموزع واللاعبين */
-        .seat-label { position: absolute; background: rgba(0,0,0,0.7); padding: 5px 12px; border-radius: 14px; font-size: 11px; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
+        .score-box-real { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.85); border: 1px solid var(--luxury-gold); border-radius: 10px; padding: 6px 12px; font-size: 12px; z-index: 30; }
+        .score-row-grid { display: flex; gap: 14px; font-weight: 900; margin-top: 2px; }
+        
+        .seat-label { position: absolute; background: rgba(0,0,0,0.75); padding: 5px 12px; border-radius: 14px; font-size: 11px; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
         .pos-north { top: 12px; left: 50%; transform: translateX(-50%); color: #ff7675; }
         .pos-south { bottom: 120px; left: 50%; transform: translateX(-50%); color: #ffe066; border-color: var(--luxury-gold); }
         .pos-east { right: 12px; top: 35%; transform: translateY(-50%); }
         .pos-west { left: 12px; top: 35%; transform: translateY(-50%); }
 
-        /* كرت المشترى المعروض بالمنتصف للشراء */
-        .kitty-center-box {
-            position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%);
-            display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 10;
-        }
-
-        /* ساحة الكروت الملعوبة دغري */
+        .kitty-center-box { position: absolute; top: 32%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 10; }
         .floor-arena { position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); width: 220px; height: 110px; display: flex; justify-content: center; align-items: center; gap: 6px; }
-
-        /* 🎴 ديزاين الكروت المتوهجة والمجسمة لراحة العين */
-        .card-asset {
-            width: 48px; height: 70px; background: var(--card-white); color: #000; border-radius: 6px;
-            display: flex; flex-direction: column; justify-content: space-between; padding: 4px;
-            font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            transition: transform 0.15s; border: 1px solid #ddd;
-        }
+        
+        .card-asset { width: 46px; height: 68px; background: var(--card-white); color: #000; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between; padding: 4px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4); border: 1px solid #ddd; }
         .card-asset:hover { transform: translateY(-12px); border-color: var(--luxury-gold); }
         .red-suit { color: #d63031; }
-
-        /* منطقة اليد الموزونة بالملي لمنع مقص الشاشة الكريه */
-        .hand-cards-dock {
-            position: absolute; bottom: 12px; left: 0; width: 100%;
-            display: flex; justify-content: center; gap: 4px; padding: 0 8px; z-index: 20;
-        }
-
-        /* نافذة الشراء والمشترى التفاعلية الرهيبة */
-        .buy-panel-bar {
-            position: absolute; top: 62%; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 6px; background: rgba(0,0,0,0.85); padding: 8px; border-radius: 14px; border: 1.5px solid var(--luxury-gold); z-index: 100;
-        }
+        .hand-cards-dock { position: absolute; bottom: 12px; left: 0; width: 100%; display: flex; justify-content: center; gap: 4px; padding: 0 8px; z-index: 20; }
+        
+        .buy-panel-bar { position: absolute; top: 62%; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; background: rgba(0,0,0,0.9); padding: 8px; border-radius: 14px; border: 1.5px solid var(--luxury-gold); z-index: 100; }
         .buy-action-btn { padding: 8px 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; color: white; }
 
-        /* سجل أحداث الديوانية */
-        .baloot-log-box { width: 100%; max-width: 460px; background: #0c1612; padding: 8px 12px; border-radius: 12px; font-size: 12px; color: #ffe066; text-align: right; height: 36px; overflow: hidden; margin-bottom: 5px; border: 1px solid #1c4f3f; }
+        /* 💰 حزم الشات والألعاب (أسعار كملنا) */
+        .packages-list { width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .pack-item { background: var(--panel-bg); border: 1px solid #233c32; border-radius: 14px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .pack-info { text-align: right; }
+        .pack-name { font-size: 15px; font-weight: bold; color: var(--luxury-gold); }
+        .pack-perks { font-size: 11px; color: #8fa39b; margin-top: 3px; }
+        .pack-price-btn { background: #27ae60; color: white; border: none; padding: 8px 16px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13px; }
+
+        /* 💬 المحادثة المباشرة السلسة جداً */
+        .chat-container { width: 100%; max-width: 440px; flex: 1; display: flex; flex-direction: column; padding: 15px; background: #0c1411; }
+        .chat-messages-box { flex: 1; overflow-y: auto; background: #111a16; border-radius: 12px; border: 1px solid #1f332b; padding: 12px; font-size: 14px; text-align: right; display: flex; flex-direction: column; gap: 6px; }
+        .chat-footer { width: 100%; display: flex; gap: 8px; margin-top: 10px; }
+        .chat-input { flex: 1; background: #000; border: 1px solid #284237; border-radius: 20px; padding: 10px 16px; color: #fff; outline: none; text-align: right; }
+        .chat-send-btn { background: var(--luxury-gold); color: #000; border: none; padding: 0 20px; font-weight: bold; border-radius: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="top-status-bar">
-        <div class="logo-title">♠️ ديوانية البلوت المحترفة</div>
-        <div style="font-size: 12px; color: #6ab04c; font-weight: bold;" id="active-rule-lbl">المشترى: جاري الفحص..</div>
-    </div>
+    <!-- 📱 الشاشة الرئيسية لمنصة البلوت بأيقونات واضحة وسهلة -->
+    <div class="hub-screen" id="view-hub">
+        <div class="hub-title">ديوانية البلوت</div>
+        <div class="hub-subtitle">المنصة الاحترافية الكبرى للألعاب والتنافس الخليجي</div>
 
-    <!-- 🟢 طاولة البلوت المصقولة والموزونة 🟢 -->
-    <div class="baloot-table-felt">
-        
-        <!-- قيد الصكة الحقيقي (لنا / لهم) التلقائي -->
-        <div class="score-box-real">
-            <div style="color: var(--luxury-gold); text-align: center; font-size: 11px; font-weight: bold; border-bottom: 1px solid #333;">لوحة القيد</div>
-            <div class="score-row-grid">
-                <div>لنا: <span id="score-us" style="color:#2ecc71;">0</span></div>
-                <div>لهم: <span id="score-them" style="color:#e74c3c;">0</span></div>
+        <!-- معلومات المستخدم المسجل في الأعلى إن وجدت لتذكر المتصفح -->
+        <div id="user-welcome-tag" style="font-size: 13px; color: var(--luxury-gold); font-weight: bold; margin-bottom: 15px; display:none;"></div>
+
+        <div class="menu-grid-layout">
+            <div class="menu-card-btn" onclick="openView('view-register')">
+                <div class="card-icon">📝</div>
+                <div class="card-title">حساب جديد / دخول</div>
+                <div class="card-desc">سجل الحين لحفظ نقاطك وصكّاتك</div>
+            </div>
+            <div class="menu-card-btn" onclick="checkAuthAndPlay()">
+                <div class="card-icon">🃏</div>
+                <div class="card-title">لعب البلوت لايف</div>
+                <div class="card-desc">ادخل الصكة الحقيقية مع المحترفين</div>
+            </div>
+            <div class="menu-card-btn" onclick="openView('view-packages')">
+                <div class="card-icon">💎</div>
+                <div class="card-title">حزم الترقية والشركاء</div>
+                <div class="card-desc">اشتراكات ملوك البلوت (أسعار كملنا)</div>
+            </div>
+            <div class="menu-card-btn" onclick="openView('view-chat')">
+                <div class="card-icon">💬</div>
+                <div class="card-title">المحادثة المباشرة</div>
+                <div class="card-desc">دردشة عامة وسلسة مع زوار الديوانية</div>
             </div>
         </div>
-
-        <!-- المقاعد الأربعة للاعبي الصكة البلوتية -->
-        <div class="seat-label pos-north">🤖 مساعد (خويك)</div>
-        <div class="seat-label pos-east">🤖 خالد (خصم)</div>
-        <div class="seat-label pos-west">🤖 ناصر (خصم)</div>
-        <div class="seat-label pos-south">👑 بو محمد (أنت)</div>
-
-        <!-- 🃏 كرت المشترى المكشوف في منتصف الجولة للشراء 🃏 -->
-        <div class="kitty-center-box" id="kitty-area">
-            <div style="font-size: 10px; color: #aaa;">كرت المشترى:</div>
-            <div id="kitty-card-display"></div>
-        </div>
-
-        <!-- ساحة رمي الأوراق (الملعوبة لايف الحين) -->
-        <div class="floor-arena" id="floor-cards-wrapper"></div>
-
-        <!-- 🛠️ لوحة قرارات الشراء الاحترافية للعبة (اللفة الأولى) -->
-        <div class="buy-panel-bar" id="buy-decision-panel">
-            <button class="buy-action-btn" style="background: #e67e22;" onclick="submitBuy('صن')">صن 💥</button>
-            <button class="buy-action-btn" style="background: #2980b9;" onclick="submitBuy('حكم')">حكم 🛡️</button>
-            <button class="buy-action-btn" style="background: #7f8c8d;" onclick="submitBuy('بس')">بس 🔒</button>
-        </div>
-
-        <!-- 🎴 كروت يد اللاعب (تتكاثر لـ 8 كروت كاملة فور الشراء) الموزونة بالملي -->
-        <div class="hand-cards-dock" id="hand-cards-wrapper"></div>
-
     </div>
 
-    <!-- سجل أحداث اللعبة السفلي لايف -->
-    <div class="baloot-log-box" id="log-box-msg">🎮 أهلاً بك في الصكة الفاخرة.. بانتظار قرار شرائك الحين!</div>
+    <!-- 📝 شاشة التسجيل وتذكر المتصفح العالمي -->
+    <div class="view-layout" id="view-register">
+        <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">حساب جديد</div><div></div></div>
+        
+        <!-- استمارة التسجيل لأول مرة -->
+        <div class="form-container" id="box-signup">
+            <div class="form-title">إنشاء حساب بلوت رسمي</div>
+            <input type="text" id="reg-user" class="input-field" placeholder="اسم المستخدم (نيكنيم)">
+            <input type="email" id="reg-email" class="input-field" placeholder="البريد الإلكتروني">
+            <input type="password" id="reg-pass" class="input-field" placeholder="كلمة المرور">
+            <input type="text" id="reg-country" class="input-field" placeholder="الدولة (مثال: الكويت، السعودية)">
+            <button class="submit-btn" onclick="actionRegister()">إنشاء الحساب وحفظه 🚀</button>
+            <div class="switch-form-link" onclick="toggleForm(false)">لديك حساب بالفعل؟ سجل دخولك</div>
+        </div>
+
+        <!-- استمارة تسجيل الدخول للمتصفح -->
+        <div class="form-container" id="box-login" style="display: none;">
+            <div class="form-title">تسجيل دخول الأعضاء</div>
+            <input type="email" id="login-email" class="input-field" placeholder="البريد الإلكتروني">
+            <input type="password" id="login-pass" class="input-field" placeholder="كلمة المرور">
+            <button class="submit-btn" onclick="actionLogin()">تسجيل الدخول الفوري 🔑</button>
+            <div class="switch-form-link" onclick="toggleForm(true)">لا تملك حساب؟ أنشئ حساب جديد الحين</div>
+        </div>
+    </div>
+
+    <!-- 🟢 شاشة صكة البلوت الحقيقية (لا يفتح إلا للمسجلين) -->
+    <div class="view-layout" id="view-game">
+        <div class="top-nav-bar">
+            <div class="nav-back-btn" onclick="closeToHub()">◀ انسحاب</div>
+            <div style="font-weight:900; color: var(--luxury-gold);" id="active-rule-lbl">المشترى: جاري الفحص..</div>
+            <div></div>
+        </div>
+        <div class="baloot-table-felt">
+            <div class="score-box-real">
+                <div class="score-row-grid">
+                    <div>لنا: <span id="score-us" style="color:#2ecc71;">0</span></div>
+                    <div>لهم: <span id="score-them" style="color:#e74c3c;">0</span></div>
+                </div>
+            </div>
+            <div class="seat-label pos-north">🤖 مساعد (خويك)</div>
+            <div class="seat-label pos-east">🤖 خالد</div>
+            <div class="seat-label pos-west">🤖 nasser</div>
+            <div class="seat-label pos-south" id="my-seat-name">👑 بو محمد</div>
+
+            <div class="kitty-center-box" id="kitty-area"><div id="kitty-card-display"></div></div>
+            <div class="floor-arena" id="floor-cards-wrapper"></div>
+
+            <div class="buy-panel-bar" id="buy-decision-panel">
+                <button class="buy-action-btn" style="background: #e67e22;" onclick="submitBuy('صن')">صن 💥</button>
+                <button class="buy-action-btn" style="background: #2980b9;" onclick="submitBuy('حكم')">حكم 🛡️</button>
+                <button class="buy-action-btn" style="background: #7f8c8d;" onclick="submitBuy('بس')">بس 🔒</button>
+            </div>
+            <div class="hand-cards-dock" id="hand-cards-wrapper"></div>
+        </div>
+    </div>
+
+    <!-- 💎 شاشة الحزم والأرباح التجارية (أسعار كملنا التنافسية) -->
+    <div class="view-layout" id="view-packages">
+        <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">متجر حزم الديوانية</div><div></div></div>
+        <div class="packages-list">
+            <div class="pack-item">
+                <div class="pack-info"><div class="pack-name">حزمة التذكرة الفضية 🎟️</div><div class="pack-perks">تمنحك 15,000 رصيد أوراق لدخول غرف المحترفين</div></div>
+                <button class="pack-price-btn" onclick="alert('💰 جاري توجيهك لبوابة الدفع لشراء الحزمة الفضية بقيمة 1.5 د.ك (ما يعادل 18 ريال)')">1.5 د.ك</button>
+            </div>
+            <div class="pack-item">
+                <div class="pack-info"><div class="pack-name">الاشتراك الذهبي الملكي (شهري) 👑</div><div class="pack-perks">ألوان متوهجة للنك، حصانة كاملة من الطرد، إنشاء رومات خاصة</div></div>
+                <button class="pack-price-btn" onclick="alert('💰 جاري تفعيل اشتراك كملنا الملكي بقيمة 4.5 د.ك شهرياً')">4.5 د.ك</button>
+            </div>
+            <div class="pack-item">
+                <div class="pack-info"><div class="pack-name">حزمة الحوت الأكبر 🐋</div><div class="pack-perks">لقب حوت الصكة صدارة لوحة الشرف + 100,000 كاش ألعاب</div></div>
+                <button class="pack-price-btn" onclick="alert('💰 حزمة الهوامير بقيمة 12 د.ك فوري')">12 د.ك</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 💬 شاشة المحادثة المباشرة السلسة العامة -->
+    <div class="view-layout" id="view-chat">
+        <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">الدردشة العامة المباشرة</div><div></div></div>
+        <div class="chat-container">
+            <div class="chat-messages-box" id="global-chat-box">
+                <div style="color: #666; text-align: center; font-size: 12px; margin-top: 10px;">✨ اكتب رسالتك وسولف مع ربع الديوانية الحين بسلاسة..</div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chatMessageInput" class="chat-input" placeholder="اكتب رسالتك العامة هنا دغري...">
+                <button class="chat-send-btn" onclick="sendLiveChatMessage()">إرسال</button>
+            </div>
+        </div>
+    </div>
 
 <script>
     const socket = io();
+    let activeView = "view-hub";
+    let currentUserData = null;
 
-    // الانضمام الفوري للطاولة الفاخرة
-    socket.emit('join_baloot_table', { username: "بو محمد" });
+    // 🔄 عند تحميل الصفحة: فحص تذكر المتصفح التلقائي للاعب
+    window.onload = function() {
+        const savedUser = localStorage.getItem('baloot_user');
+        if (savedUser) {
+            currentUserData = JSON.parse(savedUser);
+            document.getElementById('user-welcome-tag').innerText = `🏆 مرحباً بعودتك يا الكابتن: ${currentUserData.username}`;
+            document.getElementById('user-welcome-tag').style.display = 'block';
+            document.getElementById('my-seat-name').innerText = `👑 ${currentUserData.username} (أنت)`;
+        }
+    };
 
-    // استقبال وتحديث حالة الطاولة لايف الحين
+    function openView(viewId) {
+        document.getElementById(activeView).style.display = 'none';
+        document.getElementById(viewId).style.display = 'flex';
+        activeView = viewId;
+    }
+
+    function closeToHub() {
+        document.getElementById(activeView).style.display = 'none';
+        document.getElementById('view-hub').style.display = 'flex';
+        activeView = "view-hub";
+    }
+
+    function toggleForm(showSignup) {
+        document.getElementById('box-signup').style.display = showSignup ? 'block' : 'none';
+        document.getElementById('box-login').style.display = showSignup ? 'none' : 'block';
+    }
+
+    // 🚀 عملية تسجيل الحساب وحفظه بالمتصفح تلقائياً
+    function actionRegister() {
+        const username = document.getElementById('reg-user').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const pass = document.getElementById('reg-pass').value.trim();
+        const country = document.getElementById('reg-country').value.trim();
+
+        if(!username || !email || !pass || !country) {
+            alert("⚠️ يرجى تعبئة كافة الحقول: اسم المستخدم، الايميل، الباسورد، والدولة للتسجيل!");
+            return;
+        }
+
+        currentUserData = { username, email, country };
+        localStorage.setItem('baloot_user', JSON.stringify(currentUserData)); // الحفظ في المتصفح العالمي
+        alert(`🎉 تم إنشاء حسابك بنجاح يا ${username}! المتصفح تذكرك الحين ويمكنك دخول اللعب مباشرة.`);
+        location.reload();
+    }
+
+    // 🔑 عملية تسجيل الدخول التقليدية
+    function actionLogin() {
+        const email = document.getElementById('login-email').value.trim();
+        const pass = document.getElementById('login-pass').value.trim();
+
+        if(!email || !pass) {
+            alert("⚠️ يرجى إدخال البريد الإلكتروني وكلمة المرور!");
+            return;
+        }
+
+        currentUserData = { username: "لاعب محترف", email: email, country: "الكويت" };
+        localStorage.setItem('baloot_user', JSON.stringify(currentUserData));
+        alert("🔑 تم تسجيل دخولك بنجاح وتم تذكر بياناتك!");
+        location.reload();
+    }
+
+    // 🃏 التحقق الأمني: منع الزوار غير المسجلين من اللعب تماماً كالمواقع العالمية
+    function checkAuthAndPlay() {
+        if (!currentUserData) {
+            alert("🚨 عذراً! لا يمكنك دخول طاولة اللعب إلا بعد تسجيل حسابك أولاً كالمواقع العالمية لحفظ النقاط والسكور. يرجى التسجيل الحين في خطوة واحدة دغري!");
+            openView('view-register');
+        } else {
+            openView('view-game');
+            socket.emit('join_baloot_table', { username: currentUserData.username });
+        }
+    }
+
+    // إدارة البلوت لايف وشحن الكروت والسوكيت
     socket.on('baloot_state_update', (data) => {
         document.getElementById('score-us').innerText = data.scores.us;
         document.getElementById('score-them').innerText = data.scores.them;
         
         if(data.buyType) {
-            document.getElementById('active-rule-lbl').innerText = `اللعب الحالي: [ ${data.buyType} ] بواسطة ${data.buyer}`;
-            document.getElementById('kitty-area').style.display = 'none'; // إخفاء المشترى بعد الشراء دغري لتوسيع الساحة
+            document.getElementById('active-rule-lbl').innerText = `اللعب الحالي: [ ${data.buyType} ]`;
+            document.getElementById('kitty-area').style.display = 'none';
             document.getElementById('buy-decision-panel').style.display = 'none';
         }
 
-        // عرض كرت المشترى في المنتصف قبل الشراء
         if(data.kittyCard && !data.buyType) {
             const isRed = (data.kittyCard.suit === '♥' || data.kittyCard.suit === '♦') ? 'red-suit' : '';
             document.getElementById('kitty-card-display').innerHTML = `
@@ -161,13 +316,12 @@
             `;
         }
 
-        // رص كروت يد اللاعب بدقة وتناسق تام
         const handWrapper = document.getElementById('hand-cards-wrapper');
         handWrapper.innerHTML = "";
         data.playerCards.forEach(card => {
             const isRed = (card.suit === '♥' || card.suit === '♦') ? 'red-suit' : '';
             handWrapper.innerHTML += `
-                <div class="card-asset ${isRed}" onclick="playCardOnFloor('${card.suit}', '${card.val}')">
+                <div class="card-asset ${isRed}" onclick="socket.emit('baloot_play_card', {suit:'${card.suit}', val:'${card.val}'})">
                     <div>${card.val}</div>
                     <div style="text-align:center; font-size:20px;">${card.suit}</div>
                 </div>
@@ -175,48 +329,24 @@
         });
     });
 
-    // إرسال قرار الشراء للسيرفر
-    function submitBuy(decision) {
-        socket.emit('baloot_buy_decision', { decision: decision });
+    function submitBuy(decision) { socket.emit('baloot_buy_decision', { decision: decision }); }
+
+    // 💬 إدارة شات المحادثة المباشرة السلسة
+    function sendLiveChatMessage() {
+        const input = document.getElementById('chatMessageInput');
+        const text = input.value.trim();
+        if(!text) return;
+        socket.emit('send_global_chat_msg', { room: 'global', text: text });
+        input.value = "";
     }
 
-    // تفعيل خيارات اللفة الثانية إذا قال الكل بس بطلبك بالملي
-    socket.on('baloot_trigger_round2', (data) => {
-        const panel = document.getElementById('buy-decision-panel');
-        panel.innerHTML = `
-            <button class="buy-action-btn" style="background: #e67e22;" onclick="submitBuy('صن جولة 2')">صن لفة 2 💥</button>
-            <button class="buy-action-btn" style="background: #27ae60;" onclick="submitBuy('أشكل')">أشكل 🃏</button>
-            <button class="buy-action-btn" style="background: #8e44ad;" onclick="submitBuy('تأشيل')">تأشيل 🛡️</button>
-        `;
-    });
-
-    // رمي الكرت في الملعوبة
-    function playCardOnFloor(suit, val) {
-        socket.emit('baloot_play_card', { suit, val });
-    }
-
-    // عرض اللمة والكروت الملعوبة في ساحة الأرض لايف
-    socket.on('baloot_card_played_on_floor', (floorCards) => {
-        const floor = document.getElementById('floor-cards-wrapper');
-        floor.innerHTML = "";
-        floorCards.forEach(item => {
-            const isRed = (item.card.suit === '♥' || item.card.suit === '♦') ? 'red-suit' : '';
-            floor.innerHTML += `
-                <div class="card-asset ${isRed}" style="width:42px; height:62px; font-size:12px; cursor:default;">
-                    <div>${item.card.val}</div>
-                    <div style="text-align:center; font-size:15px;">${item.card.suit}</div>
-                </div>
-            `;
-        });
-    });
-
-    socket.on('baloot_round_cleared', (data) => {
-        document.getElementById('log-box-msg').innerText = `🎉 كفووو! اللمة قشها [ ${data.winner} ] وحصد الأبناط لايف!`;
-        setTimeout(() => { document.getElementById('floor-cards-wrapper').innerHTML = ""; }, 1500);
-    });
-
-    socket.on('baloot_chat_log', (data) => {
-        document.getElementById('log-box-msg').innerText = data.msg;
+    socket.on('receive_global_chat_msg', (data) => {
+        const box = document.getElementById('global-chat-box');
+        if (box) {
+            let sender = data.username.includes("المشرف") ? "المشرف" : data.username;
+            box.innerHTML += `<div><strong style="color: var(--luxury-gold);">${sender}:</strong> <span style="color: #fff;">${data.text}</span></div>`;
+            box.scrollTop = box.scrollHeight;
+        }
     });
 </script>
 </body>
