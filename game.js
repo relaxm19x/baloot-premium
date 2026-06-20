@@ -1,6 +1,6 @@
 module.exports = function(io) {
     let rooms = {};
-    let mheibesRooms = {}; // مخزن غرف لعبة المحيبس المستقلة
+    let mheibesRooms = {};
 
     const cardValuesSun = { 'A': 11, '10': 10, 'K': 4, 'Q': 3, 'J': 2, '9': 0, '8': 0, '7': 0 };
     const rankOrderSun  = { 'A': 8, '10': 7, 'K': 6, 'Q': 5, 'J': 4, '9': 3, '8': 2, '7': 1 };
@@ -9,9 +9,6 @@ module.exports = function(io) {
 
     io.on('connection', (socket) => {
         
-        // ==========================================
-        // 🃏 كود محرك ديوانية البلوت الملوكي المصلح
-        // ==========================================
         socket.on('join_matchmaking', (data) => {
             let roomId = "1000"; 
             if (!rooms[roomId]) {
@@ -38,7 +35,10 @@ module.exports = function(io) {
             io.to(roomId).emit('game_state_changed', room);
         });
 
-        socket.on('start_game_with_bots', () => { setupNewRound(socket.roomId || "1000"); });
+        socket.on('start_game_with_bots', () => { 
+            let roomId = socket.roomId || "1000";
+            setupNewRound(roomId); 
+        });
 
         function setupNewRound(roomId) {
             if (!rooms[roomId]) return; let room = rooms[roomId];
@@ -66,7 +66,7 @@ module.exports = function(io) {
             if (activePlayer.socketId.startsWith('bot_')) {
                 room.turnTimeout = setTimeout(() => { handleBotAction(room, roomId); }, 900);
             } else {
-                room.turnTimeout = setTimeout(() => { handleBotAction(room, roomId); }, 10000);
+                room.turnTimeout = setTimeout(() => { handleBotAction(room, roomId); }, 12000);
             }
         }
 
@@ -125,13 +125,18 @@ module.exports = function(io) {
 
         socket.on('play_card', (data) => {
             let room = rooms[socket.roomId || "1000"]; if (!room || room.currentTurn !== data.seatIndex) return;
-            let hand = room.playersCards[data.seatIndex]; let idx = hand.findIndex(c => c.suit === data.card.suit && c.value === data.card.value);
-            if (idx === -1) return; let chosenCard = hand[idx]; hand.splice(idx, 1);
+            let hand = room.playersCards[data.seatIndex]; 
+            let idx = hand.findIndex(c => c.suit === data.card.suit && c.value === data.card.value);
+            if (idx === -1) return; 
+            
+            let chosenCard = hand[idx]; hand.splice(idx, 1);
             if (room.tableCards.length === 0) { room.leadSuit = chosenCard.suit; for(let i=0; i<4; i++) room.playerActionsText[i] = ""; }
+            
             if (room.trickCount === 1 && room.tableCards.length === 0) {
                 let bestSeat = room.activeProjects.findIndex(p => p !== "");
                 if (bestSeat !== -1) io.to(socket.roomId).emit('project_reveal_broadcast', { seatIndex: bestSeat, text: room.activeProjects[bestSeat] });
             }
+            
             room.tableCards.push({ seatIndex: data.seatIndex, card: chosenCard });
             if (room.tableCards.length === 4) handleTrickCompletion(room, socket.roomId);
             else { room.currentTurn = (room.currentTurn + 1) % 4; io.to(socket.roomId).emit('game_state_changed', room); startTurnTimer(room, socket.roomId); }
@@ -166,24 +171,40 @@ module.exports = function(io) {
             let total = 0; room.tableCards.forEach(item => { total += (cardValuesSun[item.card.value] || 0); }); return total;
         }
 
+        function autoExecuteBotGameplay(room, roomId) {
+            if (room.isRoundEnding || room.gameStage === 'nashra') return;
+            let hand = room.playersCards[room.currentTurn]; if (!hand || hand.length === 0) return;
+            let chosenCard = hand[0];
+            let idx = hand.findIndex(c => c.suit === room.leadSuit);
+            if (idx !== -1) chosenCard = hand[idx];
+            
+            let cardIndex = hand.indexOf(chosenCard);
+            hand.splice(cardIndex, 1);
+            
+            if (room.tableCards.length === 0) room.leadSuit = chosenCard.suit;
+            room.tableCards.push({ seatIndex: room.currentTurn, card: chosenCard });
+            
+            if (room.tableCards.length === 4) handleTrickCompletion(room, roomId);
+            else { room.currentTurn = (room.currentTurn + 1) % 4; io.to(roomId).emit('game_state_changed', room); startTurnTimer(room, roomId); }
+        }
+
         // ==========================================
-        // ✊ كود محرك لعبة المحيبس الملحمية والمكالمات
+        // ✊ محرك لعبة المحيبس 
         // ==========================================
         socket.on('join_mheibes', (data) => {
             let mRoomId = "mheibes_1000";
             if (!mheibesRooms[mRoomId]) {
-                mheibesRooms[mRoomId] = { roomId: mRoomId, players: [], stage: 'waiting', seekerIdx: 0, hiderIdx: 1, winningHand: 'right' };
+                mheibesRooms[mRoomId] = { roomId: mRoomId, players: [], stage: 'playing', seekerIdx: 0, hiderIdx: 1, winningHand: 'right' };
             }
             let mRoom = mheibesRooms[mRoomId];
-            if (mRoom.players.length < 2) {
+            let exist = mRoom.players.findIndex(p => p.socketId === socket.id);
+            if (exist === -1 && mRoom.players.length < 2) {
                 mRoom.players.push({ socketId: socket.id, username: data.username, avatar: data.avatar, score: 0 });
                 socket.join(mRoomId); socket.mRoomId = mRoomId;
             }
             if (mRoom.players.length === 1) {
-                // إضافة بوت تلقائي ليكون هو الخصم إن كنت تلعب بمفردك
                 mRoom.players.push({ socketId: 'bot_mheibes', username: "🤖 بو فهد (البوت)", avatar: "m2.png", score: 0 });
             }
-            mRoom.stage = 'playing';
             mRoom.winningHand = Math.random() > 0.5 ? 'right' : 'left';
             io.to(mRoomId).emit('mheibes_state_changed', mRoom);
         });
@@ -194,27 +215,24 @@ module.exports = function(io) {
             
             if (isCorrect) {
                 mRoom.players[mRoom.seekerIdx].score += 1;
-                io.to(mRoom.roomId).emit('mheibes_round_result', { result: 'correct', winnerName: mRoom.players[mRoom.seekerIdx].username, hand: mRoom.winningHand });
+                io.to(mRoom.roomId).emit('mheibes_round_result', { result: 'correct', winnerName: mRoom.players[mRoom.seekerIdx].username, hand: mRoom.winningHand, mRoom: mRoom });
             } else {
                 mRoom.players[mRoom.hiderIdx].score += 1;
-                io.to(mRoom.roomId).emit('mheibes_round_result', { result: 'wrong', winnerName: mRoom.players[mRoom.hiderIdx].username, hand: mRoom.winningHand });
+                io.to(mRoom.roomId).emit('mheibes_round_result', { result: 'wrong', winnerName: mRoom.players[mRoom.hiderIdx].username, hand: mRoom.winningHand, mRoom: mRoom });
             }
 
-            // تبادل الأدوار تلقائياً للجولة التالية
             setTimeout(() => {
                 let temp = mRoom.seekerIdx; mRoom.seekerIdx = mRoom.hiderIdx; mRoom.hiderIdx = temp;
                 mRoom.winningHand = Math.random() > 0.5 ? 'right' : 'left';
                 io.to(mRoom.roomId).emit('mheibes_state_changed', mRoom);
-            }, 3000);
+            }, 2500);
         });
 
-        // قنوات بث الصوت المباشر لايف (Audio WebRTC / Voice Signaling)
         socket.on('voice_signaling_stream', (payload) => {
             socket.broadcast.to(socket.roomId || "1000").emit('voice_signaling_receive', payload);
         });
 
         socket.on('deliver_hospitality', (data) => {
-            let room = rooms[socket.roomId || "1000"];
             io.to(socket.roomId || "1000").emit('hospitality_broadcast', { fromSeat: data.fromSeat, toSeat: data.toSeat, senderName: data.senderName || "لاعب فخم", item: data.item });
         });
     });
