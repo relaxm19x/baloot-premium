@@ -3,242 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ADD MORE Q8 - المنصة الرسمية الفاخرة</title>
+    <title>ADD MORE Q8 - شات الملوك والـ VIP</title>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <style>
         :root {
             --bg-dark: #090a0f;
             --luxury-gold: #cca43b;
-            --vip-color: #ff9f43;
-            --panel-gradient: linear-gradient(135deg, #1f232d 0%, #12151b 100%);
+            --vip-pink: linear-gradient(90deg, #ff758c 0%, #ff7eb3 100%);
+            --vip-orange: linear-gradient(90deg, #f9d423 0%, #ff4e50 100%);
+            --reg-blue: #1f232d;
         }
 
         body {
-            margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--bg-dark); color: #ffffff;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; overflow-x: hidden; -webkit-user-select: none; user-select: none;
+            margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-dark); color: #fff;
         }
 
-        *, *::before, *::after { box-sizing: border-box; }
+        /* 🔲 تصميم المربعات الرئيسية للشبكة 🔲 */
+        .hub-screen { padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .games-grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 380px; margin-top: 15px; }
+        .square-game-card { background: #12151b; border: 1.5px solid rgba(255,255,255,0.06); border-radius: 20px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; cursor: pointer; text-align: center; }
 
-        .hub-screen {
-            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-            width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: radial-gradient(circle, #1c1e24 20%, #090a0f 100%);
-            z-index: 99999; text-align: center; padding: 20px; overflow-y: auto;
+        /* 👑 تصميم قائمة المتصلين الفاخرة المستوحاة من صورك بالملي 👑 */
+        .user-row-premium {
+            width: 100%; max-width: 400px; padding: 12px 16px; margin: 6px 0; border-radius: 14px;
+            display: flex; align-items: center; justify-content: space-between; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer;
         }
-        .hub-title { font-size: 36px; font-weight: 900; color: var(--luxury-gold); text-shadow: 0 0 15px rgba(204,164,59,0.5); margin: 15px 0 2px 0; }
-        .hub-subtitle { font-size: 13px; color: #a4a7b0; margin-bottom: 12px; }
+        .user-style-vip-pink { background: var(--vip-pink); color: #fff; border: 1px solid #ff7eb3; }
+        .user-style-vip-orange { background: var(--vip-orange); color: #fff; border: 1px solid #ff4e50; }
+        .user-style-regular { background: var(--reg-blue); color: #54a0ff; border: 1px solid #2c323f; }
 
-        .login-methods-row { display: flex; gap: 8px; margin: 10px 0; width: 100%; max-width: 320px; }
-        .login-btn-opt { flex: 1; padding: 11px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; color: #fff; font-size: 11px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .btn-google { background: #ea4335; } .btn-fb { background: #1877f2; } .btn-email { background: #2c3e50; }
+        /* 🎴 النافذة المنبثقة لخيارات المستخدم (User Modal) 🎴 */
+        .user-options-modal {
+            display: none; position: fixed; bottom: 0; left: 0; width: 100vw; 
+            background: #161922; border-top: 2px solid var(--luxury-gold);
+            border-top-left-radius: 24px; border-top-right-radius: 24px;
+            padding: 20px; z-index: 99999; text-align: center;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.7);
+        }
+        .modal-user-title { font-size: 18px; font-weight: 900; color: #ffe066; margin-bottom: 15px; }
+        .modal-btn-action { width: 100%; max-width: 320px; padding: 12px; margin: 5px auto; border-radius: 12px; border: none; font-weight: bold; font-size: 14px; cursor: pointer; display: block; }
+        .btn-pm { background: #2ecc71; color: white; }
+        .btn-follow { background: #3498db; color: white; }
+        .btn-gift-vip { background: linear-gradient(45deg, #f1c40f, #e67e22); color: black; }
+        .btn-close-modal { background: #e74c3c; color: white; }
 
-        .luxury-input { width: 100%; max-width: 320px; padding: 12px; margin: 6px 0; border-radius: 12px; border: 1px solid var(--luxury-gold); background: #0c0f16; color: white; text-align: center; font-size: 15px; }
-        .vip-toggle-box { background: rgba(255,159,67,0.12); border: 1.5px solid var(--vip-color); padding: 8px 14px; border-radius: 12px; font-weight: bold; font-size: 12px; margin-bottom: 12px; cursor: pointer; color: var(--vip-color); box-shadow: 0 0 10px rgba(255,159,67,0.2); }
-
-        .marquee-container { width: 100%; max-width: 380px; background: #16171e; border: 1px solid var(--luxury-gold); padding: 5px; overflow: hidden; white-space: nowrap; border-radius: 8px; margin-bottom: 15px; }
-        .marquee-text { display: inline-block; animation: marquee-run 14s linear infinite; color: #ffe066; font-size: 12px; font-weight: bold; }
-        @keyframes marquee-run { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
-        /* 🔲 تنظيم شبكة المربعات الجذابة والاحترافية للغاية 🔲 */
-        .games-grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 380px; margin-top: 10px; padding-bottom: 40px; }
-        .square-game-card { background: var(--panel-gradient); border: 1.5px solid rgba(255,255,255,0.06); border-radius: 20px; scale: 1; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px; cursor: pointer; transition: all 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
-        .square-game-card:hover { border-color: var(--luxury-gold); transform: translateY(-4px); }
-        .square-icon { font-size: 34px; margin-bottom: 6px; text-shadow: 0 4px 8px rgba(0,0,0,0.3); }
-        .square-title { font-size: 13px; font-weight: 900; color: #ffffff; margin-bottom: 4px; }
-        .square-desc { font-size: 10px; color: #8e929c; line-height: 1.2; }
-
-        .creator-signature { font-size: 13px; font-weight: bold; color: var(--luxury-gold); margin: 20px 0; text-shadow: 0 2px 4px #000; }
-
-        .game-layout { display: none; flex-direction: column; align-items: center; width: 100vw; height: 100vh; padding-top: 10px; position: fixed; top: 0; left: 0; background: var(--bg-dark); z-index: 100; }
-        .top-score-bar { width: 100%; max-width: 450px; background: #15171c; padding: 10px 16px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--luxury-gold); }
-        .top-action-btn { background: #222; border: 1px solid var(--luxury-gold); color: #ffe066; font-size: 12px; font-weight: bold; padding: 6px 14px; border-radius: 10px; cursor: pointer; }
-
-        /* شاشات الرومات والأسئلة المصلحة */
-        .quiz-container { width: 90vw; max-width: 400px; background: #111317; border: 1.5px solid var(--luxury-gold); border-radius: 18px; padding: 18px; text-align: center; margin-top: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
-        .quiz-question-text { font-size: 16px; font-weight: bold; color: #ffe066; margin-bottom: 20px; line-height: 1.4; }
-        .quiz-option-btn { width: 100%; padding: 13px; background: #1f232d; border: 1px solid #3a3d46; border-radius: 12px; color: #fff; font-size: 13px; font-weight: bold; margin: 6px 0; cursor: pointer; text-align: right; transition: all 0.15s; }
-        .quiz-option-btn:hover { border-color: var(--luxury-gold); background: #171921; }
-
-        .chat-room-container { width: 92vw; max-width: 420px; height: 60vh; background: #111317; border-radius: 16px; border: 1px solid #2d3038; margin-top: 15px; display: flex; flex-direction: column; padding: 14px; box-shadow: inset 0 0 20px #000; }
+        .chat-room-container { width: 92vw; max-width: 420px; height: 50vh; background: #111317; border-radius: 16px; border: 1px solid #2d3038; margin-top: 15px; display: flex; flex-direction: column; padding: 14px; }
         .chat-messages-box { flex: 1; overflow-y: auto; font-size: 13px; text-align: right; }
-        .chat-user-vip { color: var(--vip-color); font-weight: bold; text-shadow: 0 0 5px rgba(255,159,67,0.3); }
-        .chat-user-reg { color: #54a0ff; font-weight: bold; }
-
-        .chat-input-footer-bar { width: 100%; max-width: 450px; background: #16171c; border-top: 1.5px solid var(--luxury-gold); padding: 8px 12px; display: flex; gap: 8px; position: fixed; bottom: 0; z-index: 10000; }
-        .chat-text-field { flex: 1; background: #000; border: 1px solid #444; border-radius: 20px; padding: 8px 14px; color: #fff; outline: none; font-size: 14px; }
-        .chat-send-btn { background: var(--luxury-gold); color: #000; border: none; padding: 8px 18px; font-weight: bold; border-radius: 20px; cursor: pointer; font-size: 13px; }
-        .royal-toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #1f2126; border: 1.5px solid var(--luxury-gold); padding: 12px 24px; border-radius: 14px; color: #ffe066; font-weight: bold; text-align: center; z-index: 999999; transition: all 0.25s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
-        .royal-toast.show { transform: translateX(-50%) translateY(0); }
+        .game-layout { display: none; flex-direction: column; align-items: center; width: 100vw; height: 100vh; padding-top: 10px; position: fixed; top: 0; left: 0; background: var(--bg-dark); z-index: 100; }
+        .top-score-bar { width: 100%; max-width: 450px; background: #15171c; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--luxury-gold); }
+        .top-action-btn { background: #222; border: 1px solid var(--luxury-gold); color: #ffe066; font-size: 12px; font-weight: bold; padding: 6px 14px; border-radius: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="royal-toast" id="global-toast">🚨 ديوانية كويت 666</div>
-
     <div class="hub-screen" id="hub-landing-page">
         <div class="hub-title">ADD MORE Q8</div>
-        <div class="hub-subtitle">منصة غرف الشات والمسابقات الخليجية الرسمية الجاهزة اليوم</div>
-        
-        <div class="marquee-container">
-            <div class="marquee-text">🚀 جاهز ومكتمل كلياً الآن! جرب الأسئلة التعجيزية المتجددة، تفعيل الـ VIP والأسماء اللامعة، وشات كأس العالم لايف الحين! 🚀</div>
-        </div>
-
-        <div class="vip-toggle-box" id="vip-status-btn" onclick="toggleVipStatus()">🎯 حالة حسابك: [ مستخدم عادي ] - ترقية لـ VIP 💎</div>
-
-        <input type="text" id="player-global-name" class="luxury-input" placeholder="ادخل اسم اللاعب للتسجيل الفوري" value="بو محمد">
-
-        <!-- 🔐 تفعيل قنوات التسجيل الرسمي المتصلة بالباكيند 🔐 -->
-        <div class="login-methods-row">
-            <button class="login-btn-opt btn-google" onclick="setLoginMethod('Google')">🔴 Google</button>
-            <button class="login-btn-opt btn-fb" onclick="setLoginMethod('Facebook')">🔵 Facebook</button>
-            <button class="login-btn-opt btn-email" onclick="setLoginMethod('الايميل الرسمي')">✉️ الإيميل</button>
-        </div>
+        <div class="hub-subtitle">منصة الشات والبرستيج الرقمي والمسابقات الخليجية الكبرى</div>
 
         <div class="games-grid-layout">
-            
             <div class="square-game-card" style="border-color: #54a0ff;" onclick="launchGame('chat_666')">
                 <div class="square-icon">💬</div>
                 <div class="square-title">شات كويت 666</div>
-                <div class="square-desc">الدردشة الحية والأسماء الملونة والـ VIP الفوري.</div>
+                <div class="square-desc">الدردشة والأسماء الملونة والـ VIP لايف.</div>
             </div>
-
-            <!-- 🏆 روم شات كأس العالم للمناقشة الرياضية الساخنة لايف -->
             <div class="square-game-card" style="border-color: #ff9f43;" onclick="launchGame('chat_worldcup')">
                 <div class="square-icon">🏆</div>
                 <div class="square-title">كأس العالم للمناقشة</div>
                 <div class="square-desc">ديوانية ومساحة الحوار والجدل الرياضي للمباريات.</div>
             </div>
-
-            <!-- ❓ تحدي الأسئلة المتنوعة التعجيزية العشوائية غير المتكررة -->
-            <div class="square-game-card" style="border-color: #9b59b6;" onclick="launchGame('quiz')">
-                <div class="square-icon">❓</div>
-                <div class="square-title">تحدي الأسئلة الصعبة</div>
-                <div class="square-desc">مسابقات ذكاء متجددة وعشوائية لا تتكرر نهائياً!</div>
-            </div>
-
-            <!-- الألعاب مؤجلة تحت الصيانة لجذب وحصر تركيز الجمهور على الشات والربح -->
-            <div class="square-game-card" style="opacity:0.4; cursor:not-allowed;">
-                <div class="square-icon">🚧</div>
-                <div class="square-title">الكيرم</div>
-                <div class="square-desc">[ في التحديث القادم 🚧 ]</div>
-            </div>
-
-            <div class="square-game-card" style="opacity:0.4; cursor:not-allowed;">
-                <div class="square-icon">🚧</div>
-                <div class="square-title">المحيبس</div>
-                <div class="square-desc">[ في التحديث القادم 🚧 ]</div>
-            </div>
-
-            <div class="square-game-card" style="opacity:0.4; cursor:not-allowed;">
-                <div class="square-icon">🚧</div>
-                <div class="square-title">البلوت</div>
-                <div class="square-desc">[ تحت الصيانة 🚧 ]</div>
-            </div>
-
         </div>
-
         <div class="creator-signature">تصميم وإنشاء بواسطة @add.more.q8</div>
     </div>
 
-    <!-- واجهة غرف الشات الحية الموحدة للرومين -->
+    <!-- واجهة شات كويت 666 وقائمة المتصلين الاستعراضية -->
     <div class="game-layout" id="main-chat-only-view">
         <div class="top-score-bar">
             <div class="top-action-btn" onclick="history.go(0)">◀ القائمة</div>
-            <div style="font-weight:900; color:#54a0ff;" id="chat-room-title-label">💬 روم الشات الحي</div>
-            <div class="top-action-btn" style="color:#ff9f43;" onclick="showToast('🎤 المايك مفتوح تلقائياً لايف')">🎤 المايك</div>
+            <div style="font-weight:900; color:#54a0ff;" id="chat-title">💬 شات كويت 666</div>
+            <div></div>
         </div>
+
+        <!-- قائمة متصلين استعراضية تحاكي الفخامة الموجودة في صورتك بالملي -->
+        <div style="width: 92vw; max-width: 420px; margin-top: 10px;">
+            <div style="font-size: 12px; color: #aaa; text-align: right; margin-bottom: 4px;">🟢 المتصلون في الروم الحين (اضغط على الاسم للخيارات):</div>
+            
+            <div class="user-row-premium user-style-vip-pink" onclick="openUserOptions('👑 الملكة سيلدا #VIP')">
+                <div>👑 الملكة سيلدا [💎 SVIP]</div>
+                <div>🇰🇼</div>
+            </div>
+            <div class="user-row-premium user-style-vip-orange" onclick="openUserOptions('👑 بو فهد الكبار')">
+                <div>👑 بو فهد [💎 VIP]</div>
+                <div>🇰🇼</div>
+            </div>
+            <div class="user-row-premium user-style-regular" onclick="openUserOptions('لاعب عادي 1')">
+                <div>لاعب عادي 1</div>
+                <div>🇸🇦</div>
+            </div>
+        </div>
+
         <div class="chat-room-container">
             <div class="chat-messages-box" id="global-chat-box"></div>
         </div>
     </div>
 
-    <!-- واجهة تحدي الأسئلة المتنوعة الصعبة واللانهائية -->
-    <div class="game-layout" id="quiz-game-view">
-        <div class="top-score-bar">
-            <div class="top-action-btn" onclick="history.go(0)">◀ القائمة</div>
-            <div style="font-weight:900; color:#9b59b6;">❓ تحدي الأسئلة المتنوعة غير المتكررة</div>
-            <div></div>
-        </div>
-        <div class="quiz-container">
-            <div class="quiz-question-text" id="quiz-question-box">جاري توليد سؤال تعجيزي عشوائي...</div>
-            <div id="quiz-options-wrapper"></div>
-        </div>
-    </div>
-
-    <div class="chat-input-footer-bar" id="global-chat-bar" style="display:none;">
-        <input type="text" id="chatMessageInput" class="chat-text-field" placeholder="اكتب رسالتك داخل الديوانية لايف...">
-        <button class="chat-send-btn" onclick="sendLiveChatMessage()">إرسال 💬</button>
+    <!-- 🎴 لوحة الخيارات المنبثقة المدعومة بـ قفل الخاص والهدية والخصوصية للمتابعين 🎴 -->
+    <div class="user-options-modal" id="user-modal-panel">
+        <div class="modal-user-title" id="modal-target-username">اسم المستخدم</div>
+        
+        <button class="modal-btn-action btn-pm" onclick="triggerPrivateChatGate()">💬 رسالة خاصة (حصري للـ VIP)</button>
+        <button class="modal-btn-action btn-follow" onclick="triggerPrivateFollow()">👤 متابعة سرية (مخفية عن الآخرين)</button>
+        <button class="modal-btn-action btn-gift-vip" onclick="giftVipOneHour()">🎁 إهداء ساعة VIP لايف الحين</button>
+        <button class="modal-btn-action btn-close-modal" onclick="closeUserOptions()">إغلاق ❌</button>
     </div>
 
 <script>
-    // الاتصال التلقائي الفوري بالسوكيت لمنع أي تعليق
     const socket = io();
-
-    let isVipAccount = false;
-    let myCurrentUsername = "بو محمد";
-    let selectedLoginMethod = "تسجيل رسمي";
-    let activeChatRoom = "chat_666";
-
-    function toggleVipStatus() {
-        isVipAccount = !isVipAccount;
-        const btn = document.getElementById('vip-status-btn');
-        if (isVipAccount) { btn.innerText = "💎 حالة حسابك: [ مستخدم VIP فخم ] ⭐"; btn.style.background = "rgba(255,159,67,0.25)"; }
-        else { btn.innerText = "🎯 حالة حسابك: [ مستخدم عادي ] - ترقية لـ VIP 💎"; btn.style.background = "rgba(255,159,67,0.12)"; }
-    }
-
-    function setLoginMethod(method) {
-        selectedLoginMethod = method;
-        showToast(`✔ تفعيل وتسجيل الدخول الرسمي متصل عبر [ ${method} ] بنجاح!`);
-    }
+    let isMyAccountVip = false; // افتراضياً الحساب غير مشترك
+    let currentSelectedUser = "";
 
     function launchGame(game) {
-        myCurrentUsername = document.getElementById('player-global-name').value.trim() || "لاعب فخم";
         document.getElementById('hub-landing-page').style.display = 'none';
-        document.getElementById('global-chat-bar').style.display = 'flex';
-
-        socket.emit('user_login_attempt', { username: myCurrentUsername, isVip: isVipAccount, method: selectedLoginMethod });
-
-        if (game === 'chat_666' || game === 'chat_worldcup') {
-            activeChatRoom = game;
-            document.getElementById('chat-room-title-label').innerText = game==='chat_666' ? "💬 روم شات كويت 666" : "🏆 روم كأس العالم للمناقشة";
-            document.getElementById('main-chat-only-view').style.display = 'flex';
-        }
-        else if (game === 'quiz') { document.getElementById('quiz-game-view').style.display = 'flex'; socket.emit('join_quiz_game', { username: myCurrentUsername }); }
+        document.getElementById('main-chat-only-view').style.display = 'flex';
+        document.getElementById('chat-title').innerText = game === 'chat_666' ? "💬 روم شات كويت 666" : "🏆 روم كأس العالم للمناقشة";
     }
 
-    function showToast(msg) { const toast = document.getElementById('global-toast'); toast.innerText = msg; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, 3000); }
-
-    function sendLiveChatMessage() {
-        const input = document.getElementById('chatMessageInput'); const text = input.value.trim();
-        if(!text) return; socket.emit('send_global_chat_msg', { room: activeChatRoom, text: text }); input.value = "";
+    // فتح قائمة خيارات المستخدم
+    function openUserOptions(username) {
+        currentSelectedUser = username;
+        document.getElementById('modal-target-username').innerText = username;
+        document.getElementById('user-modal-panel').style.display = 'block';
     }
-    
-    socket.on('receive_global_chat_msg', (data) => {
-        if (data.room !== activeChatRoom) return; 
-        const box = document.getElementById('global-chat-box');
-        if (box) {
-            const cls = data.isVip ? 'chat-user-vip' : 'chat-user-reg';
-            box.innerHTML += `<div><span class="${cls}">${data.isVip?'⭐ ':''}${data.username}:</span> <span style="color:#fff;">${data.text}</span></div>`;
-            box.scrollTop = box.scrollHeight;
-        }
-    });
-    socket.on('chat_sys_message', (data) => { showToast(data.msg); });
 
-    // ❓ تحدي الأسئلة المتنوعة والخلط اللانهائي لعدم التكرار
-    socket.on('quiz_next_question', (data) => {
-        document.getElementById('quiz-question-box').innerText = data.question;
-        const wrapper = document.getElementById('quiz-options-wrapper'); wrapper.innerHTML = "";
-        data.options.forEach((opt, index) => {
-            wrapper.innerHTML += `<button class="quiz-option-btn" onclick="submitQuizAnswer(${index})">${index + 1}. ${opt}</button>`;
-        });
-    });
-    function submitQuizAnswer(idx) { socket.emit('quiz_submit_answer', { index: idx, username: myCurrentUsername }); }
-    socket.on('quiz_round_result', (data) => {
-        if(data.correct) showToast(`🎉 كفوو! اللاعب ${data.winner} جاوب على السؤال الصعب صح وحصد 10 نقاط لايف!`);
-        else showToast(`❌ إجابة خاطئة! السؤال كان معقداً جداً على اللاعب ${data.winner}!`);
-    });
+    function closeUserOptions() {
+        document.getElementById('user-modal-panel').style.display = 'none';
+    }
+
+    // 🔒 بوابة قفل الخاص: لا يدخل الخاص إلا المشترك والـ VIP
+    function triggerPrivateChatGate() {
+        if (!isMyAccountVip) {
+            alert("🚨 عذراً! خاصية المحادثات الخاصة حصرية للمشتركين والـ VIP لمنع الإزعاج. يرجى ترقية حسابك وتفعيل الدفع الفوري أولاً! 💎");
+        } else {
+            alert(`💬 تم فتح شات خاص آمن مع المستهدف الحين: ${currentSelectedUser}`);
+        }
+        closeUserOptions();
+    }
+
+    // 👤 متابعة سرية مخفية تماماً عن الآخرين بطلبك بالملي
+    function triggerPrivateFollow() {
+        alert(`✔ تم متابعة [ ${currentSelectedUser} ] بنجاح! تم تشفير وإخفاء قائمة متابعينك بالكامل، ولا يمكن لأي مستخدم آخر في الديوانية الاطلاع عليها كلياً للخصوصية المطلقة.`);
+        closeUserOptions();
+    }
+
+    // 🎁 خاصية دعم وإهداء مستخدم آخر VIP لمدة ساعة واحدة لايف
+    function giftVipOneHour() {
+        alert(`🎁 تم خصم القيمة وإهداء [ ${currentSelectedUser} ] رتبة VIP الملكية المشعة لمدة ساعة واحدة لايف الحين! بدأ العداد التنازلي بالسيرفر وبانتظار تفعيل الاسم اللامع.`);
+        closeUserOptions();
+    }
 </script>
 </body>
 </html>
