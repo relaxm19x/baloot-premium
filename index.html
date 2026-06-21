@@ -2,373 +2,303 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ديوانية البلوت الرسمية - ADD MORE Q8</title>
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insight Consultancy | شركة إنسيت للإستشارات</title>
+    <!-- Tailwind CSS for sleek and modern design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for premium typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg-dark: #090e0c;
-            --felt-green: #1b4d3e;
-            --luxury-gold: #cca43b;
-            --card-white: #ffffff;
-            --panel-bg: #121c18;
+            --font-ar: 'Alexandria', sans-serif;
+            --font-en: 'Inter', sans-serif;
+            /* ألوان اللوجو الرسمية */
+            --color-navy: #131131; /* الكحلي الداكن العميق لنفس خلفية اللوجو */
+            --color-gold: #c5a059; /* الذهبي الراقي الخاص باللوجو */
         }
-
         body {
-            margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--bg-dark); color: #fff; height: 100vh;
-            display: flex; flex-direction: column; align-items: center; overflow: hidden;
+            font-family: var(--font-ar);
+            transition: all 0.3s ease;
         }
-
-        *, *::before, *::after { box-sizing: border-box; }
-
-        /* 📱 شاشة الهب الرئيسية */
-        .hub-screen { 
-            padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; 
-            width: 100vw; height: 100vh; overflow-y: auto; background: linear-gradient(180deg, #0f1a16 0%, #050a08 100%);
+        html:lang(en) body {
+            font-family: var(--font-en);
         }
-        .hub-title { font-size: 32px; font-weight: 900; color: var(--luxury-gold); margin: 20px 0 5px 0; }
-        .hub-subtitle { font-size: 13px; color: #8fa39b; margin-bottom: 25px; }
-
-        .menu-grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 400px; margin-top: 10px; }
-        .menu-card-btn { background: var(--panel-bg); border: 1.5px solid rgba(204, 164, 59, 0.15); border-radius: 18px; padding: 20px 15px; cursor: pointer; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .menu-card-btn:hover { border-color: var(--luxury-gold); background: #17241f; }
-        .card-icon { font-size: 36px; margin-bottom: 8px; }
-        .card-title { font-size: 15px; font-weight: bold; color: #fff; }
-        .card-desc { font-size: 11px; color: #768c83; margin-top: 4px; }
-
-        /* النوافذ واللوحات */
-        .view-layout { display: none; flex-direction: column; width: 100vw; height: 100vh; background: var(--bg-dark); position: fixed; top: 0; left: 0; z-index: 1000; align-items: center; overflow: hidden; }
-        .top-nav-bar { width: 100%; max-width: 480px; background: #111c17; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--luxury-gold); }
-        .nav-back-btn { background: #222; border: 1px solid var(--luxury-gold); color: #ffe066; font-size: 12px; font-weight: bold; padding: 6px 14px; border-radius: 8px; cursor: pointer; }
-
-        .form-container { width: 90%; max-width: 380px; background: var(--panel-bg); border: 1px solid #1f332b; border-radius: 20px; padding: 25px; margin-top: 40px; }
-        .form-title { font-size: 20px; font-weight: bold; color: var(--luxury-gold); margin-bottom: 20px; text-align: center; }
-        .input-field { width: 100%; background: #0b120f; border: 1px solid #284237; border-radius: 10px; padding: 12px; color: #fff; margin-bottom: 12px; outline: none; text-align: right; font-size: 14px; }
-        .submit-btn { width: 100%; padding: 12px; background: var(--luxury-gold); border: none; border-radius: 10px; color: #000; font-weight: bold; }
-
-        /* 🟢 طاولة كملنا المصلحة بالكامل لـ 4 لاعبين 🟢 */
-        .baloot-table-felt {
-            flex: 1; width: 100%; max-width: 460px; background: radial-gradient(circle, #225c4a 0%, #113328 100%);
-            border: 6px solid #2e1a0f; border-radius: 24px; margin: 4px 0; position: relative; display: flex; flex-direction: column; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
-        }
-        .score-box-real { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.9); border: 1.5px solid var(--luxury-gold); border-radius: 10px; padding: 6px 12px; font-size: 11px; z-index: 30; }
+        .lang-en { display: none; }
+        html:lang(en) .lang-en { display: block; }
+        html:lang(en) .lang-ar { display: none; }
+        html:lang(ar) .lang-ar { display: block; }
         
-        .seat-label { position: absolute; background: rgba(0,0,0,0.85); padding: 6px 14px; border-radius: 14px; font-size: 12px; font-weight: bold; border: 1px solid rgba(255,255,255,0.15); text-align: center; }
-        .active-turn-glow { border-color: #2ecc71 !important; box-shadow: 0 0 12px #2ecc71; }
-        
-        .pos-north { top: 12px; left: 50%; transform: translateX(-50%); color: #ff7675; }
-        .pos-south { bottom: 135px; left: 50%; transform: translateX(-50%); color: #ffe066; }
-        .pos-east { right: 12px; top: 35%; transform: translateY(-50%); }
-        .pos-west { left: 12px; top: 35%; transform: translateY(-50%); }
-
-        .kitty-center-box { position: absolute; top: 32%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 10; }
-        .floor-arena { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 240px; height: 150px; }
-        
-        .played-card-slot { position: absolute; }
-        .slot-south { bottom: 0; left: 50%; transform: translateX(-50%); }
-        .slot-north { top: 0; left: 50%; transform: translateX(-50%); }
-        .slot-east { right: 0; top: 50%; transform: translateY(-50%); }
-        .slot-west { left: 0; top: 50%; transform: translateY(-50%); }
-
-        .card-asset { width: 46px; height: 68px; background: var(--card-white); color: #000; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between; padding: 4px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4); border: 1px solid #ddd; }
-        .card-asset:hover { transform: translateY(-12px); border-color: var(--luxury-gold); }
-        .red-suit { color: #d63031; }
-        .hand-cards-dock { position: absolute; bottom: 12px; left: 0; width: 100%; display: flex; justify-content: center; gap: 4px; padding: 0 8px; z-index: 20; }
-        
-        .buy-panel-bar { position: absolute; top: 64%; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; background: rgba(0,0,0,0.95); padding: 10px; border-radius: 16px; border: 1.5px solid var(--luxury-gold); z-index: 100; }
-        .buy-action-btn { padding: 10px 18px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; color: white; }
-
-        .table-action-log { position: absolute; bottom: 95px; left: 5%; width: 90%; height: 35px; background: rgba(0,0,0,0.85); border-radius: 8px; font-size: 12px; color: #2ecc71; padding: 8px; text-align: center; border: 1px solid #1f332b; }
-
-        /* 📊 لقطة كملنا النهائية للمشاريع والأبناط (مدمجة بطلبك كلياً) */
-        .summary-window-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 99999; justify-content: center; align-items: center; }
-        .summary-card { background: var(--panel-bg); border: 2px solid var(--luxury-gold); border-radius: 20px; width: 90%; max-width: 380px; padding: 20px; text-align: center; }
-        .summary-title { font-size: 18px; font-weight: bold; color: var(--luxury-gold); margin-bottom: 15px; }
-        .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .summary-table th, .summary-table td { padding: 10px; border-bottom: 1px solid #222; font-size: 14px; }
-        .summary-table th { color: var(--luxury-gold); }
-
-        /* 💰 حزم الشات والألعاب */
-        .packages-list { width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
-        .pack-item { background: var(--panel-bg); border: 1px solid #233c32; border-radius: 14px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .pack-info { text-align: right; }
-        .pack-name { font-size: 15px; font-weight: bold; color: var(--luxury-gold); }
-        .pack-perks { font-size: 11px; color: #8fa39b; margin-top: 3px; }
-        .pack-price-btn { background: #27ae60; color: white; border: none; padding: 8px 16px; font-weight: bold; border-radius: 8px; cursor: pointer; }
-
-        /* 💬 شات عام مباشر */
-        .chat-container { width: 100%; max-width: 440px; flex: 1; display: flex; flex-direction: column; padding: 15px; background: #0c1411; }
-        .chat-messages-box { flex: 1; overflow-y: auto; background: #111a16; border-radius: 12px; border: 1px solid #1f332b; padding: 12px; font-size: 14px; text-align: right; display: flex; flex-direction: column; gap: 6px; }
-        .chat-footer { width: 100%; display: flex; gap: 8px; margin-top: 10px; }
-        .chat-input { flex: 1; background: #000; border: 1px solid #284237; border-radius: 20px; padding: 10px 16px; color: #fff; outline: none; text-align: right; }
-        .chat-send-btn { background: var(--luxury-gold); color: #000; border: none; padding: 0 20px; font-weight: bold; border-radius: 20px; cursor: pointer; }
+        /* لمسات مخصصة للألوان المتناسقة مع الشعار */
+        .bg-insight-navy { background-color: var(--color-navy); }
+        .text-insight-gold { color: var(--color-gold); }
+        .border-insight-gold { border-color: var(--color-gold); }
+        .hover\:bg-insight-gold:hover { background-color: var(--color-gold); }
+        .hover\:text-insight-navy:hover { color: var(--color-navy); }
     </style>
 </head>
-<body>
+<body class="bg-white text-black antialiased selection:bg-amber-500 selection:text-white">
 
-    <!-- الشاشة الرئيسية -->
-    <div class="hub-screen" id="view-hub">
-        <div class="hub-title">ديوانية البلوت</div>
-        <div class="hub-subtitle">المنصة الاحترافية الكبرى للألعاب والتنافس الخليجي</div>
-        <div id="user-welcome-tag" style="font-size: 13px; color: var(--luxury-gold); font-weight: bold; margin-bottom: 15px; display:none;"></div>
-
-        <div class="menu-grid-layout">
-            <div class="menu-card-btn" onclick="openView('view-register')">
-                <div class="card-icon">📝</div>
-                <div class="card-title">حساب جديد / دخول</div>
-            </div>
-            <div class="menu-card-btn" onclick="checkAuthAndPlay()">
-                <div class="card-icon">🃏</div>
-                <div class="card-title">لعب البلوت لايف</div>
-            </div>
-            <div class="menu-card-btn" onclick="openView('view-packages')">
-                <div class="card-icon">💎</div>
-                <div class="card-title">حزم الترقية والشركاء</div>
-            </div>
-            <div class="menu-card-btn" onclick="openView('view-chat')">
-                <div class="card-icon">💬</div>
-                <div class="card-title">المحادثة المباشرة</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- شاشة التسجيل -->
-    <div class="view-layout" id="view-register">
-        <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">إدارة الحساب</div><div></div></div>
-        <div class="form-container" id="box-signup">
-            <div class="form-title">إنشاء حساب بلوت رسمي</div>
-            <input type="text" id="reg-user" class="input-field" placeholder="اسم المستخدم">
-            <input type="email" id="reg-email" class="input-field" placeholder="البريد الإلكتروني">
-            <input type="password" id="reg-pass" class="input-field" placeholder="كلمة المرور">
-            <input type="text" id="reg-country" class="input-field" placeholder="الدولة">
-            <button class="submit-btn" onclick="actionRegister()">إنشاء الحساب وحفظه 🚀</button>
-            <div class="switch-form-link" onclick="toggleForm(false)">لديك حساب بالفعل؟ سجل دخولك</div>
-        </div>
-        <div class="form-container" id="box-login" style="display: none;">
-            <div class="form-title">تسجيل دخول الأعضاء</div>
-            <input type="email" id="login-email" class="input-field" placeholder="البريد الإلكتروني">
-            <input type="password" id="login-pass" class="input-field" placeholder="كلمة المرور">
-            <button class="submit-btn" onclick="actionLogin()">تسجيل الدخول 🔑</button>
-            <div class="switch-form-link" onclick="toggleForm(true)">لا تملك حساب؟ أنشئ حساب جديد الحين</div>
-        </div>
-    </div>
-
-    <!-- 🟢 شاشة طاولة البلوت الكلية المصلحة للـ 4 لاعبين 🟢 -->
-    <div class="view-layout" id="view-game">
-        <div class="top-nav-bar">
-            <div class="nav-back-btn" onclick="closeToHub()">◀ انسحاب</div>
-            <div style="font-weight:900; color: var(--luxury-gold);" id="active-buyer-lbl">المشترى: جاري الفحص..</div>
-            <div></div>
-        </div>
-        <div class="baloot-table-felt">
-            <div class="score-box-real">
-                <div>لنا: <span id="score-us">0</span></div>
-                <div>لهم: <span id="score-them">0</span></div>
-                <div id="table-buy-type-lbl" style="color:var(--luxury-gold); font-size:10px; margin-top:2px;">جاري المشتري..</div>
-            </div>
-            
-            <div class="seat-label pos-north" id="seat-north">🤖 مساعد<br><span style="font-size:10px;">🎴 5 كروت</span></div>
-            <div class="seat-label pos-east" id="seat-east">🤖 خالد<br><span style="font-size:10px;">🎴 5 كروت</span></div>
-            <div class="seat-label pos-west" id="seat-west">🤖 ناصر<br><span style="font-size:10px;">🎴 5 كروت</span></div>
-            <div class="seat-label pos-south" id="my-seat-name">👑 بو محمد</div>
-
-            <div class="kitty-center-box" id="kitty-area"><div id="kitty-card-display"></div></div>
-            
-            <div class="floor-arena">
-                <div id="slot-south" class="played-card-slot slot-south"></div>
-                <div id="slot-north" class="played-card-slot slot-north"></div>
-                <div id="slot-east" class="played-card-slot slot-east"></div>
-                <div id="slot-west" class="played-card-slot slot-west"></div>
+    <!-- Top Navigation & Logo Header -->
+    <header class="border-b border-gray-800 sticky top-0 bg-insight-navy text-white z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+            <!-- Brand Logo Space -->
+            <div class="flex items-center">
+                <!-- اللوقو بحجمه الاحترافي الواضح -->
+                <img src="logo.jpg" alt="Insight Consultancy Logo" class="h-14 w-auto object-contain">
             </div>
 
-            <div class="table-action-log" id="table-live-log">بانتظار قرار الشراء..</div>
-
-            <div class="buy-panel-bar" id="buy-decision-panel">
-                <button class="buy-action-btn" style="background: #e67e22;" onclick="submitBuy('صن')">صن 💥</button>
-                <button class="buy-action-btn" style="background: #2980b9;" onclick="submitBuy('حكم')">حكم 🛡️</button>
-                <button class="buy-action-btn" style="background: #7f8c8d;" onclick="submitBuy('بس')">بس 🔒</button>
-            </div>
-            <div class="hand-cards-dock" id="hand-cards-wrapper"></div>
-        </div>
-    </div>
-
-    <!-- 📊 نافذة كملنا النهائية لإعلان الأبناط والمشاريع (سرا، خمسين) 📊 -->
-    <div class="summary-window-overlay" id="summary-popup-window">
-        <div class="summary-card">
-            <div class="summary-title">📊 نتيجة الشراء والأبناط والمشاريع</div>
-            <table class="summary-table">
-                <thead><tr><th>البند</th><th>لنا</th><th>لهم</th></tr></thead>
-                <tbody>
-                    <tr><td>الأكلات (اللات)</td><td id="res-us-aklat">0</td><td id="res-them-aklat">0</td></tr>
-                    <tr><td>المشاريع (سرا/خمسين)</td><td id="res-us-proj">0</td><td id="res-them-proj">0</td></tr>
-                    <tr><td>الأرض</td><td>10</td><td>0</td></tr>
-                </tbody>
-            </table>
-            <button class="submit-btn" style="background:var(--luxury-gold);" onclick="document.getElementById('summary-popup-window').style.display='none'; location.reload();">جولة جديدة 🃏</button>
-        </div>
-    </div>
-
-    <!-- شاشة الحزم -->
-    <div class="view-layout" id="view-packages">
-        <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">متجر حزم الديوانية</div><div></div></div>
-        <div class="packages-list">
-            <div class="pack-item">
-                <div class="pack-info"><div class="pack-name">حزمة التذكرة الفضية 🎟️</div><div class="pack-perks">تمنحك 15,000 رصيد أوراق لدخول غرف المحترفين</div></div>
-                <button class="pack-price-btn" onclick="alert('💰 حزمة فضية بقيمة 1.5 د.ك')">1.5 د.ك</button>
-            </div>
-            <div class="pack-item">
-                <div class="pack-info"><div class="pack-name">الاشتراك الذهبي الملكي (شهري) 👑</div><div class="pack-perks">ألوان متوهجة للنك، حصانة كاملة من الطرد، إنشاء رومات خاصة</div></div>
-                <button class="pack-price-btn" onclick="alert('💰 اشتراك كملنا الملكي بقيمة 4.5 د.ك شهرياً')">4.5 د.ك</button>
+            <!-- Quick Navigation & Lang Switcher -->
+            <div class="flex items-center space-x-6 space-x-reverse">
+                <nav class="hidden md:flex items-center space-x-8 space-x-reverse text-sm font-medium tracking-wide text-gray-300">
+                    <a href="#about" class="hover:text-insight-gold transition-colors"><span class="lang-ar">من نحن</span><span class="lang-en">About</span></a>
+                    <a href="#ceo" class="hover:text-insight-gold transition-colors"><span class="lang-ar">كلمة الرئيس</span><span class="lang-en">CEO Message</span></a>
+                    <a href="#services" class="hover:text-insight-gold transition-colors"><span class="lang-ar">خدماتنا</span><span class="lang-en">Services</span></a>
+                    <a href="#audience" class="hover:text-insight-gold transition-colors"><span class="lang-ar">الفئة المستهدفة</span><span class="lang-en">Audience</span></a>
+                    <a href="#contact" class="hover:text-insight-gold transition-colors"><span class="lang-ar">اتصل بنا</span><span class="lang-en">Contact</span></a>
+                </nav>
+                
+                <button onclick="toggleLanguage()" class="border border-insight-gold text-insight-gold px-4 py-1.5 text-xs font-bold uppercase tracking-widest hover:bg-insight-gold hover:text-insight-navy transition-all duration-300">
+                    <span class="lang-ar">English</span>
+                    <span class="lang-en">العربية</span>
+                </button>
             </div>
         </div>
-    </div>
+    </header>
 
-    <!-- شاشة الشات العام -->
-    <div class="view-layout" id="view-chat">
-        <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">الدردشة العامة المباشرة</div><div></div></div>
-        <div class="chat-container">
-            <div class="chat-messages-box" id="global-chat-box"></div>
-            <div class="chat-footer">
-                <input type="text" id="chatMessageInput" class="chat-input" placeholder="اكتب رسالتك العامة هنا...">
-                <button class="chat-send-btn" onclick="sendLiveChatMessage()">إرسال</button>
+    <!-- Hero / Title Section -->
+    <section class="max-w-7xl mx-auto px-6 py-24 border-b border-gray-100">
+        <div class="max-w-3xl">
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-black leading-tight mb-6">
+                <span class="lang-ar">شركة إنسيت للإستشارات</span>
+                <span class="lang-en">Insight Consultancy Company</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-500 font-light leading-relaxed border-r-4 border-insight-gold pr-4 html:lang(en):border-l-4 html:lang(en):border-r-0 html:lang(en):pl-4 html:lang(en):pr-0">
+                <span class="lang-ar">نصنع الوضوح من تعقيدات المخاطر لنمنح مؤسستك القوة والريادة المستدامة.</span>
+                <span class="lang-en">Transforming complex risk exposure into structured, measurable, and sustainable financial strategy.</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- About Us, Vision, Mission & Values -->
+    <section id="about" class="max-w-7xl mx-auto px-6 py-24 border-b border-gray-100 scroll-mt-24">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
+            <div class="lg:col-span-2 space-y-12">
+                <div>
+                    <h2 class="text-xs uppercase tracking-widest text-insight-gold font-bold mb-4"><span class="lang-ar">نبذة عن الشركة</span><span class="lang-en">About Us</span></h2>
+                    <p class="text-xl text-black leading-relaxed font-light">
+                        <span class="lang-ar">تعمل Insight Consultancy كشركة استشارية متخصصة في مجالات الحوكمة وإدارة المخاطر والامتثال وتأهيل الشركات للتصنيف الإئتماني والاستدامة وإعادة الهيكلة المؤسسية. نخدم المؤسسات في مختلف أنحاء منطقة الشرق الأوسط وشمال أفريقيا، ونمكّنها من تحويل التعرض للمخاطر المعقدة إلى استراتيجيات منظمة وقابلة للقياس وقوة مالية مستدامة.</span>
+                        <span class="lang-en">Insight Consultancy is a specialized GRCS advisory firm operating across risk management, Corporate governance, compliance, credit rating advisory, sustainability and Corporate restructuring. We serve organizations across the MENA region, helping them transform complex Risk exposure into structured, measurable, and sustainable Financial strategy.</span>
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6">
+                    <div class="border border-gray-200 p-8 hover:border-insight-gold transition-colors duration-300">
+                        <h3 class="text-lg font-bold mb-3 text-insight-navy"><span class="lang-ar">رؤيتنا</span><span class="lang-en">Our Vision</span></h3>
+                        <p class="text-gray-600 font-light leading-relaxed text-sm">
+                            <span class="lang-ar">تتمثل رؤيتنا في أن نصبح من أبرز شركات الاستشارات في المنطقة، معترفًا بنا لتميّزنا في تحويل المخاطر إلى ميزة استراتيجية وتمكين المؤسسات من القيادة بوضوح وثقة.</span>
+                            <span class="lang-en">Our Vision is to become one of the region’s top advisory firms, recognized for transforming risk into strategic advantage and enabling organizations to lead with clarity and confidence.</span>
+                        </p>
+                    </div>
+                    <div class="border border-gray-200 p-8 hover:border-insight-gold transition-colors duration-300">
+                        <h3 class="text-lg font-bold mb-3 text-insight-navy"><span class="lang-ar">هدفنا (رسالتنا)</span><span class="lang-en">Our Mission</span></h3>
+                        <p class="text-gray-600 font-light leading-relaxed text-sm">
+                            <span class="lang-ar">تمكين المؤسسات من اكتشاف المخاطر بوضوح واتخاذ قرارات حاسمة، بما يتيح لها التحول من الأساس إلى التميّز.</span>
+                            <span class="lang-en">To empower organizations to detect risk with clarity and act decisively, enabling a transformation from foundation to excellence.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Values Side -->
+            <div class="bg-insight-navy text-white p-8 md:p-12 flex flex-col justify-between shadow-lg">
+                <div>
+                    <h2 class="text-xs uppercase tracking-widest text-insight-gold font-bold mb-8"><span class="lang-ar">قيمنا</span><span class="lang-en">Our Values</span></h2>
+                    <ul class="space-y-5 text-sm font-medium tracking-wide">
+                        <li class="flex items-center gap-3"><span class="w-2 h-2 bg-insight-gold rounded-full"></span><div><span class="lang-ar">النزاهة</span><span class="lang-en">Integrity</span></div></li>
+                        <li class="flex items-center gap-3"><span class="w-2 h-2 bg-insight-gold rounded-full"></span><div><span class="lang-ar">الرؤية الاستراتيجية</span><span class="lang-en">Strategic Foresight</span></div></li>
+                        <li class="flex items-center gap-3"><span class="w-2 h-2 bg-insight-gold rounded-full"></span><div><span class="lang-ar">ترسيخ ثقة العملاء في كل خطوة</span><span class="lang-en">Strengthening client trust at every step</span></div></li>
+                        <li class="flex items-center gap-3"><span class="w-2 h-2 bg-insight-gold rounded-full"></span><div><span class="lang-ar">التحليل المبني على البيانات</span><span class="lang-en">Data Driven Insight</span></div></li>
+                        <li class="flex items-center gap-3"><span class="w-2 h-2 bg-insight-gold rounded-full"></span><div><span class="lang-ar">توجيه مسيرة التحوّل من الأساس إلى التميّز</span><span class="lang-en">Guiding transformation from baseline to excellence</span></div></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
-<script>
-    const socket = io();
-    let activeView = "view-hub";
-    let currentUserData = null;
+    <!-- CEO Message Section -->
+    <section id="ceo" class="max-w-7xl mx-auto px-6 py-24 border-b border-gray-100 scroll-mt-24 bg-gradient-to-br from-slate-50 to-gray-100">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-xs uppercase tracking-widest text-insight-gold font-bold mb-6 text-center"><span class="lang-ar">كلمة الرئيس التنفيذي</span><span class="lang-en">CEO Message</span></h2>
+            <blockquote class="text-xl md:text-2xl font-light text-black text-center leading-relaxed italic">
+                <span class="lang-ar">"بصفتي الرئيس التنفيذي لشركة Insight Consultancy، أفخر بقيادة مؤسسة تقوم على الوضوح والنزاهة والرؤية الاستراتيجية. وفي منطقة تتسارع فيها المخاطر وتتزايد فيها التعقيدات يومًا بعد يوم، تظل مهمتنا واضحة: تمكين المؤسسات من رؤية المخاطر مبكرًا، وفهمها بعمق، واتخاذ القرارات بثقة. نحن ملتزمون بتقديم استشارات عالية الجودة تحول عدم اليقين إلى فرصة، وتمكّن عملاءنا من القيادة بقوة ومرونة وبصيرة."</span>
+                <span class="lang-en">"As CEO of Insight Consultancy, I am proud to lead a firm built on clarity, integrity, and strategic foresight. In a region where risk evolves rapidly and complexity grows by the day, our mission is simple: empower organizations to see risk early, understand it deeply, and act with confidence. We are committed to delivering advisory excellence that transforms uncertainty into opportunity and enables our clients to lead with strength, resilience, and insight."</span>
+            </blockquote>
+            <div class="mt-8 text-center">
+                <p class="font-bold text-lg text-insight-navy">Mahmoud Gad</p>
+                <p class="text-xs uppercase tracking-widest text-insight-gold font-bold mt-1">CEO, Insight Consultancy</p>
+            </div>
+        </div>
+    </section>
 
-    window.onload = function() {
-        const savedUser = localStorage.getItem('baloot_user');
-        if (savedUser) {
-            currentUserData = JSON.parse(savedUser);
-            document.getElementById('user-welcome-tag').innerText = `🏆 مرحباً بعودتك يا الكابتن: ${currentUserData.username}`;
-            document.getElementById('user-welcome-tag').style.display = 'block';
-            document.getElementById('my-seat-name').innerHTML = `👑 ${currentUserData.username}`;
-        }
-    };
+    <!-- Comprehensive Services Grid -->
+    <section id="services" class="max-w-7xl mx-auto px-6 py-24 border-b border-gray-100 scroll-mt-24">
+        <div class="mb-16">
+            <h2 class="text-xs uppercase tracking-widest text-insight-gold font-bold mb-3"><span class="lang-ar">خدماتنا الاستشارية</span><span class="lang-en">Our Advisory Services</span></h2>
+            <p class="text-2xl font-bold text-insight-navy"><span class="lang-ar">حلول استراتيجية متكاملة للحوكمة والمخاطر</span><span class="lang-en">Integrated Strategic Solutions for GRCS</span></p>
+        </div>
 
-    function openView(viewId) { document.getElementById(activeView).style.display = 'none'; document.getElementById(viewId).style.display = 'flex'; activeView = viewId; }
-    function closeToHub() { document.getElementById(activeView).style.display = 'none'; document.getElementById('view-hub').style.display = 'flex'; activeView = "view-hub"; }
-    function toggleForm(showSignup) { document.getElementById('box-signup').style.display = showSignup ? 'block' : 'none'; document.getElementById('box-login').style.display = showSignup ? 'none' : 'block'; }
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <!-- Category 1 -->
+            <div class="space-y-6">
+                <div class="border-b-2 border-insight-gold pb-3">
+                    <h3 class="text-lg font-bold text-insight-navy"><span class="lang-ar">إعادة الهيكلة المؤسسية</span><span class="lang-en">Corporates Restructuring</span></h3>
+                </div>
+                <ul class="space-y-3 text-sm text-gray-600 font-light">
+                    <li><span class="lang-ar">التحضير للتصنيف الإئتماني</span><span class="lang-en">Credit Rating preparation</span></li>
+                    <li><span class="lang-ar">إعداد خطط الأعمال</span><span class="lang-en">Business plans</span></li>
+                    <li><span class="lang-ar">إعداد خطط الإستثمار والإستحواذ</span><span class="lang-en">Investment and Acquisition</span></li>
+                    <li><span class="lang-ar">إعداد دراسات الجدوى</span><span class="lang-en">Feasibility studies</span></li>
+                    <li><span class="lang-ar">سياسات وإجراءات الإستثمار</span><span class="lang-en">Investment policies and procedures</span></li>
+                    <li><span class="lang-ar">إعداد سياسات وإجراءات الإدارات</span><span class="lang-en">All departmental Policies and Procedure</span></li>
+                    <li><span class="lang-ar">إعادة هيكلة الموارد البشرية</span><span class="lang-en">HR Restructuring</span></li>
+                    <li><span class="lang-ar">إعادة هيكلة الإدارة المالية</span><span class="lang-en">Finance Department Restructure</span></li>
+                    <li><span class="lang-ar">إدارة مشاريع تغيير أو تطوير النظام الآلي</span><span class="lang-en">Core System transformation management</span></li>
+                </ul>
+            </div>
 
-    function actionRegister() {
-        const username = document.getElementById('reg-user').value.trim();
-        const email = document.getElementById('reg-email').value.trim();
-        const pass = document.getElementById('reg-pass').value.trim();
-        const country = document.getElementById('reg-country').value.trim();
-        if(!username || !email || !pass || !country) return alert("⚠️ يرجى تعبئة كافة الحقول للتسجيل!");
-        currentUserData = { username, email, country };
-        localStorage.setItem('baloot_user', JSON.stringify(currentUserData));
-        location.reload();
-    }
+            <!-- Category 2 -->
+            <div class="space-y-6">
+                <div class="border-b-2 border-insight-gold pb-3">
+                    <h3 class="text-lg font-bold text-insight-navy"><span class="lang-ar">إدارة المخاطر</span><span class="lang-en">Risk Management Consultancy</span></h3>
+                </div>
+                <ul class="space-y-3 text-sm text-gray-600 font-light">
+                    <li><span class="lang-ar">إعداد شهية المخاطر</span><span class="lang-en">Risk appetite</span></li>
+                    <li><span class="lang-ar">سياسات المخاطر</span><span class="lang-en">Risk manuals</span></li>
+                    <li><span class="lang-ar">تقارير المخاطر</span><span class="lang-en">Risk materials</span></li>
+                    <li><span class="lang-ar">تقارير وتجهيزات التصنيف الإئتماني</span><span class="lang-en">Credit rating reporting preparation</span></li>
+                    <li><span class="lang-ar">تقارير كفاية رأس المال</span><span class="lang-en">Capital adequacy reports</span></li>
+                    <li><span class="lang-ar">تقارير الملاءة المالية</span><span class="lang-en">Solvency reporting preparation</span></li>
+                    <li><span class="lang-ar">إعادة هيكلة الشركات</span><span class="lang-en">Corporates restructuring</span></li>
+                    <li><span class="lang-ar">الإعداد والتأهيل لشهادة الجودة ISO 31000</span><span class="lang-en">Prepration for ISO 31000</span></li>
+                    <li><span class="lang-ar">الإعداد والتأهيل لشهادة الجودة ISO 27001</span><span class="lang-en">Prepration for ISO 27001</span></li>
+                    <li><span class="lang-ar">الإعداد والتأهيل لشهادة الجودة ISO 9001</span><span class="lang-en">Prepration for ISO 9001</span></li>
+                    <li><span class="lang-ar">سياسات وإجراءات تقنية أمن المعلومات</span><span class="lang-en">Information Secuirty policies and Procedures</span></li>
+                </ul>
+            </div>
 
-    function actionLogin() {
-        const email = document.getElementById('login-email').value.trim();
-        const pass = document.getElementById('login-pass').value.trim();
-        if(!email || !pass) return alert("⚠️ يرجى إدخال البريد الإلكتروني وكلمة المرور!");
-        currentUserData = { username: "لاعب محترف", email: email, country: "الكويت" };
-        localStorage.setItem('baloot_user', JSON.stringify(currentUserData));
-        location.reload();
-    }
+            <!-- Category 3 -->
+            <div class="space-y-6">
+                <div class="border-b-2 border-insight-gold pb-3">
+                    <h3 class="text-lg font-bold text-insight-navy"><span class="lang-ar">الحوكمة والامتثال الرقابي</span><span class="lang-en">Corporate Governance & Compliance</span></h3>
+                </div>
+                <ul class="space-y-3 text-sm text-gray-600 font-light">
+                    <li><span class="lang-ar">سياسات وإجراءات الإلتزام الرقابي</span><span class="lang-en">Compliance consultancy</span></li>
+                    <li><span class="lang-ar">سياسات وإجراءات حوكمة الشركات</span><span class="lang-en">Corporate governance consultancy</span></li>
+                    <li><span class="lang-ar">إعداد حزمة تقارير هيئة أسواق المال</span><span class="lang-en">CMA reporting consultancy</span></li>
+                    <li><span class="lang-ar">إعداد حزمة تقارير وحدة تنظيم التأمين</span><span class="lang-en">IRU reporting consultancy</span></li>
+                    <li><span class="lang-ar">إعداد حزمة تقارير وزارة التجارة والصناعة</span><span class="lang-en">MOCI Reporting</span></li>
+                    <li><span class="lang-ar">سياسات وإجراءات مجلس الإدارة</span><span class="lang-en">Board of directors policies and procedures</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
 
-    function checkAuthAndPlay() {
-        if (!currentUserData) { alert("🚨 لا يمكنك دخول طاولة اللعب إلا بعد تسجيل حسابك أولاً لحفظ السكور."); openView('view-register'); }
-        else { openView('view-game'); socket.emit('join_baloot_table', { username: currentUserData.username }); }
-    }
+    <!-- Target Audience Section -->
+    <section id="audience" class="max-w-7xl mx-auto px-6 py-24 border-b border-gray-100 scroll-mt-24 bg-gray-50/50">
+        <div class="mb-12">
+            <h2 class="text-xs uppercase tracking-widest text-insight-gold font-bold mb-3"><span class="lang-ar">الفئة المستهدفة</span><span class="lang-en">Target Audience</span></h2>
+            <p class="text-xl text-gray-600 font-light"><span class="lang-ar">نحن فخورون بتقديم خدماتنا الاستشارية لصناع القرار والمنشآت المالية:</span><span class="lang-en">We serve and empower industry leaders and financial ecosystems:</span></p>
+        </div>
 
-    socket.on('baloot_state_update', (data) => {
-        document.getElementById('score-us').innerText = data.scores.us;
-        document.getElementById('score-them').innerText = data.scores.them;
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm font-medium">
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">مجلس الإدارة</span><span class="lang-en">Board OF Directors</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">لجنة المخاطر والامتثال التابعة لمجلس الإدارة</span><span class="lang-en">Board Risk and Compliance Committee</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">لجنة التدقيق</span><span class="lang-en">Audit Committee</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">لجنة الترشيحات والمكافآت والحوكمة (BNRC)</span><span class="lang-en">BNRC Committee</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">الرؤساء التنفيذيون</span><span class="lang-en">CEOs</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">الرؤساء التنفيذيون للمخاطر</span><span class="lang-en">Chief Risk Officers</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">الرؤساء التنفيذيون لتقنية أمن المعلومات</span><span class="lang-en">Chief Information security officers</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">الرؤساء التنفيذيون للاستراتيجية</span><span class="lang-en">Chief Strategy Officers</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">مسؤولو المخاطر</span><span class="lang-en">Risk officers</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">مديرو ومسؤولو الحوكمة المؤسسية</span><span class="lang-en">Corporate Governance Managers and Officers</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">مديرو ومسؤولو الامتثال</span><span class="lang-en">Compliance Managers and Officers</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">شركات التأمين وإعادة التأمين</span><span class="lang-en">Insurance and Reinsurance Company's</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">البنوك والمصارف</span><span class="lang-en">Banks</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">شركات الاستثمار</span><span class="lang-en">Investment Company's</span></div>
+            <div class="border border-gray-200 p-4 bg-white flex items-center justify-between hover:shadow-md transition-shadow"><span class="lang-ar">جميع المؤسسات المالية في منطقة الشرق الأوسط وشمال أفريقيا</span><span class="lang-en">All Financial Institutions in MENA Region</span></div>
+        </div>
+    </section>
+
+    <!-- Footer / Contact Info Section -->
+    <footer id="contact" class="bg-insight-navy text-white px-6 py-20 scroll-mt-24">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 pt-4">
+            <div>
+                <h2 class="text-2xl font-bold tracking-tight mb-6 text-insight-gold"><span class="lang-ar">ابدأ المحادثة معنا</span><span class="lang-en">Connect With Us</span></h2>
+                <p class="text-sm text-gray-300 font-light leading-relaxed max-w-sm mb-8">
+                    <span class="lang-ar">يسعدنا تواصلكم معنا للرد على أي استفسارات أو مناقشة سبل التعاون المشترك وتطوير أعمالكم.</span>
+                    <span class="lang-en">Please don’t hesitate to contact us for any inquiries or clarification needed. We look forward to hearing from you.</span>
+                </p>
+                <div class="space-y-6">
+                    <div class="space-y-2 text-xs font-bold tracking-wider uppercase">
+                        <p class="text-gray-400"><span class="lang-ar">البريد الإلكتروني الرسمي</span><span class="lang-en">Official Corporate Email</span></p>
+                        <a href="mailto:info@insightconsultancykw.com" class="text-base text-insight-gold lowercase block border-b border-transparent hover:border-insight-gold w-fit pt-1 pb-1">info@insightconsultancykw.com</a>
+                    </div>
+                    
+                    <!-- قسم اللوكيشن / موقعنا الخرائط -->
+                    <div class="space-y-2 text-xs font-bold tracking-wider uppercase">
+                        <p class="text-gray-400"><span class="lang-ar">موقعنا</span><span class="lang-en">Our Location</span></p>
+                        <a href="https://google.com/maps?q=برج+دار+العوضي،+شارع+أحمد+الجابر،+مدينة+الكويت&ftid=0x3fcf8491813f08ed:0xdb83aae35feaad27&entry=gps" target="_blank" class="text-sm text-white block hover:text-insight-gold transition-colors flex items-center gap-2 pt-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-insight-gold">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                            </svg>
+                            <span class="lang-ar">برج دار العوضي، شارع أحمد الجابر، مدينة الكويت</span>
+                            <span class="lang-en">Dar Al Awadi Tower, Ahmed Al Jaber St, Kuwait City</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 bg-white/5 p-8 border border-white/10 rounded-lg">
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-insight-gold mb-2"><span class="lang-ar">الإدارة التنفيذية</span><span class="lang-en">Executive Management</span></h4>
+                    <p class="text-base font-bold text-white">Mahmoud Gad</p>
+                    <p class="text-xs text-gray-400"><span class="lang-ar">الرئيس التنفيذي</span><span class="lang-en">CEO</span></p>
+                </div>
+                <div>
+                    <!-- تم إبقاء الرقم العام وحذف رقم الـ CEO الخاص بناءً على الطلب الرسمي -->
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-insight-gold mb-2"><span class="lang-ar">رقم التواصل (الكويت)</span><span class="lang-en">Kuwait Contact</span></h4>
+                    <a href="tel:+96550345557" class="text-sm font-medium text-white block hover:underline dir-ltr text-right inline-block">+965 50345557</a>
+                </div>
+                <div class="sm:col-span-2 pt-4 border-t border-white/10">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-insight-gold mb-2"><span class="lang-ar">رقم الاتصال (الإمارات)</span><span class="lang-en">UAE Contact</span></h4>
+                    <a href="tel:+971525420571" class="text-sm font-medium text-white block hover:underline dir-ltr text-right inline-block">+971 525420571</a>
+                </div>
+            </div>
+        </div>
         
-        // تحديث كروت البوتات على كراسيهم الثلاثة بالملي
-        document.getElementById('seat-east').innerHTML = `🤖 خالد<br><span style="font-size:10px; color:#aaa;">🎴 ${data.botCardCounts.east} كروت</span>`;
-        document.getElementById('seat-north').innerHTML = `🤖 مساعد<br><span style="font-size:10px; color:#aaa;">🎴 ${data.botCardCounts.north} كروت</span>`;
-        document.getElementById('seat-west').innerHTML = `🤖 ناصر<br><span style="font-size:10px; color:#aaa;">🎴 ${data.botCardCounts.west} كروت</span>`;
+        <div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-4">
+            <p>&copy; 2026 Insight Consultancy. All rights reserved.</p>
+            <p>insightconsultancykw.com</p>
+        </div>
+    </footer>
 
-        // إضافة توهج أخضر على مقعد اللاعب الذي عليه الدور في اللعب الحين
-        document.getElementById('my-seat-name').classList.toggle('active-turn-glow', data.currentTurn === 0);
-        document.getElementById('seat-east').classList.toggle('active-turn-glow', data.currentTurn === 1);
-        document.getElementById('seat-north').classList.toggle('active-turn-glow', data.currentTurn === 2);
-        document.getElementById('seat-west').classList.toggle('active-turn-glow', data.currentTurn === 3);
-
-        if(data.buyType) {
-            document.getElementById('active-buyer-lbl').innerText = `المشترى: ${data.buyerName}`;
-            document.getElementById('table-buy-type-lbl').innerText = `نوع اللعب: [ ${data.buyType} ]`;
-            document.getElementById('kitty-area').style.display = 'none';
-            document.getElementById('buy-decision-panel').style.display = 'none';
+    <!-- JavaScript Toggle Language Logic -->
+    <script>
+        function toggleLanguage() {
+            const html = document.documentElement;
+            if (html.getAttribute('lang') === 'ar') {
+                html.setAttribute('lang', 'en');
+                html.setAttribute('dir', 'ltr');
+            } else {
+                html.setAttribute('lang', 'ar');
+                html.setAttribute('dir', 'rtl');
+            }
         }
-
-        if(data.kittyCard && !data.buyType) {
-            const isRed = (data.kittyCard.suit === '♥' || data.kittyCard.suit === '♦') ? 'red-suit' : '';
-            document.getElementById('kitty-card-display').innerHTML = `
-                <div class="card-asset ${isRed}" style="cursor: default; margin:0 auto;">
-                    <div>${data.kittyCard.val}</div>
-                    <div style="text-align:center; font-size:22px;">${data.kittyCard.suit}</div>
-                </div>
-            `;
-        }
-
-        // مسح وعرض الكروت الملعوبة في الساحة المتقاطعة بدقة
-        document.getElementById('slot-south').innerHTML = "";
-        document.getElementById('slot-north').innerHTML = "";
-        document.getElementById('slot-east').innerHTML = "";
-        document.getElementById('slot-west').innerHTML = "";
-
-        data.floorCards.forEach(item => {
-            const isRed = (item.card.suit === '♥' || item.card.suit === '♦') ? 'red-suit' : '';
-            const cardHtml = `
-                <div class="card-asset ${isRed}" style="cursor: default; width:44px; height:66px; font-size:12px;">
-                    <div>${item.card.val}</div>
-                    <div style="text-align:center; font-size:18px;">${item.card.suit}</div>
-                </div>
-            `;
-            if (item.pos === 'south') document.getElementById('slot-south').innerHTML = cardHtml;
-            if (item.pos === 'north') document.getElementById('slot-north').innerHTML = cardHtml;
-            if (item.pos === 'east') document.getElementById('slot-east').innerHTML = cardHtml;
-            if (item.pos === 'west') document.getElementById('slot-west').innerHTML = cardHtml;
-        });
-
-        if(data.gameLog && data.gameLog.length > 0) {
-            document.getElementById('table-live-log').innerText = data.gameLog[data.gameLog.length - 1];
-        }
-
-        const handWrapper = document.getElementById('hand-cards-wrapper');
-        handWrapper.innerHTML = "";
-        data.playerCards.forEach(card => {
-            const isRed = (card.suit === '♥' || card.suit === '♦') ? 'red-suit' : '';
-            handWrapper.innerHTML += `
-                <div class="card-asset ${isRed}" onclick="playCardOnFloor('${card.suit}', '${card.val}')">
-                    <div>${card.val}</div>
-                    <div style="text-align:center; font-size:22px;">${card.suit}</div>
-                </div>
-            `;
-        });
-    });
-
-    // إطلاق نافذة كملنا النهائية لإعلان الأبناط والمشاريع الكلية للجولة
-    socket.on('baloot_show_summary_window', (scores) => {
-        document.getElementById('res-us-aklat').innerText = scores.usAklat;
-        document.getElementById('res-them-aklat').innerText = scores.themAklat;
-        document.getElementById('res-us-proj').innerText = scores.usProjects;
-        document.getElementById('res-them-proj').innerText = scores.themProjects;
-        document.getElementById('summary-popup-window').style.display = 'flex';
-    });
-
-    function playCardOnFloor(suit, val) { socket.emit('baloot_play_card', { suit: suit, val: val }); }
-    function submitBuy(decision) { socket.emit('baloot_buy_decision', { decision: decision }); }
-
-    function sendLiveChatMessage() {
-        const input = document.getElementById('chatMessageInput'); const text = input.value.trim(); if(!text) return;
-        socket.emit('send_global_chat_msg', { text: text }); input.value = "";
-    }
-    socket.on('receive_global_chat_msg', (data) => {
-        const box = document.getElementById('global-chat-box');
-        if (box) { box.innerHTML += `<div><strong style="color: var(--luxury-gold);">${data.username}:</strong> <span style="color: #fff;">${data.text}</span></div>`; box.scrollTop = box.scrollHeight; }
-    });
-</script>
+    </script>
 </body>
 </html>
