@@ -101,7 +101,6 @@
         <div class="hub-title">ديوانية البلوت</div>
         <div class="hub-subtitle">المنصة الاحترافية الكبرى للألعاب والتنافس الخليجي</div>
 
-        <!-- معلومات المستخدم المسجل في الأعلى إن وجدت لتذكر المتصفح -->
         <div id="user-welcome-tag" style="font-size: 13px; color: var(--luxury-gold); font-weight: bold; margin-bottom: 15px; display:none;"></div>
 
         <div class="menu-grid-layout">
@@ -132,7 +131,6 @@
     <div class="view-layout" id="view-register">
         <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">حساب جديد</div><div></div></div>
         
-        <!-- استمارة التسجيل لأول مرة -->
         <div class="form-container" id="box-signup">
             <div class="form-title">إنشاء حساب بلوت رسمي</div>
             <input type="text" id="reg-user" class="input-field" placeholder="اسم المستخدم (نيكنيم)">
@@ -143,7 +141,6 @@
             <div class="switch-form-link" onclick="toggleForm(false)">لديك حساب بالفعل؟ سجل دخولك</div>
         </div>
 
-        <!-- استمارة تسجيل الدخول للمتصفح -->
         <div class="form-container" id="box-login" style="display: none;">
             <div class="form-title">تسجيل دخول الأعضاء</div>
             <input type="email" id="login-email" class="input-field" placeholder="البريد الإلكتروني">
@@ -153,7 +150,7 @@
         </div>
     </div>
 
-    <!-- 🟢 شاشة صكة البلوت الحقيقية (لا يفتح إلا للمسجلين) -->
+    <!-- 🟢 شاشة صكة البلوت الحقيقية -->
     <div class="view-layout" id="view-game">
         <div class="top-nav-bar">
             <div class="nav-back-btn" onclick="closeToHub()">◀ انسحاب</div>
@@ -184,13 +181,13 @@
         </div>
     </div>
 
-    <!-- 💎 شاشة الحزم والأرباح التجارية (أسعار كملنا التنافسية) -->
+    <!-- 💎 شاشة الحزم والأرباح التجارية -->
     <div class="view-layout" id="view-packages">
         <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">متجر حزم الديوانية</div><div></div></div>
         <div class="packages-list">
             <div class="pack-item">
                 <div class="pack-info"><div class="pack-name">حزمة التذكرة الفضية 🎟️</div><div class="pack-perks">تمنحك 15,000 رصيد أوراق لدخول غرف المحترفين</div></div>
-                <button class="pack-price-btn" onclick="alert('💰 جاري توجيهك لبوابة الدفع لشراء الحزمة الفضية بقيمة 1.5 د.ك (ما يعادل 18 ريال)')">1.5 د.ك</button>
+                <button class="pack-price-btn" onclick="alert('💰 جاري توجيهك لبوابة الدفع لشراء الحزمة الفضية بقيمة 1.5 د.ك')">1.5 د.ك</button>
             </div>
             <div class="pack-item">
                 <div class="pack-info"><div class="pack-name">الاشتراك الذهبي الملكي (شهري) 👑</div><div class="pack-perks">ألوان متوهجة للنك، حصانة كاملة من الطرد، إنشاء رومات خاصة</div></div>
@@ -203,7 +200,7 @@
         </div>
     </div>
 
-    <!-- 💬 شاشة المحادثة المباشرة السلسة العامة -->
+    <!-- 💬 شاشة المحادثة المباشرة السلسة -->
     <div class="view-layout" id="view-chat">
         <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">الدردشة العامة المباشرة</div><div></div></div>
         <div class="chat-container">
@@ -222,7 +219,6 @@
     let activeView = "view-hub";
     let currentUserData = null;
 
-    // 🔄 عند تحميل الصفحة: فحص تذكر المتصفح التلقائي للاعب
     window.onload = function() {
         const savedUser = localStorage.getItem('baloot_user');
         if (savedUser) {
@@ -250,7 +246,6 @@
         document.getElementById('box-login').style.display = showSignup ? 'none' : 'block';
     }
 
-    // 🚀 عملية تسجيل الحساب وحفظه بالمتصفح تلقائياً
     function actionRegister() {
         const username = document.getElementById('reg-user').value.trim();
         const email = document.getElementById('reg-email').value.trim();
@@ -258,17 +253,16 @@
         const country = document.getElementById('reg-country').value.trim();
 
         if(!username || !email || !pass || !country) {
-            alert("⚠️ يرجى تعبئة كافة الحقول: اسم المستخدم، الايميل، الباسورد، والدولة للتسجيل!");
+            alert("⚠️ يرجى تعبئة كافة الحقول للتسجيل!");
             return;
         }
 
         currentUserData = { username, email, country };
-        localStorage.setItem('baloot_user', JSON.stringify(currentUserData)); // الحفظ في المتصفح العالمي
-        alert(`🎉 تم إنشاء حسابك بنجاح يا ${username}! المتصفح تذكرك الحين ويمكنك دخول اللعب مباشرة.`);
+        localStorage.setItem('baloot_user', JSON.stringify(currentUserData));
+        alert(`🎉 تم إنشاء حسابك بنجاح يا ${username}!`);
         location.reload();
     }
 
-    // 🔑 عملية تسجيل الدخول التقليدية
     function actionLogin() {
         const email = document.getElementById('login-email').value.trim();
         const pass = document.getElementById('login-pass').value.trim();
@@ -280,14 +274,13 @@
 
         currentUserData = { username: "لاعب محترف", email: email, country: "الكويت" };
         localStorage.setItem('baloot_user', JSON.stringify(currentUserData));
-        alert("🔑 تم تسجيل دخولك بنجاح وتم تذكر بياناتك!");
+        alert("🔑 تم تسجيل دخولك بنجاح!");
         location.reload();
     }
 
-    // 🃏 التحقق الأمني: منع الزوار غير المسجلين من اللعب تماماً كالمواقع العالمية
     function checkAuthAndPlay() {
         if (!currentUserData) {
-            alert("🚨 عذراً! لا يمكنك دخول طاولة اللعب إلا بعد تسجيل حسابك أولاً كالمواقع العالمية لحفظ النقاط والسكور. يرجى التسجيل الحين في خطوة واحدة دغري!");
+            alert("🚨 لا يمكنك دخول طاولة اللعب إلا بعد تسجيل حسابك أولاً لحفظ السكور.");
             openView('view-register');
         } else {
             openView('view-game');
@@ -295,7 +288,6 @@
         }
     }
 
-    // إدارة البلوت لايف وشحن الكروت والسوكيت
     socket.on('baloot_state_update', (data) => {
         document.getElementById('score-us').innerText = data.scores.us;
         document.getElementById('score-them').innerText = data.scores.them;
@@ -321,7 +313,7 @@
         data.playerCards.forEach(card => {
             const isRed = (card.suit === '♥' || card.suit === '♦') ? 'red-suit' : '';
             handWrapper.innerHTML += `
-                <div class="card-asset ${isRed}" onclick="socket.emit('baloot_play_card', {suit:'${card.suit}', val:'${card.val}'})">
+                <div class="card-asset ${isRed}" onclick="playCardOnFloor('${card.suit}', '${card.val}')">
                     <div>${card.val}</div>
                     <div style="text-align:center; font-size:20px;">${card.suit}</div>
                 </div>
@@ -329,9 +321,13 @@
         });
     });
 
+    // دالة الرمي المصلحة والمطابقة بالملي للسيرفر
+    function playCardOnFloor(suit, val) {
+        socket.emit('baloot_play_card', { suit: suit, val: val });
+    }
+
     function submitBuy(decision) { socket.emit('baloot_buy_decision', { decision: decision }); }
 
-    // 💬 إدارة شات المحادثة المباشرة السلسة
     function sendLiveChatMessage() {
         const input = document.getElementById('chatMessageInput');
         const text = input.value.trim();
