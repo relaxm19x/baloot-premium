@@ -53,30 +53,39 @@
         .submit-btn { width: 100%; padding: 12px; background: var(--luxury-gold); border: none; border-radius: 10px; color: #000; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 5px; }
         .switch-form-link { font-size: 12px; color: #8fa39b; text-align: center; margin-top: 15px; cursor: pointer; display: block; text-decoration: underline; }
 
-        /* 🟢 طاولة البلوت الاحترافية المرنة (نظام كملنا) 🟢 */
+        /* 🟢 طاولة البلوت المحدثة (نظام كملنا الفخم) 🟢 */
         .baloot-table-felt {
             flex: 1; width: 100%; max-width: 460px; background: radial-gradient(circle, #225c4a 0%, #113328 100%);
-            border: 6px solid #2e1a0f; border-radius: 24px; margin: 8px 0; position: relative; display: flex; flex-direction: column; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+            border: 6px solid #2e1a0f; border-radius: 24px; margin: 4px 0; position: relative; display: flex; flex-direction: column; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
         }
-        .score-box-real { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.85); border: 1px solid var(--luxury-gold); border-radius: 10px; padding: 6px 12px; font-size: 12px; z-index: 30; }
-        .score-row-grid { display: flex; gap: 14px; font-weight: 900; margin-top: 2px; }
+        .score-box-real { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.9); border: 1.5px solid var(--luxury-gold); border-radius: 10px; padding: 6px 12px; font-size: 11px; z-index: 30; line-height: 1.4; }
         
-        .seat-label { position: absolute; background: rgba(0,0,0,0.75); padding: 5px 12px; border-radius: 14px; font-size: 11px; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
-        .pos-north { top: 12px; left: 50%; transform: translateX(-50%); color: #ff7675; }
-        .pos-south { bottom: 120px; left: 50%; transform: translateX(-50%); color: #ffe066; border-color: var(--luxury-gold); }
-        .pos-east { right: 12px; top: 35%; transform: translateY(-50%); }
-        .pos-west { left: 12px; top: 35%; transform: translateY(-50%); }
+        .seat-label { position: absolute; background: rgba(0,0,0,0.85); padding: 6px 14px; border-radius: 14px; font-size: 12px; font-weight: bold; border: 1px solid rgba(255,255,255,0.15); text-align: center; }
+        .pos-north { top: 12px; left: 50%; transform: translateX(-50%); border-color: #ff7675; }
+        .pos-south { bottom: 135px; left: 50%; transform: translateX(-50%); color: #ffe066; border-color: var(--luxury-gold); }
+        .pos-east { right: 12px; top: 32%; transform: translateY(-50%); }
+        .pos-west { left: 12px; top: 32%; transform: translateY(-50%); }
 
         .kitty-center-box { position: absolute; top: 32%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 10; }
-        .floor-arena { position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); width: 220px; height: 110px; display: flex; justify-content: center; align-items: center; gap: 6px; }
+        .floor-arena { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 260px; height: 160px; position: relative; }
         
-        .card-asset { width: 46px; height: 68px; background: var(--card-white); color: #000; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between; padding: 4px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4); border: 1px solid #ddd; }
-        .card-asset:hover { transform: translateY(-12px); border-color: var(--luxury-gold); }
+        /* توزيع الكروت الملعوبة بشكل متقاطع احترافي على الطاولة */
+        .played-card-slot { position: absolute; transition: all 0.3s ease; }
+        .slot-south { bottom: 5px; left: 50%; transform: translateX(-50%); }
+        .slot-north { top: 5px; left: 50%; transform: translateX(-50%); }
+        .slot-east { right: 5px; top: 50%; transform: translateY(-50%); }
+        .slot-west { left: 5px; top: 50%; transform: translateY(-50%); }
+
+        .card-asset { width: 48px; height: 72px; background: var(--card-white); color: #000; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between; padding: 5px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4); border: 1px solid #ddd; user-select: none; }
+        .card-asset:hover { transform: translateY(-15px); border-color: var(--luxury-gold); box-shadow: 0 8px 16px rgba(204,164,59,0.4); }
         .red-suit { color: #d63031; }
-        .hand-cards-dock { position: absolute; bottom: 12px; left: 0; width: 100%; display: flex; justify-content: center; gap: 4px; padding: 0 8px; z-index: 20; }
+        .hand-cards-dock { position: absolute; bottom: 12px; left: 0; width: 100%; display: flex; justify-content: center; gap: 4px; padding: 0 8px; z-index: 20; overflow-x: auto; }
         
-        .buy-panel-bar { position: absolute; top: 62%; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; background: rgba(0,0,0,0.9); padding: 8px; border-radius: 14px; border: 1.5px solid var(--luxury-gold); z-index: 100; }
-        .buy-action-btn { padding: 8px 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; color: white; }
+        .buy-panel-bar { position: absolute; top: 64%; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; background: rgba(0,0,0,0.95); padding: 10px; border-radius: 16px; border: 1.5px solid var(--luxury-gold); z-index: 100; }
+        .buy-action-btn { padding: 10px 18px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; color: white; }
+
+        /* سجل الأكشن وشات الطاولة التلقائي لعرض المشاريع واللعب */
+        .table-action-log { position: absolute; bottom: 95px; left: 5%; width: 90%; height: 35px; background: rgba(0,0,0,0.8); border-radius: 8px; font-size: 11px; color: #2ecc71; padding: 8px; text-align: center; overflow: hidden; border: 1px solid #1f332b; }
 
         /* 💰 حزم الشات والألعاب (أسعار كملنا) */
         .packages-list { width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
@@ -96,7 +105,6 @@
 </head>
 <body>
 
-    <!-- 📱 الشاشة الرئيسية لمنصة البلوت بأيقونات واضحة وسهلة -->
     <div class="hub-screen" id="view-hub">
         <div class="hub-title">ديوانية البلوت</div>
         <div class="hub-subtitle">المنصة الاحترافية الكبرى للألعاب والتنافس الخليجي</div>
@@ -127,9 +135,8 @@
         </div>
     </div>
 
-    <!-- 📝 شاشة التسجيل وتذكر المتصفح العالمي -->
     <div class="view-layout" id="view-register">
-        <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">حساب جديد</div><div></div></div>
+        <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">إدارة الحساب</div><div></div></div>
         
         <div class="form-container" id="box-signup">
             <div class="form-title">إنشاء حساب بلوت رسمي</div>
@@ -150,44 +157,54 @@
         </div>
     </div>
 
-    <!-- 🟢 شاشة صكة البلوت الحقيقية -->
     <div class="view-layout" id="view-game">
         <div class="top-nav-bar">
             <div class="nav-back-btn" onclick="closeToHub()">◀ انسحاب</div>
-            <div style="font-weight:900; color: var(--luxury-gold);" id="active-rule-lbl">المشترى: جاري الفحص..</div>
+            <div style="font-weight:900; color: var(--luxury-gold);" id="active-buyer-lbl">المشترى: جاري الفحص..</div>
             <div></div>
         </div>
         <div class="baloot-table-felt">
             <div class="score-box-real">
-                <div class="score-row-grid">
-                    <div>لنا: <span id="score-us" style="color:#2ecc71;">0</span></div>
-                    <div>لهم: <span id="score-them" style="color:#e74c3c;">0</span></div>
-                </div>
+                <div>لنا: <span id="score-us" style="color:#2ecc71; font-weight:bold;">0</span></div>
+                <div>لهم: <span id="score-them" style="color:#e74c3c; font-weight:bold;">0</span></div>
+                <div id="table-buy-type-lbl" style="color:var(--luxury-gold); font-size:10px; margin-top:3px; border-top:1px solid #333;">لم يشتر أحد بعد</div>
             </div>
-            <div class="seat-label pos-north">🤖 مساعد (خويك)</div>
-            <div class="seat-label pos-east">🤖 خالد</div>
-            <div class="seat-label pos-west">🤖 nasser</div>
-            <div class="seat-label pos-south" id="my-seat-name">👑 بو محمد</div>
+            
+            <div class="seat-label pos-north" id="seat-north">🤖 مساعد<br><span style="font-size:10px; color:#aaa;">🎴 5 كروت</span></div>
+            <div class="seat-label pos-east" id="seat-east">🤖 خالد<br><span style="font-size:10px; color:#aaa;">🎴 5 كروت</span></div>
+            <div class="seat-label pos-west" id="seat-west">🤖 ناصر<br><span style="font-size:10px; color:#aaa;">🎴 5 كروت</span></div>
+            <div class="seat-label pos-south" id="my-seat-name">👑 بو محمد<br><span style="font-size:10px; color:var(--luxury-gold);">أنت</span></div>
 
-            <div class="kitty-center-box" id="kitty-area"><div id="kitty-card-display"></div></div>
-            <div class="floor-arena" id="floor-cards-wrapper"></div>
+            <div class="kitty-center-box" id="kitty-area">
+                <div style="font-size:10px; color:#fff; margin-bottom:2px;">كرت المشترى</div>
+                <div id="kitty-card-display"></div>
+            </div>
+            
+            <div class="floor-arena" id="floor-cards-wrapper">
+                <div id="slot-south" class="played-card-slot slot-south"></div>
+                <div id="slot-north" class="played-card-slot slot-north"></div>
+                <div id="slot-east" class="played-card-slot slot-east"></div>
+                <div id="slot-west" class="played-card-slot slot-west"></div>
+            </div>
+
+            <div class="table-action-log" id="table-live-log">جاري بدء الصكة والتحضير..</div>
 
             <div class="buy-panel-bar" id="buy-decision-panel">
                 <button class="buy-action-btn" style="background: #e67e22;" onclick="submitBuy('صن')">صن 💥</button>
                 <button class="buy-action-btn" style="background: #2980b9;" onclick="submitBuy('حكم')">حكم 🛡️</button>
                 <button class="buy-action-btn" style="background: #7f8c8d;" onclick="submitBuy('بس')">بس 🔒</button>
             </div>
+            
             <div class="hand-cards-dock" id="hand-cards-wrapper"></div>
         </div>
     </div>
 
-    <!-- 💎 شاشة الحزم والأرباح التجارية -->
     <div class="view-layout" id="view-packages">
         <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">متجر حزم الديوانية</div><div></div></div>
         <div class="packages-list">
             <div class="pack-item">
                 <div class="pack-info"><div class="pack-name">حزمة التذكرة الفضية 🎟️</div><div class="pack-perks">تمنحك 15,000 رصيد أوراق لدخول غرف المحترفين</div></div>
-                <button class="pack-price-btn" onclick="alert('💰 جاري توجيهك لبوابة الدفع لشراء الحزمة الفضية بقيمة 1.5 د.ك')">1.5 د.ك</button>
+                <button class="pack-price-btn" onclick="alert('💰 جاري توجيهك لبوابة الدفع لشراء الحزمة بقيمة 1.5 د.ك')">1.5 د.ك</button>
             </div>
             <div class="pack-item">
                 <div class="pack-info"><div class="pack-name">الاشتراك الذهبي الملكي (شهري) 👑</div><div class="pack-perks">ألوان متوهجة للنك، حصانة كاملة من الطرد، إنشاء رومات خاصة</div></div>
@@ -200,7 +217,6 @@
         </div>
     </div>
 
-    <!-- 💬 شاشة المحادثة المباشرة السلسة -->
     <div class="view-layout" id="view-chat">
         <div class="top-nav-bar"><div class="nav-back-btn" onclick="closeToHub()">◀ القائمة</div><div class="logo-title">الدردشة العامة المباشرة</div><div></div></div>
         <div class="chat-container">
@@ -225,7 +241,7 @@
             currentUserData = JSON.parse(savedUser);
             document.getElementById('user-welcome-tag').innerText = `🏆 مرحباً بعودتك يا الكابتن: ${currentUserData.username}`;
             document.getElementById('user-welcome-tag').style.display = 'block';
-            document.getElementById('my-seat-name').innerText = `👑 ${currentUserData.username} (أنت)`;
+            document.getElementById('my-seat-name').innerHTML = `👑 ${currentUserData.username}<br><span style="font-size:10px; color:var(--luxury-gold);">أنت</span>`;
         }
     };
 
@@ -253,13 +269,13 @@
         const country = document.getElementById('reg-country').value.trim();
 
         if(!username || !email || !pass || !country) {
-            alert("⚠️ يرجى تعبئة كافة الحقول للتسجيل!");
+            alert("⚠️ يرجى تعبئة كافة الحقول للتسجيل وحفظ بياناتك!");
             return;
         }
 
         currentUserData = { username, email, country };
         localStorage.setItem('baloot_user', JSON.stringify(currentUserData));
-        alert(`🎉 تم إنشاء حسابك بنجاح يا ${username}!`);
+        alert(`🎉 تم إنشاء حسابك بنجاح وبدء الحفظ التلقائي بالمتصفح العالمي يا ${username}!`);
         location.reload();
     }
 
@@ -274,13 +290,13 @@
 
         currentUserData = { username: "لاعب محترف", email: email, country: "الكويت" };
         localStorage.setItem('baloot_user', JSON.stringify(currentUserData));
-        alert("🔑 تم تسجيل دخولك بنجاح!");
+        alert("🔑 تم تسجيل دخولك بنجاح تذكر المتصفح!");
         location.reload();
     }
 
     function checkAuthAndPlay() {
         if (!currentUserData) {
-            alert("🚨 لا يمكنك دخول طاولة اللعب إلا بعد تسجيل حسابك أولاً لحفظ السكور.");
+            alert("🚨 عذراً! لا يمكنك دخول غرف وطاولات اللعب إلا بعد تسجيل حسابك وحفظ نقاطك.");
             openView('view-register');
         } else {
             openView('view-game');
@@ -288,12 +304,19 @@
         }
     }
 
+    // الاستقبال والربط الذكي المتكامل وتوزيع الكروت على الكراسي
     socket.on('baloot_state_update', (data) => {
         document.getElementById('score-us').innerText = data.scores.us;
         document.getElementById('score-them').innerText = data.scores.them;
         
+        // تحديث عدد الكروت المتبقية في يد كل بوت
+        document.getElementById('seat-east').innerHTML = `🤖 خالد<br><span style="font-size:10px; color:#aaa;">🎴 ${data.botCardCounts.east} كروت</span>`;
+        document.getElementById('seat-north').innerHTML = `🤖 مساعد<br><span style="font-size:10px; color:#aaa;">🎴 ${data.botCardCounts.north} كروت</span>`;
+        document.getElementById('seat-west').innerHTML = `🤖 ناصر<br><span style="font-size:10px; color:#aaa;">🎴 ${data.botCardCounts.west} كروت</span>`;
+
         if(data.buyType) {
-            document.getElementById('active-rule-lbl').innerText = `اللعب الحالي: [ ${data.buyType} ]`;
+            document.getElementById('active-buyer-lbl').innerText = `المشترى: ${data.buyerName}`;
+            document.getElementById('table-buy-type-lbl').innerText = `نوع اللعب: [ ${data.buyType} ]`;
             document.getElementById('kitty-area').style.display = 'none';
             document.getElementById('buy-decision-panel').style.display = 'none';
         }
@@ -301,13 +324,39 @@
         if(data.kittyCard && !data.buyType) {
             const isRed = (data.kittyCard.suit === '♥' || data.kittyCard.suit === '♦') ? 'red-suit' : '';
             document.getElementById('kitty-card-display').innerHTML = `
-                <div class="card-asset ${isRed}" style="cursor: default;">
+                <div class="card-asset ${isRed}" style="cursor: default; margin:0 auto;">
                     <div>${data.kittyCard.val}</div>
-                    <div style="text-align:center; font-size:20px;">${data.kittyCard.suit}</div>
+                    <div style="text-align:center; font-size:22px;">${data.kittyCard.suit}</div>
                 </div>
             `;
         }
 
+        // رص وعرض الكروت الملعوبة في ساحة الأرض المتقاطعة بدقة
+        document.getElementById('slot-south').innerHTML = "";
+        document.getElementById('slot-north').innerHTML = "";
+        document.getElementById('slot-east').innerHTML = "";
+        document.getElementById('slot-west').innerHTML = "";
+
+        data.floorCards.forEach(item => {
+            const isRed = (item.card.suit === '♥' || item.card.suit === '♦') ? 'red-suit' : '';
+            const cardHtml = `
+                <div class="card-asset ${isRed}" style="cursor: default; width:44px; height:66px; font-size:12px;">
+                    <div>${item.card.val}</div>
+                    <div style="text-align:center; font-size:18px;">${item.card.suit}</div>
+                </div>
+            `;
+            if (item.pos === 'south') document.getElementById('slot-south').innerHTML = cardHtml;
+            if (item.pos === 'north') document.getElementById('slot-north').innerHTML = cardHtml;
+            if (item.pos === 'east') document.getElementById('slot-east').innerHTML = cardHtml;
+            if (item.pos === 'west') document.getElementById('slot-west').innerHTML = cardHtml;
+        });
+
+        // تحديث سجل الأكشن والمشاريع في الطاولة لايف
+        if(data.gameLog && data.gameLog.length > 0) {
+            document.getElementById('table-live-log').innerText = data.gameLog[data.gameLog.length - 1];
+        }
+
+        // عرض كروت اليد الخاصة بك الحية بدقة تامة وبدون أي اختفاء
         const handWrapper = document.getElementById('hand-cards-wrapper');
         handWrapper.innerHTML = "";
         data.playerCards.forEach(card => {
@@ -315,13 +364,12 @@
             handWrapper.innerHTML += `
                 <div class="card-asset ${isRed}" onclick="playCardOnFloor('${card.suit}', '${card.val}')">
                     <div>${card.val}</div>
-                    <div style="text-align:center; font-size:20px;">${card.suit}</div>
+                    <div style="text-align:center; font-size:22px;">${card.suit}</div>
                 </div>
             `;
         });
     });
 
-    // دالة الرمي المصلحة والمطابقة بالملي للسيرفر
     function playCardOnFloor(suit, val) {
         socket.emit('baloot_play_card', { suit: suit, val: val });
     }
@@ -332,15 +380,14 @@
         const input = document.getElementById('chatMessageInput');
         const text = input.value.trim();
         if(!text) return;
-        socket.emit('send_global_chat_msg', { room: 'global', text: text });
+        socket.emit('send_global_chat_msg', { text: text });
         input.value = "";
     }
 
     socket.on('receive_global_chat_msg', (data) => {
         const box = document.getElementById('global-chat-box');
         if (box) {
-            let sender = data.username.includes("المشرف") ? "المشرف" : data.username;
-            box.innerHTML += `<div><strong style="color: var(--luxury-gold);">${sender}:</strong> <span style="color: #fff;">${data.text}</span></div>`;
+            box.innerHTML += `<div><strong style="color: var(--luxury-gold);">${data.username}:</strong> <span style="color: #fff;">${data.text}</span></div>`;
             box.scrollTop = box.scrollHeight;
         }
     });
