@@ -2,256 +2,322 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ADD MORE SHOP - متجر الخدمات الرقمية</title>
-    <script src="https://www.paypal.com/sdk/js?client-id=Af-Ri4yDKZlk0Gd5Z5UdnXa8K3zd8wmWvj6_je7jzUocvVLc8coqL2hkNmksVuDqEg5c4Onxr4gjMeIS&currency=USD"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insight Consultancy | شركة إنسيت للإستشارات</title>
+    <!-- Tailwind CSS for premium corporate design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for elite typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --brand-blue: #00f0ff; /* أزرق سماوي فخم مضيء */
-            --brand-blue-hover: #00bcff;
-            --bg-dark: #070c0e;
-            --panel-bg: #0f181c;
-            --text-muted: #7fa4b0;
-            --white: #ffffff;
+            --font-ar: 'Alexandria', sans-serif;
+            --font-en: 'Inter', sans-serif;
+            /* الألوان الرسمية الفاخرة المستوحاة من اللوجو */
+            --brand-bg: #0f0d22;     /* الكحلي الداكن الملوكي المتطابق مع الشعار */
+            --brand-card: #171432;   /* درجة كحلي متباينة للبطاقات والأقسام */
+            --brand-gold: #c5a059;   /* الذهبي الرسمي للشعار */
         }
-
         body {
-            margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--bg-dark); color: var(--white); min-height: 100vh;
-            display: flex; flex-direction: column; align-items: center; overflow-x: hidden;
+            font-family: var(--font-ar);
+            background-color: var(--brand-bg);
+            color: #ffffff;
+            transition: all 0.3s ease;
         }
-
-        *, *::before, *::after { box-sizing: border-box; }
-
-        .store-header {
-            width: 100%; max-width: 480px; background: var(--panel-bg); padding: 18px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--brand-blue); position: sticky; top: 0; z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0,240,255,0.1);
+        html:lang(en) body {
+            font-family: var(--font-en);
         }
-        .store-logo { font-size: 22px; font-weight: 900; color: var(--brand-blue); letter-spacing: 1px; }
-
-        .main-container { width: 100%; max-width: 480px; padding: 15px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 100px; }
-        .section-title { font-size: 16px; font-weight: bold; color: var(--white); text-align: right; margin-bottom: 5px; border-right: 4px solid var(--brand-blue); padding-right: 8px; }
-
-        .platform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .platform-card {
-            background: var(--panel-bg); border: 1px solid rgba(0, 240, 255, 0.1); border-radius: 14px;
-            padding: 20px 15px; text-align: center; cursor: pointer; transition: all 0.2s ease;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-        }
-        .platform-card:hover { border-color: var(--brand-blue); transform: translateY(-3px); box-shadow: 0 4px 15px rgba(0,240,255,0.15); }
-        .platform-icon-wrapper { font-size: 32px; color: var(--brand-blue); }
-        .platform-name { font-size: 13px; font-weight: bold; color: var(--white); }
-
-        .checkout-box { background: var(--panel-bg); border-radius: 16px; border: 1px solid rgba(0, 240, 255, 0.15); padding: 20px; display: none; flex-direction: column; gap: 15px; }
-        .select-input { width: 100%; background: #0b1316; border: 1px solid #1a2f36; border-radius: 10px; padding: 14px; color: var(--white); outline: none; font-size: 14px; text-align: right; }
-        .select-input:focus { border-color: var(--brand-blue); }
+        .lang-en { display: none; }
+        html:lang(en) .lang-en { display: block; }
+        html:lang(en) .lang-ar { display: none; }
+        html:lang(ar) .lang-ar { display: block; }
         
-        .price-container { font-size: 18px; font-weight: bold; color: var(--brand-blue); text-align: right; background: #0b1316; padding: 12px; border-radius: 10px; border-right: 3px solid var(--brand-blue); }
-
-        .social-connect-box { background: var(--panel-bg); border-radius: 14px; padding: 15px; display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(0, 240, 255, 0.05); }
-        .btn-social { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: bold; color: #fff; transition: 0.2s; }
-        .btn-whatsapp { background: #25d366; }
-        .btn-instagram { background: #e1306c; }
-
-        .secure-pay-badge { display: flex; justify-content: center; gap: 10px; align-items: center; background: #0b1316; padding: 12px; border-radius: 10px; font-size: 12px; color: var(--text-muted); }
-
-        .bottom-nav-bar {
-            width: 100%; max-width: 480px; background: var(--panel-bg); position: fixed; bottom: 0;
-            display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #142327; z-index: 1000;
-        }
-        .nav-item-btn { background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; display: flex; flex-direction: column; gap: 4px; }
-        .nav-active { color: var(--brand-blue) !important; }
+        /* تأثيرات الألوان المخصصة */
+        .bg-brand-navy { background-color: var(--brand-bg); }
+        .bg-brand-card { background-color: var(--brand-card); }
+        .text-brand-gold { color: var(--brand-gold); }
+        .border-brand-gold { border-color: var(--brand-gold); }
+        .hover\:bg-brand-gold:hover { background-color: var(--brand-gold); }
+        
+        /* تحسين التمرير السلس */
+        html { scroll-behavior: smooth; }
     </style>
 </head>
-<body>
+<body class="antialiased selection:bg-amber-500 selection:text-white">
 
-    <div class="store-header">
-        <div class="store-logo">ADD MORE SHOP</div>
-        <div style="font-size: 12px; color: var(--brand-blue); font-weight: bold;"><i class="fa-solid fa-bolt"></i> سحب آلي فوري</div>
-    </div>
+    <!-- Top Navigation & Logo Header -->
+    <header class="border-b border-white/10 sticky top-0 bg-[#0f0d22]/90 backdrop-blur-md z-50">
+        <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+            <!-- Brand Logo Space -->
+            <div class="flex items-center">
+                <img src="logo.jpg" alt="Insight Consultancy Logo" class="h-14 w-auto object-contain">
+            </div>
 
-    <div class="main-container">
-        
-        <div id="section-categories">
-            <div class="section-title">الأقسام والخدمات المتكاملة</div>
-            <div class="platform-grid" style="margin-top: 12px;">
-                <div class="platform-card" onclick="selectPlatform('تيك توك', 'tiktok')">
-                    <div class="platform-icon-wrapper"><i class="fa-brands fa-tiktok"></i></div>
-                    <span class="platform-name">TIKTOK</span>
+            <!-- Quick Navigation & Lang Switcher -->
+            <div class="flex items-center space-x-6 space-x-reverse">
+                <nav class="hidden md:flex items-center space-x-8 space-x-reverse text-sm font-medium tracking-wide text-gray-300">
+                    <a href="#about" class="hover:text-brand-gold transition-colors"><span class="lang-ar">من نحن</span><span class="lang-en">About</span></a>
+                    <a href="#ceo" class="hover:text-brand-gold transition-colors"><span class="lang-ar">كلمة الرئيس</span><span class="lang-en">CEO Message</span></a>
+                    <a href="#services" class="hover:text-brand-gold transition-colors"><span class="lang-ar">خدماتنا</span><span class="lang-en">Services</span></a>
+                    <a href="#audience" class="hover:text-brand-gold transition-colors"><span class="lang-ar">الفئة المستهدفة</span><span class="lang-en">Audience</span></a>
+                    <a href="#contact" class="hover:text-brand-gold transition-colors"><span class="lang-ar">اتصل بنا</span><span class="lang-en">Contact</span></a>
+                </nav>
+                
+                <button onclick="toggleLanguage()" class="border border-brand-gold text-brand-gold px-4 py-1.5 text-xs font-bold uppercase tracking-widest hover:bg-brand-gold hover:text-[#0f0d22] transition-all duration-300 rounded-sm">
+                    <span class="lang-ar">English</span>
+                    <span class="lang-en">العربية</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero / Title Section -->
+    <section class="max-w-7xl mx-auto px-6 py-28 border-b border-white/5">
+        <div class="max-w-4xl">
+            <h1 class="text-4xl md:text-7xl font-bold tracking-tight text-white leading-tight mb-8">
+                <span class="lang-ar">شركة إنسيت للإستشارات</span>
+                <span class="lang-en">Insight Consultancy Company</span>
+            </h1>
+            <p class="text-lg md:text-2xl text-gray-300 font-light leading-relaxed border-r-4 border-brand-gold pr-5 html:lang(en):border-l-4 html:lang(en):border-r-0 html:lang(en):pl-5 html:lang(en):pr-0">
+                <span class="lang-ar">نصنع الوضوح من تعقيدات المخاطر لنمنح مؤسستك القوة والريادة المستدامة.</span>
+                <span class="lang-en">Transforming complex risk exposure into structured, measurable, and sustainable financial strategy.</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- About Us, Vision, Mission & Values -->
+    <section id="about" class="max-w-7xl mx-auto px-6 py-24 border-b border-white/5 scroll-mt-24">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
+            <div class="lg:col-span-2 space-y-12">
+                <div>
+                    <h2 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-4"><span class="lang-ar">نبذة عن الشركة</span><span class="lang-en">About Us</span></h2>
+                    
+                    <div class="text-xl text-gray-100 leading-relaxed font-light">
+                        <p class="lang-ar mb-6">تعمل Insight Consultancy كشركة استشارية متخصصة في مجالات الحوكمة وإدارة المخاطر والامتثال وتأهيل الشركات للتصنيف الإئتماني والاستدامة وإعادة الهيكلة المؤسسية.</p>
+                        <p class="lang-ar">نخدم المؤسسات في مختلف أنحاء منطقة الشرق الأوسط وشمال أفريقيا، ونمكّنها من تحويل التعرض للمخاطر المعقدة إلى استراتيجيات منظمة وقابلة للقياس وقوة مالية مستدامة.</p>
+                        
+                        <p class="lang-en">Insight Consultancy is a specialized GRCS advisory firm operating across risk management, Corporate governance, compliance, credit rating advisory, sustainability and Corporate restructuring. We serve organizations across the MENA region, helping them transform complex Risk exposure into structured, measurable, and sustainable Financial strategy.</p>
+                    </div>
                 </div>
-                <div class="platform-card" onclick="selectPlatform('إنستغرام', 'instagram')">
-                    <div class="platform-icon-wrapper"><i class="fa-brands fa-instagram"></i></div>
-                    <span class="platform-name">INSTAGRAM</span>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6">
+                    <div class="bg-brand-card border border-white/5 p-8 rounded-lg hover:border-brand-gold/40 transition-all duration-300">
+                        <h3 class="text-lg font-bold mb-4 text-brand-gold"><span class="lang-ar">رؤيتنا</span><span class="lang-en">Our Vision</span></h3>
+                        <p class="text-gray-300 font-light leading-relaxed text-sm">
+                            <span class="lang-ar">تتمثل رؤيتنا في أن نصبح من أبرز شركات الاستشارات في المنطقة، معترفًا بنا لتميّزنا في تحويل المخاطر إلى ميزة استراتيجية وتمكين المؤسسات من القيادة بوضوح وثقة.</span>
+                            <span class="lang-en">Our Vision is to become one of the region’s top advisory firms, recognized for transforming risk into strategic advantage and enabling organizations to lead with clarity and confidence.</span>
+                        </p>
+                    </div>
+                    <div class="bg-brand-card border border-white/5 p-8 rounded-lg hover:border-brand-gold/40 transition-all duration-300">
+                        <h3 class="text-lg font-bold mb-4 text-brand-gold"><span class="lang-ar">هدفنا (رسالتنا)</span><span class="lang-en">Our Mission</span></h3>
+                        <p class="text-gray-600 font-light leading-relaxed text-sm">
+                            <span class="lang-ar">تمكين المؤسسات من اكتشاف المخاطر بوضوح واتخاذ قرارات حاسمة، بما يتيح لها التحول من الأساس إلى التميّز.</span>
+                            <span class="lang-en">To empower organizations to detect risk with clarity and act decisively, enabling a transformation from foundation to excellence.</span>
+                        </p>
+                    </div>
                 </div>
-                <div class="platform-card" onclick="selectPlatform('سناب شات', 'snapchat')">
-                    <div class="platform-icon-wrapper"><i class="fa-brands fa-snapchat"></i></div>
-                    <span class="platform-name">SNAPCHAT</span>
-                </div>
-                <div class="platform-card" onclick="selectPlatform('يوتيوب', 'youtube')">
-                    <div class="platform-icon-wrapper"><i class="fa-brands fa-youtube"></i></div>
-                    <span class="platform-name">YOUTUBE</span>
-                </div>
-                <div class="platform-card" onclick="selectPlatform('تليغرام', 'telegram')">
-                    <div class="platform-icon-wrapper"><i class="fa-brands fa-telegram"></i></div>
-                    <span class="platform-name">TELEGRAM</span>
-                </div>
-                <div class="platform-card" onclick="selectPlatform('منصة إكس', 'twitter')">
-                    <div class="platform-icon-wrapper"><i class="fa-brands fa-x-twitter"></i></div>
-                    <span class="platform-name">X / TWITTER</span>
+            </div>
+
+            <!-- Values Side -->
+            <div class="bg-brand-card border border-brand-gold/20 p-8 md:p-12 flex flex-col justify-between rounded-lg shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-24 h-24 bg-brand-gold/5 rounded-full blur-2xl"></div>
+                <div class="relative z-10">
+                    <h2 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-8"><span class="lang-ar">قيمنا</span><span class="lang-en">Our Values</span></h2>
+                    <ul class="space-y-5 text-sm font-light tracking-wide text-gray-200">
+                        <li class="flex items-start gap-3"><span class="w-2 h-2 bg-brand-gold rounded-full mt-1.5 shrink-0"></span><div><span class="lang-ar font-semibold block text-brand-gold mb-0.5">النزاهة</span><span class="lang-en font-semibold block text-brand-gold mb-0.5">Integrity</span></div></li>
+                        <li class="flex items-start gap-3"><span class="w-2 h-2 bg-brand-gold rounded-full mt-1.5 shrink-0"></span><div><span class="lang-ar font-semibold block text-brand-gold mb-0.5">الرؤية الاستراتيجية</span><span class="lang-en font-semibold block text-brand-gold mb-0.5">Strategic Foresight</span></div></li>
+                        <li class="flex items-start gap-3"><span class="w-2 h-2 bg-brand-gold rounded-full mt-1.5 shrink-0"></span><div><span class="lang-ar font-semibold block text-brand-gold mb-0.5">ترسيخ ثقة العملاء</span><span class="lang-en font-semibold block text-brand-gold mb-0.5">Strengthening client trust</span></div></li>
+                        <li class="flex items-start gap-3"><span class="w-2 h-2 bg-brand-gold rounded-full mt-1.5 shrink-0"></span><div><span class="lang-ar font-semibold block text-brand-gold mb-0.5">التحليل المبني على البيانات</span><span class="lang-en font-semibold block text-brand-gold mb-0.5">Data Driven Insight</span></div></li>
+                        <li class="flex items-start gap-3"><span class="w-2 h-2 bg-brand-gold rounded-full mt-1.5 shrink-0"></span><div><span class="lang-ar font-semibold block text-brand-gold mb-0.5">توجيه مسيرة التحوّل</span><span class="lang-en font-semibold block text-brand-gold mb-0.5">Guiding transformation</span></div></li>
+                    </ul>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="checkout-box" id="checkout-panel">
-            <div class="section-title" id="checkout-title">طلب الخدمة الرقمية</div>
+    <!-- CEO Message Section -->
+    <section id="ceo" class="max-w-7xl mx-auto px-6 py-24 border-b border-white/5 scroll-mt-24 relative">
+        <div class="max-w-4xl mx-auto bg-brand-card border border-white/5 p-10 md:p-16 rounded-xl shadow-2xl">
+            <h2 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-8 text-center"><span class="lang-ar">كلمة الرئيس التنفيذي</span><span class="lang-en">CEO Message</span></h2>
             
-            <label style="font-size: 12px; color: var(--text-muted); font-weight: bold;">اختر نوع باقة الخدمة المحددة بدقة:</label>
-            <select class="select-input" id="package-selector" onchange="updatePackagePrice()">
-                </select>
-
-            <div class="price-container">
-                السعر الإجمالي النهائي: <span id="package-price-lbl">0.00</span> $
+            <div class="text-lg md:text-xl font-light text-gray-100 text-center leading-relaxed italic space-y-4">
+                <p class="lang-ar">"بصفتي الرئيس التنفيذي لشركة Insight Consultancy، أفخر بقيادة مؤسسة تقوم على الوضوح والنزاهة والرؤية الاستراتيجية. وفي منطقة تتسارع فيها المخاطر وتتزايد فيها التعقيدات يومًا بعد يوم، تظل مهمتنا واضحة: تمكين المؤسسات من رؤية المخاطر مبكرًا، وفهمها بعمق، واتخاذ القرارات بثقة. ونحن ملتزمون بتقديم استشارات عالية الجودة تحول عدم اليقين إلى فرصة، وتمكّن عملاءنا من القيادة بقوة ومرونة وبصيرة."</p>
+                
+                <p class="lang-en">"As CEO of Insight Consultancy, I am proud to lead a firm built on clarity, integrity, and strategic foresight. In a region where risk evolves rapidly and complexity grows by the day, our mission is simple: empower organizations to see risk early, understand it deeply, and act with confidence.</p>
+                <p class="lang-en">We are committed to delivering advisory excellence that transforms uncertainty into opportunity and enables our clients to lead with strength, resilience, and insight."</p>
             </div>
-
-            <label style="font-size: 12px; color: var(--text-muted); font-weight: bold;">أدخل رابط الحساب أو رابط المنشور المستهدف:</label>
-            <input type="text" id="target-account-link" class="select-input" style="direction: ltr;" placeholder="https://example.com/profile">
-
-            <div style="margin-top: 10px;" id="paypal-button-container"></div>
-
-            <div class="secure-pay-badge">
-                <i class="fa-solid fa-shield-halved" style="color: var(--brand-blue);"></i>
-                <span>بوابة دفع حقيقية ومشفرة بالكامل</span>
+            
+            <div class="mt-10 text-center space-y-1">
+                <p class="font-bold text-xl text-white tracking-wide">Mahmoud Gad</p>
+                <p class="text-xs uppercase tracking-widest text-brand-gold font-bold block pt-1">CEO</p>
+                <p class="text-[11px] uppercase tracking-widest text-gray-400 block font-medium">Insight Consultancy</p>
             </div>
         </div>
+    </section>
 
-        <div>
-            <div class="section-title">قنوات التواصل والدعم الفني المباشر</div>
-            <div class="social-connect-box" style="margin-top: 12px;">
-                <a href="https://wa.me/96551367800" target="_blank" class="btn-social btn-whatsapp">
-                    <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i>
-                    تواصل معنا عبر الواتساب المباشر
-                </a>
-                <a href="https://instagram.com/add.more.q8" target="_blank" class="btn-social btn-instagram">
-                    <i class="fa-brands fa-instagram" style="font-size: 20px;"></i>
-                    تابع حسابنا الرسمي على إنستغرام
-                </a>
-            </div>
+    <!-- Comprehensive Services Grid -->
+    <section id="services" class="max-w-7xl mx-auto px-6 py-24 border-b border-white/5 scroll-mt-24">
+        <div class="mb-20">
+            <h2 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-4"><span class="lang-ar">خدماتنا الاستشارية</span><span class="lang-en">Our Advisory Services</span></h2>
+            <p class="text-2xl md:text-4xl font-bold text-white"><span class="lang-ar">حلول استراتيجية متكاملة للحوكمة والمخاطر</span><span class="lang-en">Integrated Strategic Solutions for GRCS</span></p>
         </div>
 
-    </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <!-- Category 1 -->
+            <div class="bg-brand-card border border-white/5 p-8 rounded-lg space-y-6 hover:border-brand-gold/30 transition-all duration-300">
+                <div class="border-b border-brand-gold/30 pb-4">
+                    <h3 class="text-xl font-bold text-white"><span class="lang-ar">إعادة الهيكلة المؤسسية</span><span class="lang-en">Corporates Restructuring</span></h3>
+                </div>
+                <ul class="space-y-3 text-sm text-gray-300 font-light">
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">التحضير للتصنيف الإئتماني</span><span class="lang-en">Credit Rating preparation</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">إعداد خطط الأعمال</span><span class="lang-en">Business plans</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">إعداد خطط الإستثمار والإستحواذ</span><span class="lang-en">Investment and Acquisition</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">إعداد دراسات الجدوى</span><span class="lang-en">Feasibility studies</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">سياسات وإجراءات الإستثمار</span><span class="lang-en">Investment policies and procedures</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">إعداد سياسات وإجراءات الإدارات</span><span class="lang-en">All departmental Policies and Procedure</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">إعادة هيكلة الموارد البشرية</span><span class="lang-en">HR Restructuring</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">إعادة هيكلة الإدارة المالية</span><span class="lang-en">Finance Department Restructure</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">إدارة مشاريع تغيير أو تطوير النظام الآلي</span><span class="lang-en">Core System transformation management</span></div></li>
+                </ul>
+            </div>
 
-    <div class="bottom-nav-bar">
-        <button class="nav-item-btn nav-active"><i class="fa-solid fa-house nav-icon"></i>الرئيسية</button>
-        <button class="nav-item-btn" onclick="alert('السلة فارغة، اختر خدمة أولاً!')"><i class="fa-solid fa-basket-shopping nav-icon"></i>السلة</button>
-    </div>
+            <!-- Category 2 -->
+            <div class="bg-brand-card border border-white/5 p-8 rounded-lg space-y-6 hover:border-brand-gold/30 transition-all duration-300">
+                <div class="border-b border-brand-gold/30 pb-4">
+                    <h3 class="text-xl font-bold text-white"><span class="lang-ar">إدارة المخاطر</span><span class="lang-en">Risk Management Consultancy</span></h3>
+                </div>
+                <ul class="space-y-3 text-sm text-gray-300 font-light">
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">إعداد شهية المخاطر</span><span class="lang-en">Risk appetite</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">سياسات المخاطر</span><span class="lang-en">Risk manuals</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">تقارير المخاطر</span><span class="lang-en">Risk materials</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">تقارير وتجهيزات التصنيف الإئتماني</span><span class="lang-en">Credit rating reporting preparation</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">تقارير كفاية رأس المال</span><span class="lang-en">Capital adequacy reports</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">تقارير الملاءة المالية</span><span class="lang-en">Solvency reporting preparation</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">إعادة هيكلة الشركات</span><span class="lang-en">Corporates restructuring</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">التأهيل لشهادة الجودة ISO 31000</span><span class="lang-en">Prepration for ISO 31000</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">التأهيل لشهادة الجودة ISO 27001</span><span class="lang-en">Prepration for ISO 27001</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">التأهيل لشهادة الجودة ISO 9001</span><span class="lang-en">Prepration for ISO 9001</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">سياسات وإجراءات تقنية أمن المعلومات</span><span class="lang-en">Information Secuirty policies and Procedures</span></div></li>
+                </ul>
+            </div>
 
-<script>
-    // بنك معلومات باقات الخدمات المتنوعة الشاملة والـ Service ID المقابل لها بالسيرفر
-    const packagesData = {
-        tiktok: [
-            { name: "👤 زيادة 1000 متابع تيك توك ثابت وضمان - 2.99$", price: 2.99, smmId: 1, quantity: 1000 },
-            { name: "❤️ زيادة 5000 إعجاب / لايك سريع للفيديو - 4.50$", price: 4.50, smmId: 2, quantity: 5000 },
-            { name: "👁️ زيادة 10,000 مشاهدة سريعة للفيديو - 1.50$", price: 1.50, smmId: 3, quantity: 10000 },
-            { name: "💬 100 تعليق مخصص ومكتوب لحسابك - 2.99$", price: 2.99, smmId: 4, quantity: 100 }
-        ],
-        instagram: [
-            { name: "📸 زيادة 1000 متابع إنستغرام جودة عالية وثبات - 3.49$", price: 3.49, smmId: 5, quantity: 1000 },
-            { name: "🔥 زيادة 2000 لايك لمنشورات أو ريلز إنستغرام - 1.99$", price: 1.99, smmId: 6, quantity: 2000 },
-            { name: "👁️ زيادة 5000 مشاهدة فيديو ريلز دقة فورية - 1.20$", price: 1.20, smmId: 7, quantity: 5000 }
-        ],
-        snapchat: [
-            { name: "💛 زيادة 1000 متابع ملف تعريفي سناب شات - 5.99$", price: 5.99, smmId: 8, quantity: 1000 },
-            { name: "🔥 زيادة 5000 مشاهدة لقصص / ستوري سناب - 7.99$", price: 7.99, smmId: 9, quantity: 5000 }
-        ],
-        youtube: [
-            { name: "📺 زيادة 1000 مشترك يوتيوب حقيقي دائم وضمان - 12.00$", price: 12.00, smmId: 10, quantity: 1000 },
-            { name: "👍 زيادة 1000 لايك لفيديو يوتيوب مخصص - 3.50$", price: 3.50, smmId: 11, quantity: 1000 },
-            { name: "⏱️ 1000 ساعة مشاهدة حقيقية لتفعيل تحقيق الربح - 15.00$", price: 15.00, smmId: 12, quantity: 1000 }
-        ],
-        telegram: [
-            { name: "🔹 زيادة 1000 عضو لقناة أو جروب تليغرام - 2.49$", price: 2.49, smmId: 13, quantity: 1000 },
-            { name: "👁️ 5000 مشاهدة لآخر منشورات القناة - 1.00$", price: 1.00, smmId: 14, quantity: 5000 }
-        ],
-        twitter: [
-            { name: "🐦 زيادة 1000 متابع تويتر / إكس حسابات موثوقة - 4.99$", price: 4.99, smmId: 15, quantity: 1000 },
-            { name: "🔄 500 إعادة تغريد / ريتويت لمنشورك - 2.99$", price: 2.99, smmId: 16, quantity: 500 },
-            { name: "🗳️ 1000 صوت في استفتاءات وتصويت تويتر - 3.49$", price: 3.49, smmId: 17, quantity: 1000 }
-        ]
-    };
+            <!-- Category 3 -->
+            <div class="bg-brand-card border border-white/5 p-8 rounded-lg space-y-6 hover:border-brand-gold/30 transition-all duration-300">
+                <div class="border-b border-brand-gold/30 pb-4">
+                    <h3 class="text-xl font-bold text-white"><span class="lang-ar">الحوكمة والامتثال الرقابي</span><span class="lang-en">Corporate Governance & Compliance</span></h3>
+                </div>
+                <ul class="space-y-3 text-sm text-gray-300 font-light">
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">سياسات وإجراءات الإلتزام الرقابي</span><span class="lang-en">Compliance consultancy</span></div></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">سياسات وإجراءات حوكمة الشركات</span><span class="lang-en">Corporate governance consultancy</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">إعداد حزمة تقارير هيئة أسواق المال</span><span class="lang-en">CMA reporting consultancy</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">إعداد حزمة تقارير وحدة تنظيم التأمين</span><span class="lang-en">IRU reporting consultancy</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">إعداد حزمة تقارير وزارة التجارة والصناعة</span><span class="lang-en">MOCI Reporting</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-brand-gold rounded-full"></span><div><span class="lang-ar">سياسات وإجراءات مجلس الإدارة</span><span class="lang-en">Board of directors policies and procedures</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
 
-    let selectedPackage = null;
+    <!-- Target Audience Section -->
+    <section id="audience" class="max-w-7xl mx-auto px-6 py-24 border-b border-white/5 scroll-mt-24">
+        <div class="mb-16">
+            <h2 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-4"><span class="lang-ar">الفئة المستهدفة</span><span class="lang-en">Target Audience</span></h2>
+            <p class="text-xl text-gray-300 font-light"><span class="lang-ar">نحن فخورون بتقديم خدماتنا الاستشارية لصناع القرار والمنشآت المالية:</span><span class="lang-en">We serve and empower industry leaders and financial ecosystems:</span></p>
+        </div>
 
-    function selectPlatform(name, key) {
-        document.getElementById('checkout-title').innerText = `باقات خدمات ${name} الشاملة`;
-        const selector = document.getElementById('package-selector');
-        selector.innerHTML = "";
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm font-medium">
+            <!-- تم تعديلها هنا برمجياً لتقرأ of بدلاً من OF -->
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">مجلس الإدارة</span><span class="lang-en">Board of Directors</span></div>
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">لجنة المخاطر والامتثال التابعة لمجلس الإدارة</span><span class="lang-en">Board Risk and Compliance Committee</span></div>
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">لجنة التدقيق</span><span class="lang-en">Audit Committee</span></div>
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">لجنة الترشيحات والمكافآت والحوكمة (BNRC)</span><span class="lang-en">BNRC Committee</span></div>
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">الرؤساء التنفيذيون</span><span class="lang-en">CEOs</span></div>
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">الرؤساء التنفيذيون للمخاطر</span><span class="lang-en">Chief Risk Officers</span></div>
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">الرؤساء التنفيذيون لتقنية أمن المعلومات</span><span class="lang-en">Chief Information security officers</span></div>
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">الرؤساء التنفيذيون للاستراتيجية</span><span class="lang-en">Chief Strategy Officers</span></div>
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">مسؤولو المخاطر</span><span class="lang-en">Risk officers</span></div>
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">مديرو ومسؤولو الحوكمة المؤسسية</span><span class="lang-en">Corporate Governance Managers and Officers</span></div>
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">مديرو ومسؤولو الامتثال</span><span class="lang-en">Compliance Managers and Officers</span></div>
+            
+            <!-- تم تعديلها هنا لتصبح Companies بدلاً من صيغة الملكية -->
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">شركات التأمين وإعادة التأمين</span><span class="lang-en">Insurance and Reinsurance Companies</span></div>
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">البنوك والمصارف</span><span class="lang-en">Banks</span></div>
+            
+            <!-- تم تعديلها هنا لتصبح Companies بدلاً من صيغة الملكية -->
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">شركات الاستثمار</span><span class="lang-en">Investment Companies</span></div>
+            <div class="border border-white/5 bg-brand-card p-5 flex items-center justify-between rounded-md hover:border-brand-gold/40 transition-colors"><span class="lang-ar">جميع المؤسسات المالية في منطقة الشرق الأوسط وشمال أفريقيا</span><span class="lang-en">All Financial Institutions in MENA Region</span></div>
+        </div>
+    </section>
+
+    <!-- Footer / Contact Info Section -->
+    <footer id="contact" class="bg-[#0b0918] border-t border-white/10 px-6 py-20 scroll-mt-24">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-2xl font-bold tracking-tight mb-6 text-brand-gold"><span class="lang-ar">ابدأ المحادثة معنا</span><span class="lang-en">Connect With Us</span></h2>
+                <p class="text-sm text-gray-300 font-light leading-relaxed max-w-sm mb-8">
+                    <span class="lang-ar">يسعدنا تواصلكم معنا للرد على أي استفسارات أو مناقشة سبل التعاون المشترك وتطوير أعمالكم.</span>
+                    <span class="lang-en">Please don’t hesitate to contact us for any inquiries or clarification needed. We look forward to hearing from you.</span>
+                </p>
+                <div class="space-y-6">
+                    <div class="space-y-2 text-xs font-bold tracking-wider uppercase">
+                        <p class="text-gray-400"><span class="lang-ar">البريد الإلكتروني الرسمي</span><span class="lang-en">Official Corporate Email</span></p>
+                        <a href="mailto:info@insightconsultancykw.com" class="text-base text-brand-gold lowercase block border-b border-transparent hover:border-brand-gold w-fit pt-1 pb-1">info@insightconsultancykw.com</a>
+                    </div>
+                    
+                    <!-- قسم اللوكيشن / موقعنا الخرائط -->
+                    <div class="space-y-2 text-xs font-bold tracking-wider uppercase">
+                        <p class="text-gray-400"><span class="lang-ar">موقعنا</span><span class="lang-en">Our Location</span></p>
+                        <a href="https://google.com/maps?q=برج+دار+العوضي،+شارع+أحمد+الجابر،+مدينة+الكويت&ftid=0x3fcf8491813f08ed:0xdb83aae35feaad27&entry=gps" target="_blank" class="text-sm text-white block hover:text-brand-gold transition-colors flex items-center gap-2 pt-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-brand-gold">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                            </svg>
+                            <span class="lang-ar">برج دار العوضي، شارع أحمد الجابر، مدينة الكويت</span>
+                            <span class="lang-en">Dar Al Awadi Tower, Ahmed Al Jaber St, Kuwait City</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 bg-brand-card/50 p-8 border border-white/5 rounded-lg">
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-brand-gold mb-3"><span class="lang-ar">الإدارة التنفيذية</span><span class="lang-en">Executive Management</span></h4>
+                    <p class="text-base font-bold text-white">Mahmoud Gad</p>
+                    <p class="text-xs text-brand-gold font-medium mt-0.5">CEO</p>
+                    <p class="text-[10px] text-gray-400 font-light">Insight Consultancy</p>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-brand-gold mb-3"><span class="lang-ar">رقم التواصل (الكويت)</span><span class="lang-en">Kuwait Contact</span></h4>
+                    <p dir="ltr" class="text-sm font-medium text-white block tracking-wider text-right md:text-left">+965 50345557</p>
+                </div>
+                <div class="sm:col-span-2 pt-4 border-t border-white/10">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-brand-gold mb-3"><span class="lang-ar">رقم الاتصال (الإمارات)</span><span class="lang-en">UAE Contact</span></h4>
+                    <p dir="ltr" class="text-sm font-medium text-white block tracking-wider text-right md:text-left">+971 525420571</p>
+                </div>
+            </div>
+        </div>
         
-        packagesData[key].forEach(p => {
-            selector.innerHTML += `<option value="${p.price}" data-smm="${p.smmId}" data-qty="${p.quantity}">${p.name}</option>`;
-        });
+        <div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
+            <p>&copy; 2026 Insight Consultancy. All rights reserved.</p>
+            <p>insightconsultancykw.com</p>
+        </div>
+    </footer>
 
-        document.getElementById('checkout-panel').style.display = 'flex';
-        updatePackagePrice();
-        setupPayPalButtons();
-        document.getElementById('checkout-panel').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function updatePackagePrice() {
-        const selector = document.getElementById('package-selector');
-        const price = selector.value;
-        document.getElementById('package-price-lbl').innerText = parseFloat(price).toFixed(2);
-        
-        const selectedOption = selector.options[selector.selectedIndex];
-        selectedPackage = {
-            price: price,
-            smmServiceId: selectedOption.getAttribute('data-smm'),
-            quantity: selectedOption.getAttribute('data-qty')
-        };
-    }
-
-    function setupPayPalButtons() {
-        document.getElementById('paypal-button-container').innerHTML = "";
-        
-        paypal.Buttons({
-            createOrder: function(data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: { value: document.getElementById('package-price-lbl').innerText }
-                    }]
-                });
-            },
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
-                    const targetLink = document.getElementById('target-account-link').value.trim();
-                    if(!targetLink) {
-                        alert("🚨 نجح الدفع! يرجى إرسال الرابط يدوياً فوراً للدعم عبر الواتساب لتنفيذه الحين.");
-                        return;
-                    }
-
-                    fetch('/api/verify-order', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            orderID: data.orderID,
-                            serviceDetails: selectedPackage,
-                            targetLink: targetLink
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(resData => {
-                        if(resData.success) {
-                            alert(`🎉 تم نجاح العملية وتمرير طلبك الرقمي آلياً بنجاح!\nرقم المعاملة: ${resData.smmOrderId}`);
-                        } else {
-                            alert(`⚠️ تم استقبال المال ولكن فشل التمرير التلقائي: ${resData.message}`);
-                        }
-                    });
-                });
+    <!-- JavaScript Toggle Language Logic -->
+    <script>
+        function toggleLanguage() {
+            const html = document.documentElement;
+            if (html.getAttribute('lang') === 'ar') {
+                html.setAttribute('lang', 'en');
+                html.setAttribute('dir', 'ltr');
+            } else {
+                html.setAttribute('lang', 'ar');
+                html.setAttribute('dir', 'rtl');
             }
-        }).render('#paypal-button-container');
-    }
-</script>
+        }
+    </script>
 </body>
 </html>
