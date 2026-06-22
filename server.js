@@ -1,16 +1,16 @@
-// server.js - الباكيند المحدث لمتجر ADD MORE SHOP المربوط بـ SMMGlobe
+// server.js - الباكيند الرسمي المحدث لمتجر ADD MORE SHOP
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const path = require('path');
 const bodyParser = require('body-parser');
+const https = require('https'); // استخدام المكتبة الرسمية لتفادي أخطاء fetch
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
 
-const SMM_API_URL = "https://smmglobe.com/api/v2"; 
 // ⚠️ ضع مفتاح الـ API الخاص بك من صفحة Account في SMMGlobe مكان النص بالأسفل:
 const SMM_API_KEY = "ضع_هنا_مفتاح_الـ_API_الخاص_بكامل_من_صفحة_الـ_Account";
 
@@ -18,47 +18,65 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.post('/api/verify-order', async (req, res) => {
+app.post('/api/verify-order', (req, res) => {
     const { orderID, serviceDetails, targetLink } = req.body;
 
     if (!orderID || !serviceDetails || !targetLink) {
         return res.status(400).json({ success: false, message: "بيانات الطلب غير مكتملة!" });
     }
 
-    try {
-        console.log(`💰 تم تأكيد معاملة دفع عبر PayPal برقم: ${orderID}`);
-        
-        const params = new URLSearchParams();
-        params.append('key', SMM_API_KEY);
-        params.append('action', 'add');
-        params.append('service', serviceDetails.smmServiceId); 
-        params.append('link', targetLink); 
-        params.append('quantity', serviceDetails.quantity); 
+    console.log(`💰 تم تأكيد معاملة دفع عبر PayPal برقم: ${orderID}`);
 
-        const response = await fetch(SMM_API_URL, {
-            method: 'POST',
-            body: params,
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        });
+    // تجهيز البيانات بصيغة x-www-form-urlencoded المعتمدة بالسيرفر
+    const postData = new URLSearchParams({
+        key: SMM_API_KEY,
+        action: 'add',
+        service: serviceDetails.smmServiceId,
+        link: targetLink,
+        quantity: serviceDetails.quantity
+    }).toString();
 
-        const smmResult = await response.json();
-
-        if (smmResult && smmResult.order) {
-            return res.json({ 
-                success: true, 
-                message: "تم تمرير الطلب التلقائي بنجاح الحين!",
-                smmOrderId: smmResult.order
-            });
-        } else {
-            return res.status(400).json({ 
-                success: false, 
-                message: smmResult.error || "فشل السيرفر في قبول المعاملة التلقائية." 
-            });
+    const options = {
+        hostname: 'smmglobe.com',
+        port: 443,
+        path: '/api/v2',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': Buffer.byteLength(postData)
         }
+    };
 
-    } catch (error) {
-        return res.status(500).json({ success: false, message: "حدث خطأ في معالجة طلب الأتمتة." });
-    }
+    const SmmReq = https.request(options, (smmRes) => {
+        let data = '';
+        smmRes.on('data', (chunk) => { data += chunk; });
+        smmRes.on('end', () => {
+            try {
+                const smmResult = JSON.parse(data);
+                if (smmResult && smmResult.order) {
+                    return res.json({ 
+                        success: true, 
+                        message: "تم تمرير الطلب التلقائي بنجاح الحين!",
+                        smmOrderId: smmResult.order
+                    });
+                } else {
+                    return res.status(400).json({ 
+                        success: false, 
+                        message: smmResult.error || "فشل السيرفر في قبول المعاملة التلقائية." 
+                    });
+                }
+            } catch (e) {
+                return res.status(500).json({ success: false, message: "خطأ في قراءة استجابة سيرفر المتابعين." });
+            }
+        });
+    });
+
+    SmmReq.on('error', (error) => {
+        return res.status(500).json({ success: false, message: "حدث خطأ في الاتصال بسيرفر الأتمتة." });
+    });
+
+    SmmReq.write(postData);
+    SmmReq.end();
 });
 
 http.listen(PORT, () => {
