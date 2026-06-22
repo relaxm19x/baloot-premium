@@ -24,7 +24,6 @@
 
         *, *::before, *::after { box-sizing: border-box; }
 
-        /* الهيدر العلوي */
         .store-header {
             width: 100%; max-width: 480px; background: var(--panel-bg); padding: 18px;
             display: flex; justify-content: space-between; align-items: center;
@@ -36,7 +35,6 @@
         .main-container { width: 100%; max-width: 480px; padding: 15px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 100px; }
         .section-title { font-size: 16px; font-weight: bold; color: var(--white); text-align: right; margin-bottom: 5px; border-right: 4px solid var(--brand-blue); padding-right: 8px; }
 
-        /* شبكة المنصات مع الأيقونات الحقيقية */
         .platform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .platform-card {
             background: var(--panel-bg); border: 1px solid rgba(0, 240, 255, 0.1); border-radius: 14px;
@@ -45,46 +43,40 @@
         }
         .platform-card:hover { border-color: var(--brand-blue); transform: translateY(-3px); box-shadow: 0 4px 15px rgba(0,240,255,0.15); }
         .platform-icon-wrapper { font-size: 32px; color: var(--brand-blue); }
-        .platform-name { font-size: 13px; font-weight: bold; color: var(--white); letter-spacing: 0.5px; }
+        .platform-name { font-size: 13px; font-weight: bold; color: var(--white); }
 
-        /* نافذة طلب واستعراض الخدمة */
         .checkout-box { background: var(--panel-bg); border-radius: 16px; border: 1px solid rgba(0, 240, 255, 0.15); padding: 20px; display: none; flex-direction: column; gap: 15px; }
-        .select-input { width: 100%; background: #0b1316; border: 1px solid #1a2f36; border-radius: 10px; padding: 14px; color: var(--white); outline: none; font-size: 14px; text-align: right; transition: 0.2s; }
+        .select-input { width: 100%; background: #0b1316; border: 1px solid #1a2f36; border-radius: 10px; padding: 14px; color: var(--white); outline: none; font-size: 14px; text-align: right; }
         .select-input:focus { border-color: var(--brand-blue); }
         
         .price-container { font-size: 18px; font-weight: bold; color: var(--brand-blue); text-align: right; background: #0b1316; padding: 12px; border-radius: 10px; border-right: 3px solid var(--brand-blue); }
 
-        /* أزرار الدعم وروابط السوشيال ميديا الخاصة بك في الكويت والإمارات */
         .social-connect-box { background: var(--panel-bg); border-radius: 14px; padding: 15px; display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(0, 240, 255, 0.05); }
         .btn-social { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: bold; color: #fff; transition: 0.2s; }
         .btn-whatsapp { background: #25d366; }
-        .btn-whatsapp:hover { background: #20ba5a; }
         .btn-instagram { background: #e1306c; }
-        .btn-instagram:hover { background: #ca265f; }
 
         .secure-pay-badge { display: flex; justify-content: center; gap: 10px; align-items: center; background: #0b1316; padding: 12px; border-radius: 10px; font-size: 12px; color: var(--text-muted); }
 
-        /* بار التنقل السفلي */
         .bottom-nav-bar {
             width: 100%; max-width: 480px; background: var(--panel-bg); position: fixed; bottom: 0;
             display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #142327; z-index: 1000;
         }
         .nav-item-btn { background: none; border: none; color: var(--text-muted); font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; display: flex; flex-direction: column; gap: 4px; }
         .nav-active { color: var(--brand-blue) !important; }
-        .nav-icon { font-size: 18px; }
     </style>
 </head>
 <body>
 
     <div class="store-header">
         <div class="store-logo">ADD MORE SHOP</div>
-        <div style="font-size: 12px; color: var(--brand-blue); font-weight: bold;"><i class="fa-solid fa-bolt"></i> نظام ذكي مؤتمت</div>
+        <div style="font-size: 12px; color: var(--brand-blue); font-weight: bold;"><i class="fa-solid fa-bolt"></i> سحب آلي فوري</div>
     </div>
 
     <div class="main-container">
         
         <div id="section-categories">
-            <div class="section-title">اختر المنصة لبدء الدعم الرقمي</div>
+            <div class="section-title">الأقسام والخدمات المتكاملة</div>
             <div class="platform-grid" style="margin-top: 12px;">
                 <div class="platform-card" onclick="selectPlatform('تيك توك', 'tiktok')">
                     <div class="platform-icon-wrapper"><i class="fa-brands fa-tiktok"></i></div>
@@ -114,7 +106,7 @@
         </div>
 
         <div class="checkout-box" id="checkout-panel">
-            <div class="section-title" id="checkout-title">طلب الخدمة المتكاملة</div>
+            <div class="section-title" id="checkout-title">طلب الخدمة الرقمية</div>
             
             <label style="font-size: 12px; color: var(--text-muted); font-weight: bold;">اختر نوع باقة الخدمة المحددة بدقة:</label>
             <select class="select-input" id="package-selector" onchange="updatePackagePrice()">
@@ -131,7 +123,7 @@
 
             <div class="secure-pay-badge">
                 <i class="fa-solid fa-shield-halved" style="color: var(--brand-blue);"></i>
-                <span>بوابة تشفير آمنة ومحمية 100% بالـ API</span>
+                <span>بوابة دفع حقيقية ومشفرة بالكامل</span>
             </div>
         </div>
 
@@ -157,16 +149,16 @@
     </div>
 
 <script>
-    // 📊 الداتا الشاملة والموسعة لكل الخدمات المتوفرة في سيرفر SMMGlobe مطابقة لأسعار السوق
+    // بنك معلومات باقات الخدمات المتنوعة الشاملة والـ Service ID المقابل لها بالسيرفر
     const packagesData = {
         tiktok: [
-            { name: "👤 زيادة 1000 متابع تيك توك حقيقي وضمان - 2.99$", price: 2.99, smmId: 1, quantity: 1000 },
+            { name: "👤 زيادة 1000 متابع تيك توك ثابت وضمان - 2.99$", price: 2.99, smmId: 1, quantity: 1000 },
             { name: "❤️ زيادة 5000 إعجاب / لايك سريع للفيديو - 4.50$", price: 4.50, smmId: 2, quantity: 5000 },
-            { name: "👁️ زيادة 10,000 مشاهدة سريعة لـ فيديو تيك توك - 1.50$", price: 1.50, smmId: 3, quantity: 10000 },
+            { name: "👁️ زيادة 10,000 مشاهدة سريعة للفيديو - 1.50$", price: 1.50, smmId: 3, quantity: 10000 },
             { name: "💬 100 تعليق مخصص ومكتوب لحسابك - 2.99$", price: 2.99, smmId: 4, quantity: 100 }
         ],
         instagram: [
-            { name: "📸 زيادة 1000 متابع إنستغرام ثبات جودة عالية - 3.49$", price: 3.49, smmId: 5, quantity: 1000 },
+            { name: "📸 زيادة 1000 متابع إنستغرام جودة عالية وثبات - 3.49$", price: 3.49, smmId: 5, quantity: 1000 },
             { name: "🔥 زيادة 2000 لايك لمنشورات أو ريلز إنستغرام - 1.99$", price: 1.99, smmId: 6, quantity: 2000 },
             { name: "👁️ زيادة 5000 مشاهدة فيديو ريلز دقة فورية - 1.20$", price: 1.20, smmId: 7, quantity: 5000 }
         ],
@@ -180,7 +172,7 @@
             { name: "⏱️ 1000 ساعة مشاهدة حقيقية لتفعيل تحقيق الربح - 15.00$", price: 15.00, smmId: 12, quantity: 1000 }
         ],
         telegram: [
-            { name: "🔹 زيادة 1000 عضو حقيقي لقناة أو جروب تليغرام - 2.49$", price: 2.49, smmId: 13, quantity: 1000 },
+            { name: "🔹 زيادة 1000 عضو لقناة أو جروب تليغرام - 2.49$", price: 2.49, smmId: 13, quantity: 1000 },
             { name: "👁️ 5000 مشاهدة لآخر منشورات القناة - 1.00$", price: 1.00, smmId: 14, quantity: 5000 }
         ],
         twitter: [
@@ -235,7 +227,7 @@
                 return actions.order.capture().then(function(details) {
                     const targetLink = document.getElementById('target-account-link').value.trim();
                     if(!targetLink) {
-                        alert("🚨 نجح الدفع! يرجى إرسال الرابط يدوياً فوراً للدعم عبر الواتساب لتنفيذه.");
+                        alert("🚨 نجح الدفع! يرجى إرسال الرابط يدوياً فوراً للدعم عبر الواتساب لتنفيذه الحين.");
                         return;
                     }
 
