@@ -1,4 +1,4 @@
-// server.js - الباكيند الرسمي المطور والآمن لمتجر ADD MORE SHOP
+// server.js - الباكيند المحدث لمتجر ADD MORE SHOP المربوط بـ SMMGlobe
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
@@ -10,9 +10,8 @@ app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
 
-// 🛠️ معلومات السيرفر المخفية بالباكيند كلياً لمنع علم الزوار بالسر التجاري
 const SMM_API_URL = "https://smmglobe.com/api/v2"; 
-// ⚠️ يا بومحمد: الصق الـ API Key الخاص بك من صفحة الـ Account في SMMGlobe مكان النص بالأسفل:
+// ⚠️ ضع مفتاح الـ API الخاص بك من صفحة Account في SMMGlobe مكان النص بالأسفل:
 const SMM_API_KEY = "ضع_هنا_مفتاح_الـ_API_الخاص_بكامل_من_صفحة_الـ_Account";
 
 app.get('/', (req, res) => {
@@ -27,9 +26,8 @@ app.post('/api/verify-order', async (req, res) => {
     }
 
     try {
-        console.log(`💰 تم تأكيد عملية دفع حقيقية من PayPal برقم: ${orderID}`);
+        console.log(`💰 تم تأكيد معاملة دفع عبر PayPal برقم: ${orderID}`);
         
-        // تجهيز بيانات الطلب وإرسالها مخفية بالكامل عن العميل
         const params = new URLSearchParams();
         params.append('key', SMM_API_KEY);
         params.append('action', 'add');
@@ -46,26 +44,23 @@ app.post('/api/verify-order', async (req, res) => {
         const smmResult = await response.json();
 
         if (smmResult && smmResult.order) {
-            console.log(`✅ تم قبول الطلب آلياً ورقم المعاملة المشفرة بالسيرفر هو: ${smmResult.order}`);
             return res.json({ 
                 success: true, 
-                message: "تم تأكيد الدفع وتوصيل الطلب بنجاح تلقائياً!",
+                message: "تم تمرير الطلب التلقائي بنجاح الحين!",
                 smmOrderId: smmResult.order
             });
         } else {
-            console.error("🚨 خطأ السيرفر:", smmResult);
             return res.status(400).json({ 
                 success: false, 
-                message: smmResult.error || "فشل السيرفر في قبول الطلب التلقائي الحين." 
+                message: smmResult.error || "فشل السيرفر في قبول المعاملة التلقائية." 
             });
         }
 
     } catch (error) {
-        console.error("🚨 خطأ كلي بالشبكة:", error);
-        return res.status(500).json({ success: false, message: "حدث خطأ غير متوقع في خادم المتجر الرقمي." });
+        return res.status(500).json({ success: false, message: "حدث خطأ في معالجة طلب الأتمتة." });
     }
 });
 
 http.listen(PORT, () => {
-    console.log(`🚀 ADD MORE SHOP Sky Blue Active on Port ${PORT}`);
+    console.log(`🚀 ADD MORE SHOP Active with Full Platforms on Port ${PORT}`);
 });
