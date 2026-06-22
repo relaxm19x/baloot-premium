@@ -1,17 +1,18 @@
-// server.js - الباكيند الرسمي المصلح والمستقر لمتجر ADD MORE SHOP كلياً
+// server.js - الباكيند المستقر والنهائي لمتجر ADD MORE SHOP كلياً
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const path = require('path');
 const bodyParser = require('body-parser');
-const https = require('https'); // استخدام مكتبة السيستم الرسمية لتفادي أخطاء خروج السيرفر القديم
+const https = require('https'); // الاعتماد الكلي على المكتبة الرسمية المستقرة
 
 app.use(bodyParser.json());
+// الإصلاح الجذري هنا: السطر الصافي والآمن لملفات الواجهة
 app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
 
-// ⚠️ يا بومحمد: ادخل صفحة Account في حسابك بـ SMMGlobe وانسخ الـ API Key الخاص بك وضعه مكان النص في الأسفل
+// ⚠️ ضع مفتاح الـ API الخاص بك من صفحة Account في SMMGlobe مكان النص بالأسفل:
 const SMM_API_KEY = "ضع_هنا_مفتاح_الـ_API_الخاص_بكامل_من_صفحة_الـ_Account";
 
 app.get('/', (req, res) => {
@@ -84,5 +85,5 @@ app.post('/api/verify-order', (req, res) => {
 });
 
 http.listen(PORT, () => {
-    console.log(`🚀 ADD MORE SHOP Sky Blue Engine Active on Port ${PORT}`);
+    console.log(`🚀 ADD MORE SHOP Active on Port ${PORT}`);
 });
