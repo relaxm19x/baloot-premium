@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ADD MORE SHOP - متجر الخدمات والمنتجات الرقمية</title>
-    <!-- ربط أزرار الدفع الإلكتروني لبوابة PayPal الحقيقية بمفتاحك المباشر -->
     <script src="https://www.paypal.com/sdk/js?client-id=Af-Ri4yDKZlk0Gd5Z5UdnXa8K3zd8wmWvj6_je7jzUocvVLc8coqL2hkNmksVuDqEg5c4Onxr4gjMeIS&currency=USD"></script>
     <style>
         :root {
-            --brand-yellow: #f1c40f;
+            --brand-blue: #00bcd4; /* اللون الأزرق السماوي الفخم والمريح للعين بطلبك */
             --bg-dark: #090e0c;
             --panel-bg: #121c18;
             --text-muted: #8fa39b;
@@ -26,19 +25,19 @@
         .store-header {
             width: 100%; max-width: 480px; background: #111c17; padding: 15px;
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--brand-yellow); position: sticky; top: 0; z-index: 1000;
+            border-bottom: 2px solid var(--brand-blue); position: sticky; top: 0; z-index: 1000;
         }
-        .store-logo { font-size: 20px; font-weight: 900; color: var(--brand-yellow); letter-spacing: 1px; }
+        .store-logo { font-size: 20px; font-weight: 900; color: var(--brand-blue); letter-spacing: 1px; }
 
         .main-container { width: 100%; max-width: 480px; padding: 15px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 80px; }
-        .section-title { font-size: 18px; font-weight: bold; color: #fff; text-align: right; margin-bottom: 5px; border-right: 3px solid var(--brand-yellow); padding-right: 8px; }
+        .section-title { font-size: 18px; font-weight: bold; color: #fff; text-align: right; margin-bottom: 5px; border-right: 3px solid var(--brand-blue); padding-right: 8px; }
 
         .platform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .platform-card {
-            background: var(--panel-bg); border: 1px solid rgba(241, 196, 15, 0.1); border-radius: 16px;
+            background: var(--panel-bg); border: 1px solid rgba(0, 188, 212, 0.1); border-radius: 16px;
             padding: 15px; text-align: center; cursor: pointer; transition: 0.2s;
         }
-        .platform-card:hover { border-color: var(--brand-yellow); transform: translateY(-2px); }
+        .platform-card:hover { border-color: var(--brand-blue); transform: translateY(-2px); }
         .platform-icon { font-size: 40px; margin-bottom: 8px; display: block; }
         .platform-name { font-size: 14px; font-weight: bold; color: #fff; }
 
@@ -48,17 +47,17 @@
         .secure-pay-badge { display: flex; justify-content: center; gap: 10px; align-items: center; background: #111a16; padding: 10px; border-radius: 10px; font-size: 12px; color: var(--text-muted); margin-top: 5px; }
 
         .reviews-container { display: flex; flex-direction: column; gap: 10px; }
-        .review-card { background: #111815; border-radius: 12px; padding: 15px; border-right: 3px solid var(--luxury-gold); text-align: right; }
-        .reviewer-name { font-weight: bold; font-size: 14px; color: var(--luxury-gold); }
+        .review-card { background: #111815; border-radius: 12px; padding: 15px; border-right: 3px solid var(--brand-blue); text-align: right; }
+        .reviewer-name { font-weight: bold; font-size: 14px; color: var(--brand-blue); }
         .review-text { font-size: 12px; color: #cbd5e1; margin-top: 4px; }
-        .stars { color: #f1c40f; font-size: 12px; margin-top: 2px; }
+        .stars { color: var(--brand-blue); font-size: 12px; margin-top: 2px; }
 
         .bottom-nav-bar {
             width: 100%; max-width: 480px; background: #111c17; position: fixed; bottom: 0;
             display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #1f332b; z-index: 1000;
         }
         .nav-item-btn { background: none; border: none; color: var(--text-muted); font-size: 11px; font-weight: bold; cursor: pointer; text-align: center; }
-        .nav-active { color: var(--brand-yellow) !important; }
+        .nav-active { color: var(--brand-blue) !important; }
         .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
     </style>
 </head>
@@ -66,25 +65,25 @@
 
     <div class="store-header">
         <div class="store-logo">ADD MORE SHOP</div>
-        <div style="font-size: 12px; color: var(--brand-yellow);">⚡ ربط آلي مع SMMGlobe</div>
+        <div style="font-size: 12px; color: var(--brand-blue);">⚡ معالجة فورية وتلقائية بالكامل</div>
     </div>
 
     <div class="main-container">
         
         <div id="section-categories">
-            <div class="section-title">خدمات زيادة المتابعين</div>
+            <div class="section-title">قائمة المنصات والخدمات</div>
             <div class="platform-grid" style="margin-top: 10px;">
                 <div class="platform-card" onclick="selectPlatform('تيك توك', 'tiktok')">
-                    <span class="platform-icon">🎵</span><span class="platform-name">TIKTOK</span>
+                    <span class="platform-icon">🎵</span><span class="platform-name">TIKTOK SERVICES</span>
                 </div>
                 <div class="platform-card" onclick="selectPlatform('إنستغرام', 'instagram')">
-                    <span class="platform-icon">📸</span><span class="platform-name">INSTAGRAM</span>
+                    <span class="platform-icon">📸</span><span class="platform-name">INSTAGRAM SERVICES</span>
                 </div>
                 <div class="platform-card" onclick="selectPlatform('سناب شات', 'snapchat')">
-                    <span class="platform-icon">💛</span><span class="platform-name">SNAPCHAT</span>
+                    <span class="platform-icon">💛</span><span class="platform-name">SNAPCHAT SERVICES</span>
                 </div>
                 <div class="platform-card" onclick="selectPlatform('يوتيوب', 'youtube')">
-                    <span class="platform-icon">📺</span><span class="platform-name">YOUTUBE</span>
+                    <span class="platform-icon">📺</span><span class="platform-name">YOUTUBE SERVICES</span>
                 </div>
             </div>
         </div>
@@ -92,33 +91,31 @@
         <div class="checkout-box" id="checkout-panel">
             <div class="section-title" id="checkout-title">طلب خدمة رقمية</div>
             
-            <label style="font-size: 12px; color: var(--text-muted);">اختر الباقة والكمية المطلوبة الحين:</label>
+            <label style="font-size: 12px; color: var(--text-muted);">اختر نوع الخدمة أو الباقة المطلوبة الحين:</label>
             <select class="select-input" id="package-selector" onchange="updatePackagePrice()">
-                <!-- شحن الخيارات ديناميكياً -->
-            </select>
+                </select>
 
-            <div style="font-size: 16px; font-weight: bold; color: var(--brand-yellow); text-align: right;">
-                السعر الإجمالي للعميل: <span id="package-price-lbl">0.00</span> $
+            <div style="font-size: 16px; font-weight: bold; color: var(--brand-blue); text-align: right;">
+                السعر الإجمالي للدفع: <span id="package-price-lbl">0.00</span> $
             </div>
 
             <label style="font-size: 12px; color: var(--text-muted);">أدخل رابط الحساب أو رابط الفيديو العام:</label>
-            <input type="text" id="target-account-link" class="input-field select-input" style="direction: ltr;" placeholder="https://instagram.com/username">
+            <input type="text" id="target-account-link" class="input-field select-input" style="direction: ltr;" placeholder="https://example.com/link">
 
             <div style="margin-top: 10px;" id="paypal-button-container"></div>
 
             <div class="secure-pay-badge">
-                <span>🔒 نظام آمن وتمرير فوري للطلب</span>
-                <span style="font-weight: bold; color:#fff;">SMM Panel API</span>
+                <span>🔒 نظام دفع مشفر - تسليم آلي فوري وسريع</span>
             </div>
         </div>
 
         <div>
-            <div class="section-title">آراء عملائنا ⭐️</div>
+            <div class="section-title">آراء عملائنا الكرام ⭐️</div>
             <div class="reviews-container" style="margin-top: 10px;">
                 <div class="review-card">
                     <div class="reviewer-name">طلال الرشيدي</div>
                     <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <div class="review-text">مبهر جداً، طلبت المتابعين ووصلوا بسرعة والضمان حقيقي بدون نقص.</div>
+                    <div class="review-text">مبهر جداً، سرعة فائقة في التنفيذ وتنوع الخدمات يغني عن أي موقع ثاني. أنصح به!</div>
                 </div>
             </div>
         </div>
@@ -127,32 +124,38 @@
 
     <div class="bottom-nav-bar">
         <button class="nav-item-btn nav-active"><span class="nav-icon">🏠</span>الرئيسية</button>
-        <button class="nav-item-btn" onclick="alert('السلة فارغة حالياً!')"><span class="nav-icon">🛒</span>السلة</button>
+        <button class="nav-item-btn" onclick="alert('سلة المشتريات فارغة حالياً!')"><span class="nav-icon">🛒</span>السلة</button>
     </div>
 
 <script>
-    // باقات الخدمات والمطابقة لـ Service ID في لوحة SMMGlobe الخاصة بك
-    // يمكنك تعديل الـ smmId لاحقاً ليطابق رقم الخدمة الفعلي داخل حسابك
+    // 🛠️ الباقات المتنوعة والمدروسة بهامش ربح فخم جداً لك يا بومحمد (أرباح صافية كاش)
+    // ملاحظة برمجية: تأكد من مطابقة الـ smmId مع رقم الخدمة الفعلي المناظر لها داخل حسابك بالسيرفر الخلفي
     const packagesData = {
         tiktok: [
-            { name: "⚡ 1000 متابع تيك توك ثابت مع ضمان - 2.99$", price: 2.99, smmId: 1, quantity: 1000 },
-            { name: "❤️ 5000 لايك تيك توك سريع - 4.50$", price: 4.50, smmId: 2, quantity: 5000 }
+            { name: "👤 1000 متابع تيك توك ثابت مع ضمان - 2.99$", price: 2.99, smmId: 1, quantity: 1000 },
+            { name: "❤️ 5000 لايك تيك توك سريع - 4.50$", price: 4.50, smmId: 2, quantity: 5000 },
+            { name: "👁️ 10,000 مشاهدة فيديو تيك توك فائقة السرعة - 1.50$", price: 1.50, smmId: 3, quantity: 10000 }
         ],
         instagram: [
-            { name: "📸 1000 متابع إنستغرام جودة ممتازة - 3.49$", price: 3.49, smmId: 3, quantity: 1000 }
+            { name: "📸 1000 متابع إنستغرام جودة ممتازة وضمان - 3.49$", price: 3.49, smmId: 4, quantity: 1000 },
+            { name: "🔥 2000 لايك إنستغرام متفاعل - 1.99$", price: 1.99, smmId: 5, quantity: 2000 }
         ],
         snapchat: [
-            { name: "💛 1000 متابع منصة أضواء سناب - 5.99$", price: 5.99, smmId: 4, quantity: 1000 }
+            { name: "💛 1000 متابع منصة أضواء سناب - 5.99$", price: 5.99, smmId: 6, quantity: 1000 }
         ],
         youtube: [
-            { name: "📺 1000 مشترك يوتيوب حقيقي دائم - 12.00$", price: 12.00, smmId: 5, quantity: 1000 }
+            { name: "👑 500 مشترك يوتيوب حقيقي ثابت مع ضمان - 6.50$", price: 6.50, smmId: 10, quantity: 500 },
+            { name: "📺 1000 مشترك يوتيوب حقيقي دائم مع ضمان - 12.00$", price: 12.00, smmId: 11, quantity: 1000 },
+            { name: "⏱️ 1000 ساعة مشاهدة علنية حقيقية لفيديوهاتك - 14.99$", price: 14.99, smmId: 12, quantity: 1000 },
+            { name: "👁️ 5000 مشاهدة فيديو يوتيوب سريعة وآمنة - 4.25$", price: 4.25, smmId: 13, quantity: 5000 },
+            { name: "👍 1000 لايك لفيديوهات وشورتس اليوتيوب - 3.50$", price: 3.50, smmId: 14, quantity: 1000 }
         ]
     };
 
     let selectedPackage = null;
 
     function selectPlatform(name, key) {
-        document.getElementById('checkout-title').innerText = `طلب خدمات ${name} وتوصيلها آلياً`;
+        document.getElementById('checkout-title').innerText = `طلب خدمات ${name} الاحترافية الفورية`;
         const selector = document.getElementById('package-selector');
         selector.innerHTML = "";
         
@@ -194,11 +197,11 @@
                 return actions.order.capture().then(function(details) {
                     const targetLink = document.getElementById('target-account-link').value.trim();
                     if(!targetLink) {
-                        alert("🚨 تم استلام المبلغ بنجاح! ولكن يرجى تزويد الدعم برابط الحساب يدوياً فوراً لأنك تركته فارغاً.");
+                        alert("🚨 تم استلام المبلغ بنجاح! ولكن يرجى تزويد الدعم الفني برابط الحساب أو الفيديو فوراً لتنفيذ الطلب.");
                         return;
                     }
 
-                    // إرسال البيانات فوراً للباكيند لطلب التنفيذ من SMMGlobe لايف الحين
+                    // تمرير المعاملة دغري للباكيند ليخاطب السيرفر في سرية تامة بالخلفية
                     fetch('/api/verify-order', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -211,9 +214,9 @@
                     .then(res => res.json())
                     .then(resData => {
                         if(resData.success) {
-                            alert(`🎉 تم نجاح العملية وتمرير الطلب آلياً لسيرفر المتابعين بنجاح!\nرقم المعاملة بالسيرفر: ${resData.smmOrderId}`);
+                            alert(`🎉 شكرًا لك يا ${details.payer.name.given_name}!\nتم تأكيد دفعتك المباشرة، وبدأ العمل والتوصيل التلقائي لحسابك فوراً لايف الحين!`);
                         } else {
-                            alert(`⚠️ تم استقبال المال ولكن فشل التمرير التلقائي: ${resData.message}`);
+                            alert(`⚠️ تم استقبال المال ولكن فشل التمرير الآلي: ${resData.message}`);
                         }
                     });
                 });
