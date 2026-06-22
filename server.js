@@ -1,13 +1,13 @@
-// server.js - الباكيند الرسمي المحدث لمتجر ADD MORE SHOP
+// server.js - الباكيند الرسمي المصلح والمستقر لمتجر ADD MORE SHOP
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const path = require('path');
 const bodyParser = require('body-parser');
-const https = require('https'); // استخدام المكتبة الرسمية لتفادي أخطاء fetch
+const https = require('https'); // الاعتماد الكلي على المكتبة الرسمية المستقرة
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname)));
+app.use(express.express?.static ? express.static(path.join(__dirname)) : express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
 
@@ -27,7 +27,7 @@ app.post('/api/verify-order', (req, res) => {
 
     console.log(`💰 تم تأكيد معاملة دفع عبر PayPal برقم: ${orderID}`);
 
-    // تجهيز البيانات بصيغة x-www-form-urlencoded المعتمدة بالسيرفر
+    // تجهيز البيانات المتوافقة مع سيرفر SMMGlobe بصيغة x-www-form-urlencoded
     const postData = new URLSearchParams({
         key: SMM_API_KEY,
         action: 'add',
