@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const https = require('https'); 
 
 app.use(bodyParser.json());
-// السطر الصحيح والمستقر بنسبة 100% لتشغيل ملفات الواجهة
+// الإصلاح الجذري والدقيق لتشغيل ملفات الواجهة بنجاح وبدون كراش
 app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
@@ -54,14 +54,13 @@ app.post('/api/verify-order', (req, res) => {
             try {
                 const smmResult = JSON.parse(data);
                 if (smmResult && smmResult.order) {
-                    console.log(`✅ تم قبول الطلب آلياً ورقم المعاملة في SMMGlobe هو: ${smmResult.order}`);
+                    console.log(`✅ تم قبول الطلب آلياً برقم: ${smmResult.order}`);
                     return res.json({ 
                         success: true, 
                         message: "تم تمرير الطلب التلقائي بنجاح الحين!",
                         smmOrderId: smmResult.order
                     });
                 } else {
-                    console.error("🚨 رفض السيرفر المعاملة:", smmResult);
                     return res.status(400).json({ 
                         success: false, 
                         message: smmResult.error || "فشل السيرفر في قبول المعاملة التلقائية." 
@@ -74,7 +73,6 @@ app.post('/api/verify-order', (req, res) => {
     });
 
     SmmReq.on('error', (error) => {
-        console.error("🚨 خطأ اتصال خارجي بالسيرفر:", error);
         return res.status(500).json({ success: false, message: "حدث خطأ في الاتصال بسيرفر الأتمتة." });
     });
 
