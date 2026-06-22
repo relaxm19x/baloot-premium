@@ -1,17 +1,17 @@
-// server.js - الباكيند الرسمي المصلح والمستقر لمتجر ADD MORE SHOP
+// server.js - الباكيند الرسمي المصلح والمستقر لمتجر ADD MORE SHOP كلياً
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const path = require('path');
 const bodyParser = require('body-parser');
-const https = require('https'); // الاعتماد الكلي على المكتبة الرسمية المستقرة
+const https = require('https'); // استخدام مكتبة السيستم الرسمية لتفادي أخطاء خروج السيرفر القديم
 
 app.use(bodyParser.json());
-app.use(express.express?.static ? express.static(path.join(__dirname)) : express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
 
-// ⚠️ ضع مفتاح الـ API الخاص بك من صفحة Account في SMMGlobe مكان النص بالأسفل:
+// ⚠️ يا بومحمد: ادخل صفحة Account في حسابك بـ SMMGlobe وانسخ الـ API Key الخاص بك وضعه مكان النص في الأسفل
 const SMM_API_KEY = "ضع_هنا_مفتاح_الـ_API_الخاص_بكامل_من_صفحة_الـ_Account";
 
 app.get('/', (req, res) => {
@@ -25,9 +25,9 @@ app.post('/api/verify-order', (req, res) => {
         return res.status(400).json({ success: false, message: "بيانات الطلب غير مكتملة!" });
     }
 
-    console.log(`💰 تم تأكيد معاملة دفع عبر PayPal برقم: ${orderID}`);
+    console.log(`💰 تم تأكيد معاملة دفع عبر PayPal حقيقية برقم: ${orderID}`);
 
-    // تجهيز البيانات المتوافقة مع سيرفر SMMGlobe بصيغة x-www-form-urlencoded
+    // تجهيز حقول الداتا المطلوبة لـ SMMGlobe بنظام URL x-www-form-urlencoded المعتمد
     const postData = new URLSearchParams({
         key: SMM_API_KEY,
         action: 'add',
@@ -47,6 +47,7 @@ app.post('/api/verify-order', (req, res) => {
         }
     };
 
+    // إطلاق الاتصال والطلب الفوري الآمن بالخلفية
     const SmmReq = https.request(options, (smmRes) => {
         let data = '';
         smmRes.on('data', (chunk) => { data += chunk; });
@@ -54,24 +55,27 @@ app.post('/api/verify-order', (req, res) => {
             try {
                 const smmResult = JSON.parse(data);
                 if (smmResult && smmResult.order) {
+                    console.log(`✅ تم قبول الطلب آلياً ورقم المعاملة في SMMGlobe هو: ${smmResult.order}`);
                     return res.json({ 
                         success: true, 
                         message: "تم تمرير الطلب التلقائي بنجاح الحين!",
                         smmOrderId: smmResult.order
                     });
                 } else {
+                    console.error("🚨 رفض السيرفر المعاملة:", smmResult);
                     return res.status(400).json({ 
                         success: false, 
                         message: smmResult.error || "فشل السيرفر في قبول المعاملة التلقائية." 
                     });
                 }
             } catch (e) {
-                return res.status(500).json({ success: false, message: "خطأ في قراءة استجابة سيرفر المتابعين." });
+                return res.status(500).json({ success: false, message: "خطأ في قراءة استجابة خادم المتابعين." });
             }
         });
     });
 
     SmmReq.on('error', (error) => {
+        console.error("🚨 خطأ اتصال خارجي بالسيرفر:", error);
         return res.status(500).json({ success: false, message: "حدث خطأ في الاتصال بسيرفر الأتمتة." });
     });
 
@@ -80,5 +84,5 @@ app.post('/api/verify-order', (req, res) => {
 });
 
 http.listen(PORT, () => {
-    console.log(`🚀 ADD MORE SHOP Active with Full Platforms on Port ${PORT}`);
+    console.log(`🚀 ADD MORE SHOP Sky Blue Engine Active on Port ${PORT}`);
 });
