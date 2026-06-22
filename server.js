@@ -4,10 +4,10 @@ const app = express();
 const http = require('http').createServer(app);
 const path = require('path');
 const bodyParser = require('body-parser');
-const https = require('https'); // الاعتماد الكلي على المكتبة الرسمية المستقرة
+const https = require('https'); 
 
 app.use(bodyParser.json());
-// الإصلاح الجذري هنا: السطر الصافي والآمن لملفات الواجهة
+// السطر الصحيح والمستقر بنسبة 100% لتشغيل ملفات الواجهة
 app.use(express.static(path.join(__dirname)));
 
 const PORT = process.env.PORT || 3000;
@@ -28,7 +28,6 @@ app.post('/api/verify-order', (req, res) => {
 
     console.log(`💰 تم تأكيد معاملة دفع عبر PayPal حقيقية برقم: ${orderID}`);
 
-    // تجهيز حقول الداتا المطلوبة لـ SMMGlobe بنظام URL x-www-form-urlencoded المعتمد
     const postData = new URLSearchParams({
         key: SMM_API_KEY,
         action: 'add',
@@ -48,7 +47,6 @@ app.post('/api/verify-order', (req, res) => {
         }
     };
 
-    // إطلاق الاتصال والطلب الفوري الآمن بالخلفية
     const SmmReq = https.request(options, (smmRes) => {
         let data = '';
         smmRes.on('data', (chunk) => { data += chunk; });
