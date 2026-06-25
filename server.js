@@ -1,85 +1,94 @@
-// server.js - الباكيند المستقر والنهائي لمتجر ADD MORE SHOP كلياً
 const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
+require('dotenv').config();
+
 const app = express();
-const http = require('http').createServer(app);
-const path = require('path');
-const bodyParser = require('body-parser');
-const https = require('https'); 
 
-app.use(bodyParser.json());
-// الإصلاح الجذري والدقيق لتشغيل ملفات الواجهة بنجاح وبدون كراش
-app.use(express.static(path.join(__dirname)));
+// تفعيل مشاركة الموارد لتسهيل الاتصال بين فرونت إند الموقع والسيرفر
+app.use(cors());
+app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+// الرابط الرسمي الموحد لـ API موقع SMMGlobe بناءً على الصفحة التي أرسلتها
+const SMM_API_URL = 'https://smmglobe.com/api/v2';
 
-// ⚠️ ضع مفتاح الـ API الخاص بك من صفحة Account في SMMGlobe مكان النص بالأسفل:
-const SMM_API_KEY = "ضع_هنا_مفتاح_الـ_API_الخاص_بكامل_من_صفحة_الـ_Account";
+/**
+ * نقطة النهاية (Endpoint): استقبال الدفع الناجح وتمرير الطلب فوراً لـ SMMGlobe
+ */
+app.post('/api/payment-success', async (req, res) => {
+    try {
+        const { orderDetails, paypalTransactionId } = req.body;
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.post('/api/verify-order', (req, res) => {
-    const { orderID, serviceDetails, targetLink } = req.body;
-
-    if (!orderID || !serviceDetails || !targetLink) {
-        return res.status(400).json({ success: false, message: "بيانات الطلب غير مكتملة!" });
-    }
-
-    console.log(`💰 تم تأكيد معاملة دفع عبر PayPal حقيقية برقم: ${orderID}`);
-
-    const postData = new URLSearchParams({
-        key: SMM_API_KEY,
-        action: 'add',
-        service: serviceDetails.smmServiceId,
-        link: targetLink,
-        quantity: serviceDetails.quantity
-    }).toString();
-
-    const options = {
-        hostname: 'smmglobe.com',
-        port: 443,
-        path: '/api/v2',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': Buffer.byteLength(postData)
+        // 1. التحقق التلقائي من سلامة البيانات المستقبلة من الموقع
+        if (!orderDetails || !orderDetails.smmId || !orderDetails.link || !orderDetails.quantity) {
+            console.error('[خطأ]: بيانات الطلب القادمة من المتجر غير مكتملة.');
+            return res.status(400).json({ 
+                success: false, 
+                message: 'فشل التمرير التلقائي: بيانات الخدمة أو الرابط أو الكمية ناقصة.' 
+            });
         }
-    };
 
-    const SmmReq = https.request(options, (smmRes) => {
-        let data = '';
-        smmRes.on('data', (chunk) => { data += chunk; });
-        smmRes.on('end', () => {
-            try {
-                const smmResult = JSON.parse(data);
-                if (smmResult && smmResult.order) {
-                    console.log(`✅ تم قبول الطلب آلياً برقم: ${smmResult.order}`);
-                    return res.json({ 
-                        success: true, 
-                        message: "تم تمرير الطلب التلقائي بنجاح الحين!",
-                        smmOrderId: smmResult.order
-                    });
-                } else {
-                    return res.status(400).json({ 
-                        success: false, 
-                        message: smmResult.error || "فشل السيرفر في قبول المعاملة التلقائية." 
-                    });
-                }
-            } catch (e) {
-                return res.status(500).json({ success: false, message: "خطأ في قراءة استجابة خادم المتابعين." });
-            }
+        // 2. جلب مفتاح الـ API الخاص بـ SMMGlobe المخزن بأمان في السيرفر
+        const SMM_API_KEY = process.env.SMM_API_KEY;
+
+        if (!SMM_API_KEY || SMM_API_KEY.trim() === '') {
+            console.error('[خطأ حرج]: لم يتم ضبط مفتاح SMM_API_KEY في إعدادات Render.');
+            return res.status(500).json({
+                success: false,
+                message: 'خطأ في إعدادات السيرفر: مفتاح الـ API الخاص بـ SMMGlobe غير موجود.'
+            });
+        }
+
+        console.log(`[PayPal]: تم استقبال تأكيد الدفع بنجاح للمعاملة: ${paypalTransactionId}`);
+        console.log(`[SMMGlobe]: جاري إرسال الطلب تلقائياً للخدمة رقم: ${orderDetails.smmId}`);
+
+        // 3. بناء وتجهيز البيانات بالصيغة المطلوبة تماماً بمستند SMMGlobe (URL Encoded)
+        // المعاملات المطلوبة: key, action, service, link, quantity
+        const params = new URLSearchParams();
+        params.append('key', SMM_API_KEY.trim());
+        params.append('action', 'add');
+        params.append('service', orderDetails.smmId.toString());
+        params.append('link', orderDetails.link.toString());
+        params.append('quantity', orderDetails.quantity.toString());
+
+        // 4. إرسال الطلب بشكل آمن ومباشر إلى سيرفر SMMGlobe بنظام POST
+        const response = await axios.post(SMM_API_URL, params, {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
-    });
 
-    SmmReq.on('error', (error) => {
-        return res.status(500).json({ success: false, message: "حدث خطأ في الاتصال بسيرفر الأتمتة." });
-    });
+        // 5. تحليل استجابة السيرفر وتأكيد التمرير
+        if (response.data && response.data.order) {
+            console.log(`✅ نجاح التمرير التلقائي! رقم الطلب في SMMGlobe: ${response.data.order}`);
+            return res.status(200).json({
+                success: true,
+                message: 'تمت العملية بنجاح كامل: استلام المال وتمرير الطلب تلقائياً.',
+                smmOrderId: response.data.order
+            });
+        } else if (response.data && response.data.error) {
+            console.error(`❌ رفض من SMMGlobe API: ${response.data.error}`);
+            return res.status(400).json({
+                success: false,
+                message: `فشل التمرير التلقائي من السيرفر: ${response.data.error}`
+            });
+        } else {
+            console.error('[SMMGlobe]: استجابة مبهمة أو غير متوقعة:', response.data);
+            return res.status(500).json({
+                success: false,
+                message: 'حدث رد غير معروف من سيرفر تجهيز الخدمات.'
+            });
+        }
 
-    SmmReq.write(postData);
-    SmmReq.end();
+    } catch (error) {
+        console.error('❌ خطأ في الاتصال بالشبكة أو السيرفر الخارجي:', error.message);
+        return res.status(500).json({
+            success: false,
+            message: 'فشل الاتصال التلقائي بسيرفر الخدمات، يرجى مراجعة حالة الخادم.'
+        });
+    }
 });
 
-http.listen(PORT, () => {
-    console.log(`🚀 ADD MORE SHOP Active on Port ${PORT}`);
+// تشغيل السيرفر على البورت المتاح في بيئة الاستضافة
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`🚀 السيرفر يعمل بأعلى كفاءة وجاهز تماماً للتمرير على البورت: ${PORT}`);
 });
