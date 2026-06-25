@@ -2,10 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const path = require('path');
+const https = require('https');
 
 const app = express();
 
-// تفعيل مشاركة الموارد ومعالجة البيانات مدمجة لتفادي أي كراش في البناء
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
@@ -13,7 +13,7 @@ app.use(express.static(path.join(__dirname)));
 // الرابط الرسمي الموحد لـ API موقع SMMGlobe
 const SMM_API_URL = 'https://smmglobe.com/api/v2';
 
-// مفتاح الـ API الحقيقي الخاص بحسابك تم دمجه وثباته هنا بالملي
+// مفتاح الـ API الحقيقي الخاص بك والمفعل
 const SMM_API_KEY = '4bb74b551611ef2c97d1c2f75439ac57';
 
 app.get('/', (req, res) => {
@@ -21,25 +21,24 @@ app.get('/', (req, res) => {
 });
 
 /**
- * استقبال الدفع الناجح وتمرير الطلب فوراً لـ SMMGlobe تلقائياً
+ * استقبال تأكيد الدفع وتمرير الطلب تلقائياً لـ SMMGlobe بناءً على شروط PHP الخاصة بهم
  */
 app.post('/api/verify-order', async (req, res) => {
     try {
         const { orderID, serviceDetails, targetLink } = req.body;
 
-        // 1. التحقق التلقائي من سلامة البيانات المستقبلة من الواجهة
         if (!orderID || !serviceDetails || !targetLink) {
-            console.error('[خطأ]: بيانات الطلب القادمة من المتجر غير مكتملة.');
+            console.error('[خطأ]: بيانات الطلب غير مكتملة.');
             return res.status(400).json({ 
                 success: false, 
-                message: 'فشل التمرير التلقائي: بيانات الخدمة أو الرابط ناقصة.' 
+                message: 'بيانات الطلب ناقصة للتمرير.' 
             });
         }
 
-        console.log(`[PayPal]: تم استقبال تأكيد الدفع بنجاح للمعاملة: ${orderID}`);
-        console.log(`[SMMGlobe]: جاري إرسال الطلب تلقائياً للخدمة رقم: ${serviceDetails.smmServiceId}`);
+        console.log(`[PayPal]: تم استلام المال بنجاح للمعاملة رقم: ${orderID}`);
+        console.log(`[SMMGlobe]: جاري إرسال الطلب للخدمة: ${serviceDetails.smmServiceId}`);
 
-        // 2. بناء وتجهيز البيانات بالصيغة المطلوبة تماماً بمستند SMMGlobe
+        // تجهيز المعاملات بصيغة URL Encoded كما يطلب السيرفر
         const params = new URLSearchParams();
         params.append('key', SMM_API_KEY);
         params.append('action', 'add');
@@ -47,17 +46,25 @@ app.post('/api/verify-order', async (req, res) => {
         params.append('link', targetLink.toString());
         params.append('quantity', serviceDetails.quantity.toString());
 
-        // 3. إرسال الطلب بشكل آمن ومباشر إلى سيرفر SMMGlobe بنظام POST
-        const response = await axios.post(SMM_API_URL, params, {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        // محاكاة نفس خيارات وتفاصيل اتصال PHP (الـ User-Agent وتخطي حماية SSL المباشرة)
+        const agent = new https.Agent({  
+            rejectUnauthorized: false 
         });
 
-        // 4. تحليل استجابة السيرفر وتأكيد التمرير للعميل
+        const response = await axios.post(SMM_API_URL, params, {
+            headers: { 
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)'
+            },
+            httpsAgent: agent
+        });
+
+        // قراءة استجابة السيرفر النهائية
         if (response.data && response.data.order) {
-            console.log(`✅ نجاح التمرير التلقائي! رقم الطلب في SMMGlobe: ${response.data.order}`);
+            console.log(`✅ نجاح التمرير الآلي! رقم الطلب: ${response.data.order}`);
             return res.status(200).json({
                 success: true,
-                message: 'تمت العملية بنجاح كامل: استلام المال وتمرير الطلب تلقائياً.',
+                message: 'تم استقبال المال وتمرير الطلب تلقائياً بنجاح وبدون أخطاء.',
                 smmOrderId: response.data.order
             });
         } else if (response.data && response.data.error) {
@@ -67,24 +74,24 @@ app.post('/api/verify-order', async (req, res) => {
                 message: response.data.error
             });
         } else {
-            console.error('[SMMGlobe]: استجابة غير متوقعة:', response.data);
+            console.error('[SMMGlobe]: استجابة مبهمة:', response.data);
             return res.status(500).json({
                 success: false,
-                message: 'حدث رد غير معروف من سيرفر تجهيز الخدمات.'
+                message: 'حدث رد غير معروف من سيرفر التجهيز.'
             });
         }
 
     } catch (error) {
-        console.error('❌ خطأ في الاتصال بالسيرفر الخارجي:', error.message);
+        console.error('❌ خطأ حرج في الشبكة أثناء تمرير الطلب:', error.message);
         return res.status(500).json({
             success: false,
-            message: 'فشل الاتصال التلقائي بسيرفر الخدمات.'
+            message: 'فشل الاتصال التلقائي بسيرفر المتابعين.'
         });
     }
 });
 
-// تشغيل السيرفر على البورت المتاح في بيئة الاستضافة
+// تشغيل السيرفر على البورت الافتراضي
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 السيرفر يعمل بأعلى كفاءة ومفتاح الـ API مفعّل بالكامل الحين على البورت: ${PORT}`);
+    console.log(`🚀 السيرفر يعمل بأعلى كفاءة وجاهز تماماً للتمرير الفوري على البورت: ${PORT}`);
 });
